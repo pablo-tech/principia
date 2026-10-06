@@ -1,6 +1,6 @@
 ---
 name: tenancy
-description: Working for more than one tenant from one set of tools — what a tenant is, why the commit is the only boundary that binds every agent, how .protocol/tenant declares the ones this repo is not and .protocol/identity declares whose commits these are, the four controls in order of what actually carries weight, and why a tenant reports a protocol defect on itself rather than upstream.
+description: Working for more than one tenant from one set of tools — what a tenant is, why the commit is the only boundary that binds every agent, how .protocol/tenant declares the ones this repo is not and .protocol/identity declares whose commits these are, why no mechanical control can decide what a file is for and placement is therefore the only lever, why a policy root is the unit of enforcement, the four controls in order of what actually carries weight, and why a tenant reports a protocol defect on itself rather than upstream.
 ---
 
 # Tenancy
@@ -50,6 +50,41 @@ A repository that will itself be read by others carries the terms in an untracke
 backwards is a list of what the repository is protecting, so a published one states the shapes and
 the categories and leaves the proper nouns on the machine that needs them.
 
+## What a control cannot decide, and where that leaves you
+
+**No mechanical control can decide what a file is for.** What a file contains is a property of its
+text; what it is for is a property of the intention behind it, and every non-trivial semantic
+property of a program is undecidable — Rice's theorem (H. G. Rice, "Classes of Recursively
+Enumerable Sets and Their Decision Problems", 1953), of which this is the everyday case. So a
+matcher cannot be made to respect purpose by making it cleverer, and the search for a better pattern
+is the wrong search. What is left is one degree of freedom: **where the control is installed.** The
+decision that cannot be mechanized is taken once, by a person, and expressed as placement rather
+than as cleverness — policy separated from mechanism (Roger Levin, Ellis Cohen, William Corwin,
+Fred Pollack and William Wulf, "Policy/Mechanism Separation in Hydra", 1975).
+
+Which turns an uncontrolled boundary into a statement rather than a gap: draw the boundary so that
+purpose is uniform inside it, install the control where the rule applies, and **the absence of a
+control is the assertion that purpose differs there.** Be careful with that inversion, because it is
+the shape a loophole also has. It is only an assertion where the absence is written down as a
+decision with its reason, in the place whoever finds it will be standing — unrecorded, it is
+indistinguishable from an oversight, and a reader who cannot tell which it is has to assume the
+worse one. [`as-built.md`](as-built.md) is the rule that makes it legible: the document says what
+the system *is*, and a control nobody installed is part of what the system is.
+
+**A policy root is the unit of enforcement, and silence about a root is not safety.** A control
+reaches the edge of the thing it is installed in and no further — a **trust boundary**, and
+enumerating them is the work rather than the preamble to it (Adam Shostack, *Threat Modeling:
+Designing for Security*, 2014). Complete mediation read backwards is what applies at that edge: a
+root nobody enrolled is unpoliced however firmly a document asserts the rule, and a document is
+exactly what is available to assert it with, which is why the assertion feels like coverage. That is
+the declaration above seen from outside — stated here as a property of the arrangement, because read
+as a note about one file it sounds like an edge case rather than the default. The remedy is weaker
+than mediation and has to be, since roots that police themselves are what make one separable from
+another at all: the roots are **inventoried**, each carries its own enrolment, and *unenrolled* is a
+recorded value rather than the default reading of an empty directory. Where a root is put belongs to
+this too — placement decides which controls are even available to it, so it is a decision about
+enforcement and not about filing.
+
 ## Whose commits these are
 
 The declaration above refuses another tenant's *material*. The name and address a commit is made as
@@ -87,7 +122,14 @@ that does carry the file is judged by that and by nothing else.
 
 1. **Absence.** On a machine whose owner can read any file on it, the only real control is that the
    other tenant's material was never cloned there. Nothing configured on that machine improves on
-   this, and nothing substitutes for it.
+   this, and nothing substitutes for it. An exclusion rule is not this. It is a **preventive
+   control** and guarantees only that the excluded material is not carried, saying nothing about
+   whether it exists — and pairing a preventive control with a detective one is the whole of why
+   that distinction is worth a name (COSO, *Internal Control — Integrated Framework*, 1992). What an
+   exclusion leaves behind is invisible rather than absent: present on one machine, refused by
+   nothing, reported by nothing, failing no check anywhere. So an exclusion that matters is paired
+   with a **sweep** for what it allowed to accumulate, and the sweep is a control with an owner
+   rather than a paragraph of advice.
 2. **The commit-time guard.** On a machine you do own, the live risk is not exfiltration — it is a
    private plan landing in the other tenant's commit by ordinary mistake. The guard prevents that
    regardless of which agent wrote the diff.
