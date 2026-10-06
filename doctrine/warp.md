@@ -1,6 +1,6 @@
 ---
 name: warp
-description: The delegation mode. Say "warp" to take an approved plan from approval to deployed product with no further check-ins — what that authorizes, the four things it still stops for, the mark it starts with and the report it ends with.
+description: The delegation mode. Say "warp" to take an approved plan from approval to deployed product with no further check-ins — what that authorizes, the four things it still stops for, why blast radius is read off the declared trigger rather than off your diff, why a procedure handed to a person is reduced to one act, the mark it starts with and the report it ends with.
 ---
 
 # Warp
@@ -40,9 +40,39 @@ small it looks:
   commit one to the repository that holds them. It stops only where a later step could not recover
   the value. The ordering that follows is: salvage the credential first, then delete whatever held it.
 
-**A publish that a merge triggers is still a publish.** Where merging to a branch runs a release
-job, that merge belongs to the owner however small the diff, and *the diff not touching the
-published artefact is not an exemption* — the job keys on the push, not on the paths.
+**An automated action fires on its declared condition, not on what you think you changed.** Where
+merging to a branch runs a release job, that merge belongs to the owner however small the diff, and
+*the diff not touching the published artefact is not an exemption* — the job keys on the push, not on
+the paths. The general failure is an **automation surprise**: the operator's model of what an
+automated system will do diverges from what it will do, and the divergence is discovered by the
+system acting (Nadine Sarter and David Woods, "How in the World Did We Ever Get into That Mode? Mode
+Error and Awareness in Supervisory Control", *Human Factors*, 1995). That literature is about a
+running system whose state the operator cannot see, and here every trigger's condition is declared,
+static and readable before the merge — which makes the remedy cheaper than anything it proposes and
+the failure less forgivable. **Read the declaration.** Blast radius is read off the mechanism, and
+"this change could not possibly have published anything" is a prediction about a trigger rather than
+a fact about a diff.
+
+## A procedure handed to a person is not a transaction
+
+A warp that cannot take a step itself hands it over, which is delegation at its narrowest — and what
+has to be fixed in advance there is not the intent but the **shape**. A sequence of steps carries no
+all-or-nothing guarantee: the second step runs after the first has failed, so a guard on the first
+step protects that step and nothing after it, and partial execution is a state nobody designed while
+the real world has already moved. That is **atomicity** and its absence (the A in ACID — Jim Gray,
+"The Transaction Concept: Virtues and Limitations", 1981).
+
+**The departure is that rollback is not available**, because the earlier steps were performed rather
+than recorded. So the available form of atomicity is not recovery but **irreducibility**: reduce the
+handover to one act whose partial execution is not a meaningful state, and put the sequence behind
+that act, where it either runs or does not. That is a **forcing function** — design the task so the
+wrong action is impossible rather than discouraged (**poka-yoke**: Shigeo Shingo, *Zero Quality
+Control: Source Inspection and the Poka-Yoke System*, 1986; named for design generally by Donald
+Norman, *The Psychology of Everyday Things*, 1988). It is also why a procedure valid in only one
+place names that place *inside* the act rather than in the prose above it: prose does not travel with
+a copied line. Length is the variable that decides all of this, which makes brevity a control rather
+than a courtesy, and review before handover is the only holder there is — the failure happens in
+someone else's terminal, past the last point anything here can see.
 
 ## Working around other sessions
 
