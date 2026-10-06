@@ -7,6 +7,9 @@ description: Tests held to the same standard as code — one behaviour per test,
 
 *Red-first is falsifiability; one knob per diff is experimental design.*
 
+**Named:** falsifiability — Karl Popper, *Logik der Forschung*, 1934 (in English, *The Logic of
+Scientific Discovery*, 1959). One factor at a time — R. A. Fisher, *The Design of Experiments*, 1935.
+
 **Tests are code and are held to the Clean Code standard** — the same bar for naming, size, single
 responsibility and DRY. What is specific to tests:
 

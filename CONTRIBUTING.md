@@ -78,14 +78,18 @@ authorized. [The template](.github/PULL_REQUEST_TEMPLATE.md) is pre-filled that 
 
 [INDUCTION.md](INDUCTION.md) is the whole of what that costs, and it is the part of this repository
 most likely to turn a pull request down. The short form: name the principle the rule instantiates,
-in the strongest form the wider field states it; say where this repository departs from that form
-and why; show the particular that induced it and then leave the particular behind; and say what
-holds the rule — a guard, a review, or nothing but the reader, which is the ordinary answer.
+in the strongest form the wider field states it, and cite the specific prior work it is named from —
+author, title, year, in the form the field recognizes it by, because a practice area is not a
+citation; say where this repository departs from that form and why; show the particular that induced
+it and then leave the particular behind; and say what holds the rule — a guard, a review, or nothing
+but the reader, which is the ordinary answer.
 
-A new document also needs its row in that file's register, and `bin/induction.test.sh` fails the
-build without one. A rule that cannot get through is not thereby wrong: it is a mechanism, a
-measurement, or a sentence belonging to a document that already exists, and all three have
-somewhere else to go.
+The citation is printed where the rule is stated: on a `Named:` line under the document's opening
+line, and in [README.md](README.md)'s table of the doctrine. A new document also needs its row in
+INDUCTION.md's register, which carries the full lineage and the departure. `bin/induction.test.sh`
+fails the build without any of the three. A rule that cannot get through is not thereby wrong: it is
+a mechanism, a measurement, or a sentence belonging to a document that already exists, and all three
+have somewhere else to go.
 
 ## Adding an adapter for another AI coding agent
 

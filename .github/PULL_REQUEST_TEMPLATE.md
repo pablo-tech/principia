@@ -29,7 +29,9 @@ Tick only what applies:
 - [ ] A doctrine file still carries exactly `name` and `description` frontmatter
       ([ARCHITECTURE.md §1](../ARCHITECTURE.md#1-the-protocol-is-doctrine-everything-else-installs-it-or-enforces-it)).
 - [ ] A new or changed rule names the principle it instantiates in the strongest form the field
-      states it, with its departure declared, and every document under `doctrine/` has its row in
+      states it and cites the specific prior work it is named from — author, title, year — on a
+      `Named:` line under the document's opening line and in [README.md](../README.md)'s table, with
+      its departure declared, and every document under `doctrine/` has its row in
       [INDUCTION.md](../INDUCTION.md)'s register.
 - [ ] A new or changed guard exits 0 when its policy file is absent, and the chain still fails
       closed when a guard is missing (§3, §4).

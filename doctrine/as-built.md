@@ -8,6 +8,10 @@ description: The document that describes a system is part of that system — cha
 *A document is part of the system it describes, and the evidence for a discrepancy decays from the
 moment it is found.*
 
+**Named:** stop the line — Taiichi Ohno, *Toyota Production System*, 1978. As-built record
+documents — AIA Document A201, *General Conditions of the Contract for Construction*, §3.11, which
+requires a record set marked to show the work as actually executed.
+
 **The document that describes a system is part of that system.** It is not a report about the work,
 written afterwards by whoever has time. A reader who cannot trust it has to re-derive the system from
 the system, which is the cost the document existed to remove.

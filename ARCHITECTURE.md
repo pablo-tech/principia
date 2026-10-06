@@ -28,13 +28,16 @@ of a generation — and belongs in a dated finding in the tenant that measured i
 would inherit the authority of a rule with a twenty-year half-life and be shared with every tenant
 that never measured it. §10 is the check that holds this one too.
 
-Doctrine is named. A rule is admitted only when the document carries the principle it instantiates,
-in the strongest form the wider field states it, and **every document under `doctrine/` has a row in
-[INDUCTION.md](INDUCTION.md)'s register** saying what that principle is and where this repository
-departs from it. That file is the terms of admission and the argument for them;
-`bin/induction.test.sh` refuses a tree where a document has no row, or a row no dated source. A
-consumer may rely on this: a rule here is either traceable to something older than this repository
-or says in as many words that no prior form was found.
+Doctrine is named and cited. A rule is admitted only when the document carries the principle it
+instantiates, in the strongest form the wider field states it, **and the specific prior work it is
+named from — author, title, year — printed on a `Named:` line under the document's opening line and
+again in `README.md`'s table of the doctrine**. A practice area is not a citation. Every document
+under `doctrine/` also has a row in [INDUCTION.md](INDUCTION.md)'s register, which carries the full
+lineage and where this repository departs from it. That file is the terms of admission and the
+argument for them; `bin/induction.test.sh` refuses a tree where a document has no `Named:` line, no
+register row, or where that line, its README row or its register row names no dated work. A consumer
+may rely on this: a rule here is either traceable to a work older than this repository or says in as
+many words that no prior work was found.
 
 ## 2. The tenant is the unit
 

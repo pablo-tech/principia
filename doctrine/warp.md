@@ -7,6 +7,11 @@ description: The delegation mode. Say "warp" to take an approved plan from appro
 
 *Delegation is only useful if its edges are fixed in advance.*
 
+**Named:** mission command — Helmuth von Moltke, *Verordnungen für die höheren Truppenführer*
+("Instructions for Large Unit Commanders"), 1869. The principal–agent problem — Michael Jensen and
+William Meckling, "Theory of the Firm: Managerial Behavior, Agency Costs and Ownership Structure",
+1976.
+
 **"warp" means: take the plan from approval to deployed product with no further check-ins.**
 Commit, push, open and merge the pull requests, run the migrations, set the secrets, deploy to
 production, and make every decision along the way by best judgement. The authority is delegated at
