@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Tests held to the same standard as code — one behaviour per test, testability as a property of the design rather than of the suite, real implementations over mocks, one knob per diff so a difference has one cause, and the rule that a test must be able to fail.
+description: Tests held to the same standard as code — one behaviour per test, testability as a property of the design rather than of the suite, real implementations over mocks, one knob per diff so a difference has one cause, the rule that a test must be able to fail, and the rule that a passing run is evidence only about what it executed.
 ---
 
 # Testing
@@ -52,3 +52,25 @@ The red-first discipline is the cheapest defence, and it has a corollary worth s
 written before its implementation reports some checks already passing, those checks are the ones to
 distrust. A check that "passes" because the thing under test does not yet exist is telling you about
 its own construction, not about the code.
+
+## A passing run is evidence about what it executed
+
+**Which is not always what you changed.** Where a test resolves its inputs through the environment —
+a path, a symbolic link, an installed copy, a cached build — it can exercise code that is not the code
+under test, and the result is a green tick answering a question nobody asked. That is a failure of
+**construct validity**: whether an instrument measures the thing it claims to measure, as distinct
+from whether it measures it precisely (Donald Campbell and Donald Fiske, "Convergent and Discriminant
+Validation by the Multitrait-Multimethod Matrix", 1959; the standard treatment is Thomas Cook and
+Donald Campbell, *Quasi-Experimentation: Design and Analysis Issues for Field Settings*, 1979). A test
+is a measuring instrument, so a run against the wrong source is an invalid instrument rather than a
+flaky one, and no amount of repetition improves it.
+
+**It is worse here than in the field that named it, and that is the part to carry.** A badly
+constructed survey yields a number somebody can still argue with. A test that exercised the wrong
+source yields a pass, which is the one output nobody re-examines. It is also not the oracle problem
+above: there the judgement is too weak to decide a real result, here the judgement is sound and the
+result came from somewhere else — a sound judgement about the wrong thing. So when a change is to
+something *resolved* rather than something named, confirm what actually loaded before believing the
+pass. Declaring and controlling every input — a **hermetic** run — is the structural remedy, and it
+belongs wherever a particular toolchain is configured rather than here; what belongs here is the
+refusal to read a green tick as evidence about a source nobody checked.

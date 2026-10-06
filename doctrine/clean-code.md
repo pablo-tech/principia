@@ -1,6 +1,6 @@
 ---
 name: clean-code
-description: The Clean Code standard, applied to prose as well as to code — no comments without a non-obvious why, ruthless DRY, small single-responsibility units, one concept to one word with a glossary that names the synonyms it refuses, and the Boy Scout rule with its limit.
+description: The Clean Code standard, applied to prose as well as to code — no comments without a non-obvious why, ruthless DRY with the test of who keeps a second copy true, small single-responsibility units, one concept to one word with a glossary that names the synonyms it refuses, and the Boy Scout rule with its limit.
 ---
 
 # Clean Code
@@ -29,7 +29,13 @@ just paid by every session instead of by every call.
   configuration file confesses — those have no source to read, so writing them down is the only copy
   there is. A fact one command answers is left to the command, where it cannot go stale. That is the
   general form of the hand-typed status [`planning.md`](planning.md) refuses: a second copy of a
-  derivable fact, wrong from the moment the source moves and silent about when that was.
+  derivable fact, wrong from the moment the source moves and silent about when that was. **The test is
+  not whether the copy is accurate today but who keeps it accurate.** A copy a command recomputes is a
+  cache with an invalidation; a copy a person has to remember to rewrite is a replica with no
+  replication protocol — no acknowledgement, no retry, and divergence that nothing detects (Jim Gray,
+  Pat Helland, Patrick O'Neil and Dennis Shasha, "The Dangers of Replication and a Solution", 1996).
+  It is already wrong on the first day nobody looks at it. Derive it, or drop it and let the command
+  answer.
 - **Small, single-responsibility units.** A function or module doing one thing, named for that thing,
   beats a god-function dispatching on twenty flags or a 900-line file owning every concern in a
   domain. Split by responsibility, not to hit a line count.

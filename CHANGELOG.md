@@ -44,6 +44,34 @@ move with `main` can stop at.
 
 ### Changed
 
+- **`doctrine/clean-code.md`, `doctrine/testing.md` and `doctrine/warp.md` gain the last four of the
+  nine claims the audit held back.** All four were earned in a tenant and are stated here with the case
+  left behind, per `INDUCTION.md` condition 3. **The test for a second copy of a derivable fact is not
+  whether it is accurate today but who keeps it accurate** — a copy a command recomputes is a cache with
+  an invalidation, and a copy a person has to remember to rewrite is a replica with no replication
+  protocol: no acknowledgement, no retry, and divergence nothing detects (Gray, Helland, O'Neil and
+  Shasha, 1996), which is DRY's existing rule given the question that decides a case. **A passing run is
+  evidence about what it executed, which is not always what you changed** — where a test resolves its
+  inputs through the environment it can exercise code that is not the code under test, and the green
+  tick answers a question nobody asked. That is a failure of construct validity (Campbell and Fiske,
+  1959; Cook and Campbell, 1979), and it is worse here than in the field that named it: a badly
+  constructed survey yields a number somebody can argue with, while an invalid test yields a pass, which
+  is the one output nobody re-examines. It is distinct from the oracle problem the same document already
+  states — there the judgement is too weak to decide a real result, here the judgement is sound and the
+  result came from somewhere else. **An automated action fires on its declared condition, not on what
+  you think you changed** — `warp.md`'s publish-on-merge sentence is generalized in place rather than
+  restated in `git.md`, which would have been the second home condition 5 refuses; the failure is an
+  automation surprise (Sarter and Woods, 1995) and the remedy is to read the declaration, blast radius
+  being a property of the mechanism rather than of a diff. **And a procedure handed to a person to
+  execute is not a transaction** — a sequence carries no all-or-nothing guarantee, so partial execution
+  is a state nobody designed (atomicity; Gray, 1981), and since rollback is unavailable the form that
+  is available is irreducibility: one act whose partial execution is not meaningful, the sequence behind
+  it, the place a procedure is valid in named inside the act rather than in the prose above it — a
+  forcing function, or poka-yoke (Shingo, 1986; Norman, 1988). Three register rows state the departures,
+  of which two matter: Sarter and Woods wrote about a system whose state the operator cannot see, where
+  every trigger here is declared and readable, so the claim is weaker and the failure less forgivable;
+  and atomicity is borrowed without the mechanism that makes it true.
+
 - **`doctrine/git.md` gains the lever run backwards, and `doctrine/as-built.md` gains two rules about
   what a document owes.** All three were earned in a tenant and are stated here with the case left
   behind, per `INDUCTION.md` condition 3. **A compatibility shim runs shift-left backwards** — a
