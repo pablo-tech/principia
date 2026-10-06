@@ -9,7 +9,8 @@ description: The Clean Code standard, applied to prose as well as to code — no
 
 **Named:** don't repeat yourself — Andrew Hunt and David Thomas, *The Pragmatic Programmer*, 1999,
 whose database form is older and sharper: a value stored twice admits an update anomaly — E. F. Codd,
-"A Relational Model of Data for Large Shared Data Banks", 1970.
+"A Relational Model of Data for Large Shared Data Banks", 1970. This document's title, and the Boy
+Scout rule below, are Robert C. Martin's — *Clean Code*, 2008.
 
 This applies to code *and* to prose — instruction files, prompts, skills, agent configuration,
 runbooks. A bloated or duplicated document is the same defect as a bloated or duplicated function,

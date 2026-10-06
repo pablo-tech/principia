@@ -42,6 +42,33 @@ move with `main` can stop at.
   row in README's table, or where any of the three names no dated work. What it cannot ask is whether
   the work cited is the right one; that half stays with review, and INDUCTION.md says so.
 
+### Changed
+
+- **The seven incumbent documents audited against `INDUCTION.md`, which was written from them.** A bar
+  induced from the things it judges passes them by construction, so the useful question was whether
+  each would be admitted today by someone who had not written it. All seven clear the condition on
+  their headline principle. What the audit found is a class the mechanical check cannot see: terms
+  **named inside a document** with no work behind them, where the test only asks whether the `Named:`
+  line carries a dated one. `F.I.R.S.T.` is Robert C. Martin, *Clean Code*, 2008 — and
+  `doctrine/testing.md` states four of its five letters and renames one, which is a departure and is
+  now declared; red-first is Kent Beck, 2002, of which only that half is taken; the Boy Scout rule and
+  the title of `doctrine/clean-code.md` are Martin's; the decision record of `doctrine/as-built.md` is
+  Michael Nygard, "Documenting Architecture Decisions", 2011, narrowed here from four headings to three
+  sentences. `INDUCTION.md` now states that the condition reaches inside a document and where such a
+  citation goes, since the sweep it asks for is review's work permanently.
+
+- **`doctrine/git.md`'s branch-protection section stated a vendor fact as a rule and now states the
+  rule.** That one forge offers no organization-wide default is true of one product on the day it is
+  read; what does not change is that a setting decided per repository is decided again by whoever
+  creates the next one, with nothing afterwards saying which were decided differently. The principle is
+  named — convergence to a declared state, Mark Burgess, "A Site Configuration Engine", 1995 — and the
+  forge's behaviour is now the instance beneath it, dated as such.
+
+- **`INDUCTION.md`'s `git.md` row declares *respect des fonds* as a metaphor**, which it was being used
+  as without saying so. The archival principle is about custody of a body of records, not about what
+  authorized a change; the register now says which half transfers, what work the metaphor does, and
+  that a closer work for the authorization half would be an improvement on it.
+
 ## [1.0.0] — 2026-10-06
 
 The first release under this name, and the first commit in this repository. Stated as what the

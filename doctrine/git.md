@@ -20,11 +20,21 @@ Journal*, 2001.
   may execute outside any checkout. A command that relies on the current directory is a command that
   eventually runs in the wrong one.
 
-## Branch protection does not have an organization-wide default
+## Per-repository settings are reconciled from one file, never re-decided
 
+A setting decided per repository is decided again by whoever creates the next one, and nothing
+afterwards says which repositories were decided differently — so the drift is invisible rather than
+merely present. The answer belongs in one declarative file that a script reconciles, run after
+creating a repository or an organization: **convergence to a declared state**, where the settings
+every repository should have are a written specification something repeatedly restores the world to,
+rather than the residue of whoever configured each one last (Mark Burgess, "A Site Configuration
+Engine", 1995).
+
+What makes it bite rather than merely be tidy is that the forge may offer nothing to inherit from:
 GitHub has no organization-wide default for branch protection, head-branch deletion, labels or
-required checks, so every repository drifts alone. The answer belongs in one declarative file that a
-script reconciles, run after creating a repository or an organization — not re-decided per repository.
+required checks, so every repository starts from nothing. That is a fact about one product, true on
+the day it is read and able to change — which is why it is stated as the instance and not as the
+rule. A default that did exist would still be a second place the answer lived.
 
 ## A pull request names the phase that authorized it
 
