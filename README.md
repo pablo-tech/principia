@@ -200,6 +200,7 @@ what the repository is protecting — [`ARCHITECTURE.md`](ARCHITECTURE.md) §3.
 | Path | What it is |
 |---|---|
 | [`doctrine/`](doctrine/) | the protocol itself, and nothing else is normative — [`doctrine/README.md`](doctrine/README.md) is what each document holds you to |
+| [`INDUCTION.md`](INDUCTION.md) | what it takes for a rule to be admitted to `doctrine/`: named in the strongest form the field states it, with a register row per document and a departure where this repository takes the weaker version |
 | [`AGENTS.md`](AGENTS.md) | the entry point an agent reads: which document to open before which piece of work |
 | [`guards/`](guards/) | the commit-time enforcement: file size, credentials, tenancy, and the identity a commit is made as |
 | [`bin/adapt`](bin/adapt) | the installer, idempotent, `--copy` for a machine that will not follow symlinks |

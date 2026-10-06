@@ -74,6 +74,19 @@ tenant's fact that does not travel here — so a contribution to this repository
 and `"phase": null` with a `"reason"`, which is the form that section provides for work no plan
 authorized. [The template](.github/PULL_REQUEST_TEMPLATE.md) is pre-filled that way.
 
+## Adding or changing a rule in `doctrine/`
+
+[INDUCTION.md](INDUCTION.md) is the whole of what that costs, and it is the part of this repository
+most likely to turn a pull request down. The short form: name the principle the rule instantiates,
+in the strongest form the wider field states it; say where this repository departs from that form
+and why; show the particular that induced it and then leave the particular behind; and say what
+holds the rule — a guard, a review, or nothing but the reader, which is the ordinary answer.
+
+A new document also needs its row in that file's register, and `bin/induction.test.sh` fails the
+build without one. A rule that cannot get through is not thereby wrong: it is a mechanism, a
+measurement, or a sentence belonging to a document that already exists, and all three have
+somewhere else to go.
+
 ## Adding an adapter for another AI coding agent
 
 Most of the work is finding out which environment variable relocates that agent's configuration

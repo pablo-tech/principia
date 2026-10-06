@@ -22,6 +22,11 @@ That table is which one to open. [`doctrine/README.md`](doctrine/README.md) is t
 the same documents — what each holds you to, and why it is shaped that way — for reading rather
 than for routing.
 
+[`INDUCTION.md`](INDUCTION.md) is the third axis and the one to read before proposing a rule rather
+than following one: what admission costs, and the register naming the principle each document above
+instantiates. A rule you cannot name is a mechanism, a measurement, or a sentence belonging to a
+document that already exists.
+
 ## The two rules that hold the rest together
 
 **One canonical home per fact.** A fact, a mechanism or a number is written down once, in the

@@ -16,6 +16,21 @@ move with `main` can stop at.
 
 ## [Unreleased]
 
+### Added
+
+- **`INDUCTION.md`: what it takes for a rule to be admitted to `doctrine/`.** A rule is admitted
+  only when it can be named — stated as an instance of a principle the wider field already knows, in
+  the strongest form that field states it, with any departure from that form declared rather than
+  smoothed away. The file is the argument for why naming is the load-bearing condition, the five
+  conditions in full, the distinction between a principle, a mechanism and a measurement, and a
+  **register** with one row per doctrine document: the named principle, its dated source, and where
+  this repository departs from it. `ARCHITECTURE.md` §1 states the contract a consumer may rely on,
+  and `bin/induction.test.sh` refuses a tree where a document has no row or a row no dated source.
+  Nothing in `doctrine/` changed: the seven documents were already instances of named principles,
+  and the register is where that stops being implicit. One departure is worth reading on its own —
+  `tenancy.md` uses a denylist where fail-safe defaults demand an allow-list, knowingly, and the
+  register is now where that is admitted.
+
 ## [1.0.0] — 2026-10-06
 
 The first release under this name, and the first commit in this repository. Stated as what the
