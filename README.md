@@ -28,18 +28,28 @@ prevents either cannot happen or announces itself while it is still cheap to fix
 the other thing, and a control that depends on remembering costs nothing until the hour it
 matters.
 
-| Document | What it holds you to |
-|---|---|
-| [`planning.md`](doctrine/planning.md) | "Every plan opens with an executive summary." |
-| [`testing.md`](doctrine/testing.md) | "A test must be able to fail." |
-| [`clean-code.md`](doctrine/clean-code.md) | "The same fact or logic in two places will drift, and one of them becomes a lie with no signal which." |
-| [`git.md`](doctrine/git.md) | "Large files live in object storage. Repositories keep information extracted from them, never the files themselves." |
-| [`as-built.md`](doctrine/as-built.md) | "A document found to disagree with the system is corrected in the change that found it." |
-| [`warp.md`](doctrine/warp.md) | "Take the plan from approval to deployed product with no further check-ins." |
-| [`tenancy.md`](doctrine/tenancy.md) | "The ordering matters more than the list. A great deal of effort is commonly spent on 3 while 1 is quietly violated, which buys nothing." |
+| Document | What it holds you to | Named from |
+|---|---|---|
+| [`planning.md`](doctrine/planning.md) | "Every plan opens with an executive summary." | pre-registration — Nosek and colleagues, 2018 |
+| [`testing.md`](doctrine/testing.md) | "A test must be able to fail." | falsifiability — Popper, 1934 |
+| [`clean-code.md`](doctrine/clean-code.md) | "The same fact or logic in two places will drift, and one of them becomes a lie with no signal which." | don't repeat yourself — Hunt and Thomas, 1999 |
+| [`git.md`](doctrine/git.md) | "Large files live in object storage. Repositories keep information extracted from them, never the files themselves." | the end-to-end argument — Saltzer, Reed and Clark, 1984 |
+| [`as-built.md`](doctrine/as-built.md) | "A document found to disagree with the system is corrected in the change that found it." | stop the line — Ohno, 1978 |
+| [`warp.md`](doctrine/warp.md) | "Take the plan from approval to deployed product with no further check-ins." | mission command — Moltke, 1869 |
+| [`tenancy.md`](doctrine/tenancy.md) | "The ordering matters more than the list. A great deal of effort is commonly spent on 3 while 1 is quietly violated, which buys nothing." | complete mediation — Saltzer and Schroeder, 1975 |
 
-Quoted like that they read as slogans, which is the failure mode of every list of principles. Two
-of them worked out show what the shape is actually doing.
+**The third column is a condition of entry, not a bibliography.** A rule is admitted to `doctrine/`
+only when it can be named as an instance of something the wider field already knows *and* attributed
+to a specific prior work — author, title, year, in the form the field recognizes it by.
+[`INDUCTION.md`](INDUCTION.md) is the argument for why that is the expensive condition and the
+register of the full lineage; each document prints its own citation directly under its opening line;
+and `bin/induction.test.sh` refuses a tree where a document, a row above, or a register row names no
+dated work. It is also the fastest way to audit this list from outside: every rule here points at
+something older than this repository, and the day one does not, the document has to say in as many
+words that no prior work was found.
+
+Quoted like that the rules read as slogans, which is the failure mode of every list of principles.
+Two of them worked out show what the shape is actually doing.
 
 **"A test must be able to fail."** The sentence is unremarkable until you ask what its opposite
 looks like in practice, because a test that cannot fail does not announce itself — it reports
@@ -200,7 +210,7 @@ what the repository is protecting — [`ARCHITECTURE.md`](ARCHITECTURE.md) §3.
 | Path | What it is |
 |---|---|
 | [`doctrine/`](doctrine/) | the protocol itself, and nothing else is normative — [`doctrine/README.md`](doctrine/README.md) is what each document holds you to |
-| [`INDUCTION.md`](INDUCTION.md) | what it takes for a rule to be admitted to `doctrine/`: named in the strongest form the field states it, with a register row per document and a departure where this repository takes the weaker version |
+| [`INDUCTION.md`](INDUCTION.md) | what it takes for a rule to be admitted to `doctrine/`: named in the strongest form the field states it, cited to a specific prior work, with a register row per document and a departure where this repository takes the weaker version |
 | [`AGENTS.md`](AGENTS.md) | the entry point an agent reads: which document to open before which piece of work |
 | [`guards/`](guards/) | the commit-time enforcement: file size, credentials, tenancy, and the identity a commit is made as |
 | [`bin/adapt`](bin/adapt) | the installer, idempotent, `--copy` for a machine that will not follow symlinks |

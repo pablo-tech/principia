@@ -25,10 +25,11 @@ work.
 
 **1b. What it took for them to be in there** —
 [INDUCTION.md](INDUCTION.md), which is one page and is the shortest way to see what kind of
-document this is: a rule is admitted only when it can be named in the strongest form the wider
-field already states it, and the register says what each of the documents above instantiates and
-where this repository departs from it. Read it if you are weighing whether to adopt the doctrine or
-to argue with it.
+document this is: a rule is admitted only when it can be named in the strongest form the wider field
+already states it *and* attributed to a specific prior work, which each document prints under its
+own opening line. The register says what each of the documents above instantiates and where this
+repository departs from it. Read it if you are weighing whether to adopt the doctrine or to argue
+with it.
 
 **2. Why it is a repository and not a page in your agent's config** —
 [README.md](README.md#a-doctrine-only-holds-if-it-travels). The two directions a standard gives

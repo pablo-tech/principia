@@ -4,11 +4,19 @@
 cases to a general claim, and the ceremony by which a body admits a member on stated terms. A rule
 arrives here by the first and is admitted only by the second.*
 
-**A rule is admitted to [`doctrine/`](doctrine/) only when it can be named — stated as an instance
-of a principle the wider field already knows, in the strongest form that field states it.** Not
-*resembles*, not *is in the spirit of*: named, with the name the literature uses and a pointer to
-where it is argued. Everything else this document asks is ordinary hygiene. That one condition is
-the reason the directory is short.
+**A rule is admitted to [`doctrine/`](doctrine/) only when it can be named and cited — stated as an
+instance of a principle the wider field already knows, in the strongest form that field states it,
+and attributed to a specific prior work a reader can go and get.** Not *resembles*, not *is in the
+spirit of*, and not a practice area either: the name the literature uses, and under it an author, a
+title and a year. Everything else this document asks is ordinary hygiene. That one condition is the
+reason the directory is short.
+
+**And the citation is printed where the rule is stated.** Under the document's own opening line, and
+in the statement of the doctrine in [`README.md`](README.md), called out in the form the field
+recognizes it by — not filed only in the register at the foot of this page. A lineage kept in one
+file that nobody opens under pressure is a bibliography. A lineage printed above the rule is a
+standing invitation to go and argue with something older and better argued than this repository,
+which is the only reason to have one.
 
 Admission is deliberately expensive, because the cheap way to grow a standard is to write down
 whatever the last incident taught you. A standard grown that way is a list of scars. It is
@@ -26,7 +34,9 @@ it is known to fail, the costs it is known to carry, the practitioners who think
 inheritance is the point — a rule admitted with its objections attached can be applied by someone
 who has to weigh it against something else, which is the only situation in which a rule is ever
 actually used. A rule invented here arrives with no objections, so it cannot lose an argument, so it
-is never tested.
+is never tested. A rule named but *uncited* fails the same way with better
+manners: it arrives with the authority of a literature and none of its contents, and nobody can go
+and read what the objections were.
 
 **It exposes re-invention, which is the usual case.** Most of what a practitioner discovers under
 pressure has been named for decades, and once it is named the correct response is almost never a new
@@ -54,6 +64,30 @@ this repository is not willing to go as far as the canonical form, **that gap is
 interesting sentence in the document** and has to be written down as a departure rather than
 smoothed into agreement.
 
+## A name is not yet a citation
+
+A name is a handle; the work is what the handle refers to, and only one of the two can be checked.
+*Shift left*, *as-built documentation*, *provenance*, *defence in depth* — each is a real term with
+real content, and not one of them is a citation. A practice area has no author to disagree with, no
+year to date it from, and no text that might turn out to say something narrower than the person
+quoting it. **A row that names a practice and stops there has not met condition 1.** Find who wrote
+it down first, or wrote it well enough that the field cites them, and name that.
+
+Three tests, and a term passes all three or it is unnamed:
+
+- **It has an author, a title and a year.** A paper, a book, a report, a standard, a contract form,
+  a letter — anything with a text somebody could read back to you. "Standard practice" is not one;
+  folklore is not one; a textbook that restates a work without being it is not one either.
+- **It is the work the field cites, not the earliest antecedent the search turns up.** The citation
+  is for recognition, and a reader who already knows the principle has to see it at a glance. The
+  end-to-end argument is cited as Saltzer, Reed and Clark, 1984 though the layering argument is
+  older; Rice's theorem is cited as Rice, 1953 though Turing, 1936 is underneath it. Chasing priority
+  past the recognizable form is scholarship and buys this repository nothing. Name the work the field
+  names, and say what it rests on only where a reader needs it.
+- **A survey counts when the survey is the recognizable form.** The oracle problem is cited as Barr,
+  Harman, McMinn, Shahbaz and Yoo, 2015, because that survey is where the field settled the term. A
+  survey standing in for a specific work that is itself famous is the lazy case and is not this one.
+
 ## What a name is not
 
 - **Not an argument.** A citation establishes that a claim is known, not that it is right, and
@@ -65,20 +99,51 @@ smoothed into agreement.
   resemblance is metaphorical, say that, and say what work the metaphor is doing. A borrowed name
   used loosely is worse than no name: it smuggles in authority that was earned somewhere else.
 - **Not waived when nothing is found.** The condition is the best *knowable* form, so the search is
-  part of the work rather than a bibliography added at the end. A rule nobody has named may still be
-  admitted — the field is not finished — but the document says plainly that no prior form was found.
-  That is a falsifiable claim, any reader holding a citation can refute it, and such a refutation is
-  a contribution rather than an embarrassment.
+  part of the work rather than a bibliography added at the end. A rule nobody has written down may
+  still be admitted — the field is not finished — but the document says plainly, in those words,
+  that **no prior work was found**. That is a falsifiable claim, any reader holding a citation can
+  refute it, and such a refutation is a contribution rather than an embarrassment. A term that has a
+  name but no work behind it is this case and not the satisfied one.
+
+## Printed in three places, deliberately
+
+Each doctrine document carries a **`Named:`** line directly under its opening discipline line: the
+principle in its recognizable form, and the work. [`README.md`](README.md)'s table of the doctrine
+carries the same work in its shortest form, in the row that states the rule. The register at the
+foot of this page carries the full lineage — every name the rule touches, and the departures.
+
+Three copies of one fact, which [`doctrine/clean-code.md`](doctrine/clean-code.md) would ordinarily
+refuse outright. The exemption is narrow enough to state exactly: **a citation is dated and
+immutable.** Saltzer and Schroeder, 1975 will not be reissued in 1976, and nothing can make the
+three copies disagree except a typo — the one failure mode a reader catches for free. The rule that
+two copies drift is about facts that change, and a published work is the single class of fact in this
+repository that cannot. Nothing else here gets the exemption.
+
+Each copy is also a different length, for a different reader, which is why none of them is derivable
+from another. The document's line is for the person about to apply the rule, who needs to see at a
+glance that it is not this repository's invention — one or two works and no more, because a document
+that becomes a reading list has stopped being doctrine. The README row is for someone deciding from
+the outside, in two minutes, whether to adopt any of this. The register row is for whoever is
+deciding whether the rule should exist at all, and is the only one of the three that states the
+departure.
+
+[`doctrine/README.md`](doctrine/README.md) carries none of it and points at the documents instead:
+it is the index beside them rather than doctrine ([`ARCHITECTURE.md`](ARCHITECTURE.md) §7), so a
+citation there would be the fourth copy — the one with no reader of its own.
 
 ## Five conditions, and they are conjunctive
 
-1. **It is named**, in the strongest form the field states it, with its departures declared. The
-   section above is the whole of this condition.
+1. **It is named and cited**, in the strongest form the field states it, from a specific prior work,
+   with its departures declared — and the citation printed where the rule is stated rather than only
+   in the register. The three sections above are the whole of this condition, and
+   `bin/induction.test.sh` holds the mechanical half of it: a doctrine document with no `Named:`
+   line is refused, as is a `Named:` line, a README row or a register row that names no dated work.
 2. **It survives both erasures.** Replace every tenant on the machine and the rule still reads the
    same — [`ARCHITECTURE.md`](ARCHITECTURE.md) §1, *doctrine is tenant-free*. Replace every model on
    the machine tomorrow and it is still true — §1 again, *doctrine is model-free*. Those two are
-   checked mechanically, by `guards/tenant-guard.sh --scan-tree` and `bin/doctrine.test.sh`, and
-   they are the only conditions here that are.
+   checked mechanically and completely, by `guards/tenant-guard.sh --scan-tree` and
+   `bin/doctrine.test.sh`. Condition 1 is checked in half — whether a dated work is printed is
+   mechanical, whether it is the right work is not — and conditions 3, 4 and 5 are review's alone.
 3. **It was induced from a particular, and the particular does not come with it.** A principle
    admitted with no case behind it is a slogan, and a case admitted with its particulars is a war
    story. What travels is the general claim; the dated, specific, verifiable instance stays with
@@ -101,7 +166,7 @@ whole document exists to prevent, and it is invisible in review because all thre
 
 | | What it is | Where it lives | Half-life |
 |---|---|---|---|
-| **Principle** | a claim about information systems or human organization, true of other tools and in other decades | `doctrine/`, and named here | decades |
+| **Principle** | a claim about information systems or human organization, true of other tools and in other decades | `doctrine/`, named and cited there and here | decades |
 | **Mechanism** | how this repository applies a principle — at this gate, in this shell, with these paths | the document's own mechanism paragraph, `guards/`, `bin/`, `ARCHITECTURE.md` | as long as the tool |
 | **Measurement** | what something did on a date, under conditions somebody arranged | the tenant that took it, dated | a season |
 
@@ -113,21 +178,22 @@ describe a mechanism is a document that should not have been added.
 
 **Every document under `doctrine/` has a row here, and `bin/induction.test.sh` refuses a tree where
 one does not.** That is the forcing function: a new document cannot be added without naming what it
-instantiates, and the naming cannot be deferred to a reviewer who will not do it.
+instantiates and the work it is named from, and neither can be deferred to a reviewer who will not
+do it.
 
 It is not a second copy of the doctrine. Each document states its rule for someone about to do the
 work; its row states the lineage, for someone deciding whether the rule should exist at all. The
 two are read by different people on different days, and neither can be derived from the other.
 
-| Document | Named in its best-known form | Where this repository departs |
+| Document | Named in its best-known form, and the prior work it is named from | Where this repository departs |
 |---|---|---|
-| [`planning.md`](doctrine/planning.md) | **Pre-registration** — the hypothesis and the method are declared before the evidence is gathered, so a result cannot be reinterpreted into a prediction (clinical-trials practice since the 1990s; generalized for the social sciences by Nosek and colleagues, 2018). **Answer-first exposition** — the conclusion leads and the support follows, because a reader who gets the evidence first has already formed a conclusion of their own (Barbara Minto's pyramid principle, 1987; the military states it as *bottom line up front*). | Pre-registration is a norm for experiments; here it is a gate on an ordinary work plan, and the thing pre-registered is the goal rather than a hypothesis. The stronger form — a plan whose phases cannot be renegotiated once approved — this repository deliberately does not take: [`warp.md`](doctrine/warp.md) enumerates the reasons to stop instead. |
-| [`testing.md`](doctrine/testing.md) | **Falsifiability** — a claim that no observation could contradict is not a claim about the world (Karl Popper, 1934), which is what "a test must be able to fail" is an instance of. **One factor at a time** — a comparison with two differences has two candidate causes and no way to choose (R. A. Fisher's design of experiments, 1935). **The oracle problem** — deciding whether an output is *correct* is a different and harder question than deciding whether it is well formed (the standard term in software-testing research; surveyed by Barr, Harman, McMinn, Shahbaz and Yoo, 2015). | Fisher's remedy for several factors is a factorial design that varies them together and recovers the effects statistically. Here the remedy is serial: one knob per diff, each with its own pass. The reason is that a change to a system is not a replicated trial — there is one unit, run once — so the design that buys efficiency from replication has nothing to buy it with. |
-| [`clean-code.md`](doctrine/clean-code.md) | **Don't repeat yourself** — every piece of knowledge has one authoritative representation (Hunt and Thomas, 1999), whose database form is older and sharper: a value stored twice admits an update anomaly, which normalization exists to remove (E. F. Codd, 1970). **Ubiquitous language** — one deliberate vocabulary, shared with the domain's own people (Eric Evans, domain-driven design, 2003). **Separation of concerns** and **information hiding** (Dijkstra, 1974; Parnas, 1972) for small single-purpose units. **The broken-windows theory**, borrowed into software as *don't live with broken windows* (Wilson and Kelling, 1982; Hunt and Thomas again), for why sediment accumulates. | Codd's anomalies are repaired by a schema that makes the second copy impossible; prose has no schema and no transaction, so the only available form of the rule is to drop the stored copy and leave the fact to the command that answers it. Evans's ubiquitous language asks for a shared vocabulary; this repository additionally requires the **refused synonyms** to be written down, because a definition alone leaves a drifting second name reading as a third concept. |
-| [`git.md`](doctrine/git.md) | **The end-to-end argument** — a function belongs at the endpoint that holds the information, not in the middle of the network, which is why a size ceiling is enforced where the commit is made rather than where the push arrives (Saltzer, Reed and Clark, 1984). **Shift left** — move a check earlier, toward the point where the defect is cheap (the standard term in software quality and now in security). **Provenance** — a change carries the record of what authorized it (the archival and scientific-data sense of the word). | The end-to-end argument is about correctness: the endpoint is the only place a check *can* be complete. The argument here is about reversibility — both ends can measure a blob, but only one of them has not yet written it into history. That is a cost asymmetry rather than a completeness one, and it points the same way for a different reason, which is worth saying out loud because the two diverge whenever the expensive end is also the only informed one. |
-| [`as-built.md`](doctrine/as-built.md) | **As-built documentation** — the record is corrected to what was actually constructed, not to what was drawn (construction and engineering practice; the term is the name). **Stop the line** — a defect is corrected where and when it is found rather than queued, because queueing it multiplies what is built on top of it (Toyota's *jidoka* and the andon cord, as described by Taiichi Ohno, 1978). | Stop-the-line halts production. Nothing here halts: the correction is required *in the change that found it*, which is the smallest unit this repository can stop. The stronger industrial form — stop everything until the cause is removed — is not available to one person with one working tree, and claiming it would be the kind of borrowed authority this document refuses. |
-| [`warp.md`](doctrine/warp.md) | **Mission command** — the superior fixes the intent and the constraints, the subordinate chooses the means, because the person at the point of contact has information the plan never had (Prussian *Auftragstaktik*, nineteenth century; current doctrine in several armies). **The principal–agent problem** — delegation creates a divergence of interest and information that has to be bounded in advance rather than supervised continuously (Ross, 1973; Jensen and Meckling, 1976). **One-way and two-way doors** — the reversibility of a decision, not its size, sets how much deliberation it deserves (stated this way by Jeff Bezos, 2015). | Mission command bounds delegation by *intent*; here it is bounded by a document whose phases, doors and rollback are written down before approval, which is a narrower and more auditable thing than intent and does not survive genuine surprise as well. The compensation is the enumerated list of reasons to stop — an explicit re-contracting point, which mission command deliberately does not provide. |
-| [`tenancy.md`](doctrine/tenancy.md) | **Complete mediation** — every access is checked, so an unmediated path is unprotected whatever the policy says. **Fail-safe defaults** — the default is denial, and absence of a permission is a refusal. **Least privilege** (all three: Saltzer and Schroeder, 1975, which is also where *economy of mechanism* comes from, and is why the chain is small enough to audit in one sitting). **Data minimization** — material that is not present cannot leak, which is the only control that survives an adversary with administrative access (privacy-by-design, Cavoukian; now statutory in several places). | **The large and deliberate departure: this repository uses a denylist where fail-safe defaults demand an allow-list.** Saltzer and Schroeder are right about the general case, and an allow-list here would be wrong anyway: nobody can enumerate in advance every term their own legitimate work will contain, and a control that refuses unfamiliar material gets bypassed on its first false refusal — after which it protects nothing at all. So the weaker control is chosen knowingly, its gap is stated in [`README.md`](README.md#what-this-does-not-catch) rather than papered over, and the strong form is applied where it does hold: a missing guard fails closed, and an absent policy file means the repository never opted in. |
+| [`planning.md`](doctrine/planning.md) | **Pre-registration** — the hypothesis and the method are declared before the evidence is gathered, so a result cannot be reinterpreted into a prediction (clinical-trials practice, made a condition of publication by the ICMJE in 2004; generalized for the social sciences by Nosek, Ebersole, DeHaven and Mellor, "The preregistration revolution", 2018). **Answer-first exposition** — the conclusion leads and the support follows, because a reader who gets the evidence first has already formed a conclusion of their own (Barbara Minto, *The Pyramid Principle*, 1987; the military states it as *bottom line up front*). | Pre-registration is a norm for experiments; here it is a gate on an ordinary work plan, and the thing pre-registered is the goal rather than a hypothesis. The stronger form — a plan whose phases cannot be renegotiated once approved — this repository deliberately does not take: [`warp.md`](doctrine/warp.md) enumerates the reasons to stop instead. |
+| [`testing.md`](doctrine/testing.md) | **Falsifiability** — a claim that no observation could contradict is not a claim about the world (Karl Popper, *Logik der Forschung*, 1934; in English, *The Logic of Scientific Discovery*, 1959), which is what "a test must be able to fail" is an instance of. **One factor at a time** — a comparison with two differences has two candidate causes and no way to choose (R. A. Fisher, *The Design of Experiments*, 1935). **The oracle problem** — deciding whether an output is *correct* is a different and harder question than deciding whether it is well formed (Barr, Harman, McMinn, Shahbaz and Yoo, "The Oracle Problem in Software Testing: A Survey", 2015, which is where the field settled the term). | Fisher's remedy for several factors is a factorial design that varies them together and recovers the effects statistically. Here the remedy is serial: one knob per diff, each with its own pass. The reason is that a change to a system is not a replicated trial — there is one unit, run once — so the design that buys efficiency from replication has nothing to buy it with. |
+| [`clean-code.md`](doctrine/clean-code.md) | **Don't repeat yourself** — every piece of knowledge has one authoritative representation (Andrew Hunt and David Thomas, *The Pragmatic Programmer*, 1999), whose database form is older and sharper: a value stored twice admits an update anomaly, which normalization exists to remove (E. F. Codd, "A Relational Model of Data for Large Shared Data Banks", 1970). **Ubiquitous language** — one deliberate vocabulary, shared with the domain's own people (Eric Evans, *Domain-Driven Design*, 2003). **Separation of concerns** and **information hiding** (Edsger Dijkstra, "On the role of scientific thought", 1974; David Parnas, "On the Criteria To Be Used in Decomposing Systems into Modules", 1972) for small single-purpose units. **The broken-windows theory**, borrowed into software as *don't live with broken windows* (James Q. Wilson and George Kelling, "Broken Windows", *The Atlantic*, 1982; Hunt and Thomas again), for why sediment accumulates. | Codd's anomalies are repaired by a schema that makes the second copy impossible; prose has no schema and no transaction, so the only available form of the rule is to drop the stored copy and leave the fact to the command that answers it. Evans's ubiquitous language asks for a shared vocabulary; this repository additionally requires the **refused synonyms** to be written down, because a definition alone leaves a drifting second name reading as a third concept. |
+| [`git.md`](doctrine/git.md) | **The end-to-end argument** — a function belongs at the endpoint that holds the information, not in the middle of the network, which is why a size ceiling is enforced where the commit is made rather than where the push arrives (Jerome Saltzer, David Reed and David Clark, "End-to-End Arguments in System Design", 1984). **Shift left** — move a check earlier, toward the point where the defect is cheap (Larry Smith, "Shift-Left Testing", *Dr. Dobb's Journal*, 2001, where the term was coined; the cost curve underneath it is Barry Boehm, *Software Engineering Economics*, 1981). **Provenance** — a change carries the record of what authorized it (the archival sense, codified as *respect des fonds* by Muller, Feith and Fruin, *Handleiding voor het ordenen en beschrijven van archieven* — the Dutch Manual — 1898). | The end-to-end argument is about correctness: the endpoint is the only place a check *can* be complete. The argument here is about reversibility — both ends can measure a blob, but only one of them has not yet written it into history. That is a cost asymmetry rather than a completeness one, and it points the same way for a different reason, which is worth saying out loud because the two diverge whenever the expensive end is also the only informed one. |
+| [`as-built.md`](doctrine/as-built.md) | **As-built documentation** — the record is corrected to what was actually constructed, not to what was drawn (the obligation is contractual before it is editorial: AIA Document A201, *General Conditions of the Contract for Construction*, §3.11, which requires a record set marked to show the work as actually executed). **Stop the line** — a defect is corrected where and when it is found rather than queued, because queueing it multiplies what is built on top of it (Taiichi Ohno, *Toyota Production System*, 1978, on *jidoka* and the andon cord). | Stop-the-line halts production. Nothing here halts: the correction is required *in the change that found it*, which is the smallest unit this repository can stop. The stronger industrial form — stop everything until the cause is removed — is not available to one person with one working tree, and claiming it would be the kind of borrowed authority this document refuses. |
+| [`warp.md`](doctrine/warp.md) | **Mission command** — the superior fixes the intent and the constraints, the subordinate chooses the means, because the person at the point of contact has information the plan never had (Helmuth von Moltke, *Verordnungen für die höheren Truppenführer* — "Instructions for Large Unit Commanders" — 1869, the written form of Prussian *Auftragstaktik*; current doctrine in several armies, stated as U.S. Army ADP 6-0, *Mission Command*, 2019). **The principal–agent problem** — delegation creates a divergence of interest and information that has to be bounded in advance rather than supervised continuously (Stephen Ross, "The Economic Theory of Agency: The Principal's Problem", 1973; Michael Jensen and William Meckling, "Theory of the Firm: Managerial Behavior, Agency Costs and Ownership Structure", 1976). **One-way and two-way doors** — the reversibility of a decision, not its size, sets how much deliberation it deserves (stated this way by Jeff Bezos in the letter to shareholders for 2015). | Mission command bounds delegation by *intent*; here it is bounded by a document whose phases, doors and rollback are written down before approval, which is a narrower and more auditable thing than intent and does not survive genuine surprise as well. The compensation is the enumerated list of reasons to stop — an explicit re-contracting point, which mission command deliberately does not provide. |
+| [`tenancy.md`](doctrine/tenancy.md) | **Complete mediation** — every access is checked, so an unmediated path is unprotected whatever the policy says. **Fail-safe defaults** — the default is denial, and absence of a permission is a refusal. **Least privilege** (all three: Jerome Saltzer and Michael Schroeder, "The Protection of Information in Computer Systems", 1975, which is also where *economy of mechanism* comes from, and is why the chain is small enough to audit in one sitting). **Data minimization** — material that is not present cannot leak, which is the only control that survives an adversary with administrative access (Ann Cavoukian, *Privacy by Design: The 7 Foundational Principles*, 2009; now statutory, as GDPR Article 5(1)(c), 2016). | **The large and deliberate departure: this repository uses a denylist where fail-safe defaults demand an allow-list.** Saltzer and Schroeder are right about the general case, and an allow-list here would be wrong anyway: nobody can enumerate in advance every term their own legitimate work will contain, and a control that refuses unfamiliar material gets bypassed on its first false refusal — after which it protects nothing at all. So the weaker control is chosen knowingly, its gap is stated in [`README.md`](README.md#what-this-does-not-catch) rather than papered over, and the strong form is applied where it does hold: a missing guard fails closed, and an absent policy file means the repository never opted in. |
 
 ## Proposing an addition
 
@@ -135,7 +201,8 @@ Four sentences in the pull request body, which
 [the template](.github/PULL_REQUEST_TEMPLATE.md) asks for and
 [`CONTRIBUTING.md`](CONTRIBUTING.md) is the rest of:
 
-1. **The name**, in its strongest known form, with where it is argued.
+1. **The name and the work** — the principle in its strongest known form, and the specific prior
+   work it is named from, in the form the field recognizes: author, title, year.
 2. **The departure**, if there is one, and why this repository takes the weaker or narrower version.
 3. **The particular that induced it**, enough to show the rule was earned — and then left behind,
    per condition 3.
@@ -155,4 +222,4 @@ whose only remaining reader is archaeology.
 
 **Seven documents is not a target and neither is seventy.** The number this directory settles at is
 whatever survives the conditions above, and a principle rejected here is not refuted — it is
-unnamed, or not yet named well enough to be held to.
+unnamed, uncited, or not yet stated well enough to be held to.

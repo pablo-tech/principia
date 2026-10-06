@@ -7,6 +7,10 @@ description: Commit and branch discipline — who decides to commit and push, wh
 
 *A gate placed after the irreversible step is a gate paid for twice.*
 
+**Named:** the end-to-end argument — Jerome Saltzer, David Reed and David Clark, "End-to-End
+Arguments in System Design", 1984. Shift left — Larry Smith, "Shift-Left Testing", *Dr. Dobb's
+Journal*, 2001.
+
 - **Don't commit unless asked. Don't push unless asked.** A warp lifts both for the scope of one
   approved plan, and nothing else does.
 - Never use `--no-verify`, `--force`, or `--amend` on published commits without asking first.

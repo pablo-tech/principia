@@ -24,8 +24,9 @@ than for routing.
 
 [`INDUCTION.md`](INDUCTION.md) is the third axis and the one to read before proposing a rule rather
 than following one: what admission costs, and the register naming the principle each document above
-instantiates. A rule you cannot name is a mechanism, a measurement, or a sentence belonging to a
-document that already exists.
+instantiates and the specific prior work it is named from. Each document prints that citation itself,
+on a `Named:` line under its opening line. A rule you cannot name and cite is a mechanism, a
+measurement, or a sentence belonging to a document that already exists.
 
 ## The two rules that hold the rest together
 

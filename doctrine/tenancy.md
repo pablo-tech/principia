@@ -8,6 +8,10 @@ description: Working for more than one tenant from one set of tools — what a t
 *Absence is the only control that survives root; enforce at the chokepoint every route passes
 through.*
 
+**Named:** complete mediation, fail-safe defaults and least privilege — Jerome Saltzer and Michael
+Schroeder, "The Protection of Information in Computer Systems", 1975. Data minimization — Ann
+Cavoukian, *Privacy by Design: The 7 Foundational Principles*, 2009.
+
 A **tenant** is whoever the work belongs to. One person routinely works for several, through the
 same tools, on the same machine, in the same hour.
 The protocol is shared across all of them. The *content* — plans, notes, names, identifiers,

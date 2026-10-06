@@ -14,6 +14,12 @@ Each one is written as a **forcing function** rather than as advice.
 Read them in any order. [`AGENTS.md`](../AGENTS.md) says which one to open before a particular
 piece of work; this page says what each one holds you to, and why it is shaped the way it is.
 
+Each document prints the principle it instantiates and the prior work it is named from on a
+`Named:` line directly under its opening line. [`INDUCTION.md`](../INDUCTION.md) is why that is a
+condition of entry rather than a courtesy, and carries the full lineage and the departures. This
+page carries neither: it is the index beside the documents rather than doctrine, and a citation
+repeated here would be the copy with no reader of its own.
+
 ---
 
 ### [Every plan opens with an executive summary](planning.md)

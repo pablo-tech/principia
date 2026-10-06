@@ -8,6 +8,9 @@ description: What a plan has to contain before it can be executed without furthe
 *Summary-first is pre-registration: a goal stated after its evidence is a conclusion the reader has
 already agreed with.*
 
+**Named:** pre-registration — Nosek, Ebersole, DeHaven and Mellor, "The preregistration revolution",
+2018. Answer-first exposition — Barbara Minto, *The Pyramid Principle*, 1987.
+
 A plan is not a build artefact and does not ship. **Planning documents live in the context
 repository, under a path mirroring the one they would have had inside the repository they plan for**
 — never inside that repository. Leaving a plan where it applies means every repository re-derives

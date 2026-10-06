@@ -7,6 +7,10 @@ description: The Clean Code standard, applied to prose as well as to code — no
 
 *Two copies of a fact is a missing signal, not redundancy.*
 
+**Named:** don't repeat yourself — Andrew Hunt and David Thomas, *The Pragmatic Programmer*, 1999,
+whose database form is older and sharper: a value stored twice admits an update anomaly — E. F. Codd,
+"A Relational Model of Data for Large Shared Data Banks", 1970.
+
 This applies to code *and* to prose — instruction files, prompts, skills, agent configuration,
 runbooks. A bloated or duplicated document is the same defect as a bloated or duplicated function,
 just paid by every session instead of by every call.

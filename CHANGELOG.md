@@ -19,17 +19,28 @@ move with `main` can stop at.
 ### Added
 
 - **`INDUCTION.md`: what it takes for a rule to be admitted to `doctrine/`.** A rule is admitted
-  only when it can be named — stated as an instance of a principle the wider field already knows, in
-  the strongest form that field states it, with any departure from that form declared rather than
-  smoothed away. The file is the argument for why naming is the load-bearing condition, the five
-  conditions in full, the distinction between a principle, a mechanism and a measurement, and a
-  **register** with one row per doctrine document: the named principle, its dated source, and where
-  this repository departs from it. `ARCHITECTURE.md` §1 states the contract a consumer may rely on,
-  and `bin/induction.test.sh` refuses a tree where a document has no row or a row no dated source.
-  Nothing in `doctrine/` changed: the seven documents were already instances of named principles,
-  and the register is where that stops being implicit. One departure is worth reading on its own —
-  `tenancy.md` uses a denylist where fail-safe defaults demand an allow-list, knowingly, and the
-  register is now where that is admitted.
+  only when it can be named *and cited* — stated as an instance of a principle the wider field
+  already knows, in the strongest form that field states it, attributed to a specific prior work
+  (author, title, year, in the form the field recognizes it by), with any departure from that form
+  declared rather than smoothed away. A practice area is not a citation. The file is the argument for
+  why that condition is the load-bearing one, the five conditions in full, the distinction between a
+  principle, a mechanism and a measurement, and a **register** with one row per doctrine document:
+  the named principle, the prior work it is named from, and where this repository departs from it.
+  One departure is worth reading on its own — `tenancy.md` uses a denylist where fail-safe defaults
+  demand an allow-list, knowingly, and the register is now where that is admitted.
+
+- **Every doctrine document prints its citation itself, on a `Named:` line under its opening line**,
+  and `README.md`'s table of the doctrine carries the same work in its shortest form. The citation is
+  deliberately in three places and INDUCTION.md states the exemption that allows it: a published work
+  is dated and immutable, so the copies cannot drift, which is the one class of fact
+  `doctrine/clean-code.md`'s rule does not reach. **The doctrine's rules did not change** — the seven
+  documents were already instances of named principles, and this is where the lineage stops being
+  implicit — but their text did, so a consumer tracking `main` sees seven documents and seven skills
+  change. `ARCHITECTURE.md` §1 states the contract that follows: a rule here is either traceable to a
+  work older than this repository or says in as many words that no prior work was found.
+  `bin/induction.test.sh` refuses a tree where a document has no `Named:` line, no register row, no
+  row in README's table, or where any of the three names no dated work. What it cannot ask is whether
+  the work cited is the right one; that half stays with review, and INDUCTION.md says so.
 
 ## [1.0.0] — 2026-10-06
 
