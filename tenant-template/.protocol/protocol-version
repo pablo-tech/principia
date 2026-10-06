@@ -1,0 +1,17 @@
+# Which commit of the protocol installed this repository. One line, the first that is neither blank
+# nor a whole-line comment: `<ref> <short-sha> <date>` — `main a1b2c3d 2026-09-30`, say.
+#
+# A receipt, not a pin. `bin/adapt` writes it on every run, out of the checkout it was run from, and
+# nothing else writes it: editing it by hand claims an install that never happened, and the next run
+# overwrites the claim anyway.
+#
+# It answers one question — which protocol the files in this repository came from: the pre-commit
+# shim, the seeded policy files, the agent launchers, each of which the installer writes once and
+# skips forever after. Which protocol *judges* a commit is a different question, decided live by the
+# `protocol/` symlink at the moment of the commit, and `protocol/bin/doctor` asks it there rather
+# than believing a line written the last time somebody ran the installer.
+#
+# So the doctor reads two things out of this one line: whether `protocol/` is still on the ref named
+# here and level with it, and whether it has moved past the commit named here since. A repository
+# that tracks a branch upgrades with `git pull` in its protocol checkout and re-runs `bin/adapt`; one
+# that would rather pin checks out a tag, and this line then names the tag.

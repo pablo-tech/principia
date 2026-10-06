@@ -1,0 +1,44 @@
+---
+name: testing
+description: Tests held to the same standard as code — one behaviour per test, testability as a property of the design rather than of the suite, real implementations over mocks, one knob per diff so a difference has one cause, and the rule that a test must be able to fail.
+---
+
+# Testing
+
+*Red-first is falsifiability; one knob per diff is experimental design.*
+
+**Tests are code and are held to the Clean Code standard** — the same bar for naming, size, single
+responsibility and DRY. What is specific to tests:
+
+- **One behaviour per test, named for the behaviour it pins.** The name is read far more often than
+  the body; it is the failure message.
+- **F.I.R.S.T.** — fast, isolated, repeatable, self-validating. Asserts, never eyeballed output.
+- **Testability is a property of the design, not of the suite.** If exercising a unit needs elaborate
+  scaffolding, a network, wall-clock time or a deep mock tree, the production code is the defect. Fix
+  the seam: inject the dependency, split the god-function, push the input and output to the edge.
+- **Hit real implementations, not mocks**, unless mocking is the only option.
+- **New *or modified* behaviour gets its test in the same change**, not a follow-up — changing
+  behaviour means changing or adding the test that pins it.
+- **Prefer writing the test first.** A test written first cannot pass vacuously, because it has to be
+  red before the fix exists.
+- **One knob per diff.** Attribution requires isolation. Land two changes together and a difference
+  in the result has two candidate causes and no way to choose between them — and the one that
+  improved things masks the one that made them worse, which is the case nobody notices. Each knob
+  gets its own validation pass, in the order that establishes a bar before anything is measured
+  against it.
+- **A validator is not an oracle.** A check that a value parses, that a low bound sits below a high
+  one and that units match has no way to notice that the conclusion drawn from those well-formed
+  values is wrong. Output a human will act on therefore needs a check independent of whatever
+  produced it: the well-formed false positive, the reference that was correct when it was stored, and
+  the plausible range picked off the wrong scale all pass every schema check there is.
+
+## A test must be able to fail
+
+One that passes whether or not the property holds is not a test. This is not a theoretical
+concern — it is the ordinary result of writing the assertion after the code, of a stub broad enough
+to swallow the exact case the test claims to check, or of a suite whose setup silently no-ops.
+
+The red-first discipline is the cheapest defence, and it has a corollary worth stating: when a suite
+written before its implementation reports some checks already passing, those checks are the ones to
+distrust. A check that "passes" because the thing under test does not yet exist is telling you about
+its own construction, not about the code.
