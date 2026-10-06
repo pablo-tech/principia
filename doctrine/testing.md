@@ -15,7 +15,12 @@ responsibility and DRY. What is specific to tests:
 
 - **One behaviour per test, named for the behaviour it pins.** The name is read far more often than
   the body; it is the failure message.
-- **F.I.R.S.T.** — fast, isolated, repeatable, self-validating. Asserts, never eyeballed output.
+- **F.I.R.S.T.** — fast, isolated, repeatable, self-validating (Robert C. Martin, *Clean Code*,
+  2008, where the acronym is Tim Ottinger and Brett Schuchert's). Asserts, never eyeballed output.
+  Two departures from that form: *isolated* stands for Martin's *independent*, and his fifth
+  letter — *timely*, the test written just before the code it pins — is the red-first rule below
+  rather than a letter here, being a rule about when a test is written where the other four are
+  properties of the test itself.
 - **Testability is a property of the design, not of the suite.** If exercising a unit needs elaborate
   scaffolding, a network, wall-clock time or a deep mock tree, the production code is the defect. Fix
   the seam: inject the dependency, split the god-function, push the input and output to the edge.
@@ -23,7 +28,9 @@ responsibility and DRY. What is specific to tests:
 - **New *or modified* behaviour gets its test in the same change**, not a follow-up — changing
   behaviour means changing or adding the test that pins it.
 - **Prefer writing the test first.** A test written first cannot pass vacuously, because it has to be
-  red before the fix exists.
+  red before the fix exists (test-driven development — Kent Beck, *Test-Driven Development: By
+  Example*, 2002, of which only the red-first half is taken: nothing here asks that a design be
+  allowed to emerge from its tests).
 - **One knob per diff.** Attribution requires isolation. Land two changes together and a difference
   in the result has two candidate causes and no way to choose between them — and the one that
   improved things masks the one that made them worse, which is the case nobody notices. Each knob

@@ -35,9 +35,11 @@ the system, which is the cost the document existed to remove.
 ## A decision record
 
 **A decision record is one to three sentences: what the context was, what was decided, and why.**
-That is the whole required form. Status, the options considered and the consequences are added where
-a reader needs them and left out where they would be ceremony — a template filled in to be complete
-is how the three sentences that matter end up on page two.
+That is the whole required form — narrower than the architecture decision record it is named from
+(Michael Nygard, "Documenting Architecture Decisions", 2011), whose template carries status,
+context, decision and consequences as headings. Status, the options considered and the consequences
+are added where a reader needs them and left out where they would be ceremony — a template filled
+in to be complete is how the three sentences that matter end up on page two.
 
 **A decision has earned one when all three of these hold.** It is **hard to reverse**; it is
 **surprising** to a reader who does not have the context that produced it; and it was a **real
