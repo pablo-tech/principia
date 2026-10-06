@@ -9,9 +9,8 @@ fresh session.
 
 Do this now:
 
-1. Identify the plan document this session has been working from. It lives in the context
-   repository, under a path mirroring the one it would have had inside the repository it plans for
-   — see `protocol/doctrine/planning.md`. If more than one could be meant, ask which.
+1. Identify the plan document this session has been working from. It lives where
+   `protocol/doctrine/planning.md` says a plan lives. If more than one could be meant, ask which.
 
 2. Append or update a short **Progress** entry in it, carrying only what a fresh session needs to
    continue. Not a transcript:
