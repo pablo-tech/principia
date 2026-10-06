@@ -44,6 +44,27 @@ move with `main` can stop at.
 
 ### Changed
 
+- **`doctrine/git.md` gains the lever run backwards, and `doctrine/as-built.md` gains two rules about
+  what a document owes.** All three were earned in a tenant and are stated here with the case left
+  behind, per `INDUCTION.md` condition 3. **A compatibility shim runs shift-left backwards** — a
+  redirect, an alias or a tolerated old spelling keeps a stale reference working, so the correction
+  happens when the shim is removed rather than when the reference went stale, and what it spends is
+  the signal, since a silent success is the one failure no check can be written for. The principle it
+  declines is named rather than ignored: the robustness principle (Postel, RFC 760, 1980) is sound
+  between implementations that cannot coordinate, and its reconsideration is the half that applies
+  inside one system, where liberal acceptance only conceals the error until the defect is the
+  specification (Allman, 2011). A shim that is kept is therefore kept as a decision, with what it
+  covers for and the condition on which it goes. **A rule nothing enforces is recorded as unenforced,
+  with the decision attached** — absence leaves no trace to contradict the document, so the document
+  asserting the rule is the only evidence there is and it reads as coverage; writing the gap down with
+  its decision is accepted risk (ISO 31000:2018). It is also the sentence that makes `tenancy.md`'s
+  inversion honest, which is why it lands in the phase after it. **And a comparative claim in a
+  document is an empirical claim, so the document ships what would settle it** — falsifiability
+  (Popper, 1934) asks only that a claim could be contradicted, and a document is held to more because
+  the party making the claim and the party publishing it are the same one. Both register rows state
+  their departures, of which the one that matters is that Popper is used for more than he asks: the
+  ground for the stronger form is the conflicted authorship, not the criterion.
+
 - **`doctrine/tenancy.md` gains three named principles: what a control cannot decide, where that
   leaves you, and what an exclusion does not do.** All three were earned in a tenant and are stated
   here with the case left behind, per `INDUCTION.md` condition 3. **No mechanical control can decide

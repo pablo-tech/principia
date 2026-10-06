@@ -1,6 +1,6 @@
 ---
 name: git
-description: Commit and branch discipline — who decides to commit and push, what a commit message says, what a pull request declares about the phase that authorized it, how a promotion works, why the file-size ceiling is enforced at commit rather than push, and why every repo-scoped command names its repo.
+description: Commit and branch discipline — who decides to commit and push, what a commit message says, what a pull request declares about the phase that authorized it, how a promotion works, why the file-size ceiling is enforced at commit rather than push, why a compatibility shim defers a failure past the point where it is cheap, and why every repo-scoped command names its repo.
 ---
 
 # Git
@@ -19,6 +19,28 @@ Journal*, 2001.
   `repos/owner/repo/...` for an API call. This includes commands handed to a person to run, which
   may execute outside any checkout. A command that relies on the current directory is a command that
   eventually runs in the wrong one.
+
+## A compatibility shim runs the lever backwards
+
+**Shift left** — the lever this document is named from — moves a check toward the point where the
+defect is cheap. A **compatibility shim** pulls the same lever the other way: a redirect, an alias, a
+tolerated old spelling keeps a stale reference working, so the correction happens when the shim is
+eventually removed rather than when the reference went stale — at the least convenient moment, with
+whoever wrote the reference gone and the original context with them. What the shim spends is the
+signal, and a silent success is the one failure no check can be built for. So the cost is paid by
+review or not at all, which is the reason this is written down.
+
+The general rule it declines is the **robustness principle** — be conservative in what you send, be
+liberal in what you accept (Jon Postel, RFC 760, 1980, restated as a requirement in RFC 1122, 1989) —
+and what is kept is its **reconsideration**: liberal acceptance conceals the error, so the defect
+propagates and eventually becomes the specification everything is written against (Eric Allman, "The
+Robustness Principle Reconsidered", *ACM Queue*, 2011). Postel's rule buys interoperability between
+implementations that cannot coordinate, which is a real purchase and is not the case inside one
+system: there both ends have the same owner, the coordination is available, and leniency buys nothing
+but the quiet. **So a shim that is kept is kept as a decision** — with what it covers for and the
+condition on which it goes, recorded where whoever finds the stale reference will be standing, which
+is [`as-built.md`](as-built.md)'s rule and not a new one. Unrecorded, a shim is indistinguishable
+from the thing it stands in for, which is the whole of why the stale reference is invisible.
 
 ## Per-repository settings are reconciled from one file, never re-decided
 
