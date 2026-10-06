@@ -1,6 +1,6 @@
 ---
 name: as-built
-description: The document that describes a system is part of that system — changed in the same change that changes the system, and corrected on the spot when it is merely found to be wrong.
+description: The document that describes a system is part of that system — changed in the same change that changes the system, corrected on the spot when it is merely found to be wrong, recording a rule nothing enforces as unenforced with the decision attached, and shipping the measurement that would settle any comparative claim it makes.
 ---
 
 # As-built
@@ -31,6 +31,21 @@ the system, which is the cost the document existed to remove.
 - **If nothing describes it, that is the finding.** A system with no document is not exempt from this
   rule — it is the case the rule is most expensive to have skipped. Write the short true version now
   rather than the complete one later.
+- **A rule nothing enforces is recorded as unenforced, with the decision attached.** The failure here
+  is particular to absence, which is why it needs its own line: a structure built differently from the
+  drawing leaves a trace that contradicts the drawing, and a rule nothing enforces leaves no trace at
+  all — so the document asserting it is the only evidence there is, and it reads as coverage. Writing
+  the gap down is the same move risk management makes with an exposure nobody is going to remediate:
+  it is entered with that decision attached rather than left out because nothing was done about it —
+  **accepted risk** (ISO 31000:2018, *Risk management — Guidelines*). The decision is what makes it a
+  record; *unenforced* with nothing beside it is a defect waiting to be rediscovered.
+- **A comparative claim in a document is an empirical claim, so the document ships what would settle
+  it.** *Faster*, *cheaper*, *smaller*, *scales*, *catches more* — each is a sentence a measurement
+  could contradict. **Falsifiability** asks only that it could be (Karl Popper, *Logik der Forschung*,
+  1934, which [`testing.md`](testing.md) names for tests); a document is held to more than that,
+  because the party making the claim and the party publishing it are the same one, so nobody with an
+  incentive to try will contradict it. Either the measurement that would settle it ships beside the
+  claim, or the claim is cut back to what the document can show.
 
 ## A decision record
 
