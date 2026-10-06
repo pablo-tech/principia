@@ -44,6 +44,28 @@ move with `main` can stop at.
 
 ### Changed
 
+- **`doctrine/tenancy.md` gains three named principles: what a control cannot decide, where that
+  leaves you, and what an exclusion does not do.** All three were earned in a tenant and are stated
+  here with the case left behind, per `INDUCTION.md` condition 3. **No mechanical control can decide
+  what a file is for** — what a file contains is a property of its text and what it is for is a
+  property of the intention behind it, and every non-trivial semantic property of a program is
+  undecidable (Rice, 1953), so a matcher cannot be made to respect purpose by being made cleverer and
+  the only remaining variable is *where it is installed* (policy separated from mechanism — Levin,
+  Cohen, Corwin, Pollack and Wulf, Hydra, 1975). Which makes **the absence of a control an assertion
+  that purpose differs there** rather than a gap — but only where the absence is recorded as a
+  decision, since unrecorded it is indistinguishable from an oversight. **A policy root is the unit of
+  enforcement, and silence about a root is not safety**: a control reaches the edge of what it is
+  installed in and no further (the trust boundary — Shostack, 2014), so roots are inventoried and
+  *unenrolled* is a recorded value rather than the default reading of an empty directory. And **an
+  exclusion is a preventive control and nothing more** — it guarantees the excluded material is not
+  carried and says nothing about whether it exists, leaving state that is invisible rather than
+  absent, so an exclusion that matters is paired with a sweep that has an owner (preventive and
+  detective controls — COSO, 1992). The register row states the departures, of which two matter: Rice
+  is invoked for what it forbids rather than as a proof about controls that match text, and the
+  trust-boundary paragraph is complete mediation read backwards, which is structurally weaker than
+  reading it forwards because there is no single reference monitor to read forwards through.
+
+
 - **The seven incumbent documents audited against `INDUCTION.md`, which was written from them.** A bar
   induced from the things it judges passes them by construction, so the useful question was whether
   each would be admitted today by someone who had not written it. All seven clear the condition on
