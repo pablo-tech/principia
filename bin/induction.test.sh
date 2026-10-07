@@ -243,6 +243,7 @@ unobjected() {
         ${line%%|*}"
   done < <(para '**What the field says against it**' "$lin")
   [ -z "$out" ] || { printf '        no dated objection and no claim that none was found:%s\n' "$out"; return 1; }
+}
 
 # The `Named:` line itself carries the way out to the origin, which the register's rows already do.
 # This is the copy standing where the rule is applied, the one INDUCTION.md says cannot be skipped,
@@ -268,7 +269,6 @@ unlineaged() {
   [ -z "$none" ] || printf '        no lineage link on the `Named:` line of:%s\n' "$none"
   [ -z "$bad" ] || printf '        a `Named:` line asks the lineage for an entry it has not got:%s\n' "$bad"
   [ -z "$none$bad" ] || return 1
-}
 }
 
 check "every doctrine document carries a \`Named:\` line" 'unnamed "$ROOT/doctrine"'
