@@ -85,11 +85,13 @@ it and then leave the particular behind; and say what holds the rule — a guard
 but the reader, which is the ordinary answer.
 
 The citation is printed where the rule is stated: on a `Named:` line under the document's opening
-line, and in [README.md](README.md)'s table of the doctrine. A new document also needs its row in
-INDUCTION.md's register, which carries the full lineage and the departure. `bin/induction.test.sh`
-fails the build without any of the three. A rule that cannot get through is not thereby wrong: it is
-a mechanism, a measurement, or a sentence belonging to a document that already exists, and all three
-have somewhere else to go.
+line, which also links to the lineage entry, and in [README.md](README.md)'s table of the doctrine.
+A new document also needs its row in INDUCTION.md's register, which carries the full lineage and the
+departure, and an entry in [LINEAGE.md](LINEAGE.md) for each work it is named from — that work's own
+scope, and what its own field says against it, or the claim in as many words that no serious
+objection was found. `bin/induction.test.sh` fails the build without any of the four. A rule that
+cannot get through is not thereby wrong: it is a mechanism, a measurement, or a sentence belonging
+to a document that already exists, and all three have somewhere else to go.
 
 ## Adding an adapter for another AI coding agent
 

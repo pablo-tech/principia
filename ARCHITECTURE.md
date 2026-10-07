@@ -38,6 +38,10 @@ argument for them; `bin/induction.test.sh` refuses a tree where a document has n
 register row, or where that line, its README row or its register row names no dated work. A consumer
 may rely on this: a rule here is either traceable to a work older than this repository or says in as
 many words that no prior work was found.
+The fourth place is [LINEAGE.md](LINEAGE.md), one entry per work rather than one row per document,
+and a consumer may rely on that too: every name a document is admitted on has an entry carrying that
+work's own scope and a dated objection from its own field, or the claim in as many words that none
+was found, and the same suite refuses a tree where an entry has neither.
 
 ## 2. The tenant is the unit
 

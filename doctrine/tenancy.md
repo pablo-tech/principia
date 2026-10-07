@@ -11,6 +11,7 @@ through.*
 **Named:** complete mediation, fail-safe defaults and least privilege — Jerome Saltzer and Michael
 Schroeder, "The Protection of Information in Computer Systems", 1975. Data minimization — Ann
 Cavoukian, *Privacy by Design: The 7 Foundational Principles*, 2009.
+[Lineage](../LINEAGE.md#complete-mediation--saltzer-and-schroeder-1975).
 
 A **tenant** is whoever the work belongs to. One person routinely works for several, through the
 same tools, on the same machine, in the same hour.
