@@ -65,7 +65,32 @@ move with `main` can stop at.
   row in README's table, or where any of the three names no dated work. What it cannot ask is whether
   the work cited is the right one; that half stays with review, and INDUCTION.md says so.
 
+- **The closer work `git.md`'s provenance departure asked for in writing, named.** The register
+  declared *respect des fonds* a metaphor and said that naming a closer work for the authorization
+  half "is the contribution to make"; writing the lineage found one, and it is now cited beside the
+  archival principle with an entry of its own — in-toto (Torres-Arias, Afzali, Kuppusamy, Curtmola
+  and Cappos, 2019), where a chain is verified by requiring every step to be attested by whoever was
+  authorized in advance to perform it. The archival principle keeps the custody half it actually
+  states. **The rule in `doctrine/git.md` did not change**: a pull request already quoted the phase
+  that authorized it, and that is still what the register names it for.
+
 ### Changed
+
+- **Construct validity is cited to Cronbach and Meehl, 1955, not Campbell and Fiske, 1959.** The
+  1959 paper is convergent and discriminant *validation* by the multitrait-multimethod matrix — the
+  procedure for arguing construct validity from a pattern of agreements between instruments. The
+  work that defines the term is "Construct Validity in Psychological Tests", *Psychological
+  Bulletin* 52(4), 1955, 281–302, which is what `INDUCTION.md`'s second test asks for: the work the
+  field cites. Corrected in all three places at once — the cited sentence in `doctrine/testing.md`,
+  the register row, and the lineage entry, whose anchor moves with it. Both other works stay in the
+  entry, which is where a reader who wants the procedure or the standard treatment will look.
+
+- **`warp.md` cited one work for the principal–agent problem and the register cited another.** The
+  `Named:` line said Jensen and Meckling, 1976; the register and the lineage head the entry Ross,
+  1973. Ross is where the problem is formulated under the name the doctrine uses — "The Economic
+  Theory of Agency: The Principal's Problem", *American Economic Review* 63(2), 1973, 134–139 — so
+  the `Named:` line is the copy that was wrong, and it now says what the other two say. Jensen and
+  Meckling, the more cited development, stays named in the entry with its volume and pages.
 
 - **Every doctrine document's `Named:` line now links to the lineage**, which is the fourth place a
   citation is printed and the first one reachable from where the rule is applied. One link per
