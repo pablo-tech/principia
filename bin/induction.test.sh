@@ -114,6 +114,137 @@ undated_name() {
   [ -z "$out" ] || { printf '        `Named:` line carries no dated work:%s\n' "$out"; return 1; }
 }
 
+# A dated work, or the one sentence that stands in for having looked and found no objection. The
+# register's escape hatch is `no prior work was found`; a lineage entry's is its own sentence,
+# because the two claims are different ones — nobody wrote the principle down, against nobody has
+# written against it — and a reader holding a citation refutes either.
+OBJECTED='(^|[^0-9])(1[5-9]|20)[0-9][0-9]([^0-9]|$)|no serious objection was found'
+
+LINEAGE="$ROOT/LINEAGE.md"
+
+# GitHub's anchor for a heading: lowercase, drop every character that is not a letter, digit, space
+# or hyphen, then spaces to hyphens. Byte-wise on purpose — an em dash is dropped a byte at a time
+# and the two spaces around it survive as the doubled hyphen the anchors actually carry, which is
+# the same answer on either platform's sed rather than whichever one has a UTF-8 locale.
+slug() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | LC_ALL=C sed -e 's/[^a-z0-9 -]//g' -e 's/ /-/g'
+  echo
+}
+
+# Every entry in the lineage, as the anchor a link to it has to carry.
+entry_slugs() {
+  local h
+  while IFS= read -r h; do slug "${h#\#\#\# }"; done < <(grep -E '^### ' "$1" 2>/dev/null)
+}
+
+# Every anchor into the lineage that some other file asks for.
+lineage_links() {
+  grep -o '](LINEAGE\.md#[a-z0-9-]*)' "$1" 2>/dev/null | sed -e 's/.*#//' -e 's/)$//'
+}
+
+# One labelled paragraph of each entry, rejoined onto a line: the label through the blank line that
+# ends it. A citation wraps, and the year is as likely to be on the second line as the first.
+para() {
+  awk -v lab="$1" '
+    function flush() { if (h != "" && buf != "") printf "%s|%s\n", h, buf; buf=""; inpara=0 }
+    index($0, "### ") == 1 { flush(); h=substr($0, 5); next }
+    index($0, "#") == 1 { flush(); h=""; next }
+    h == "" { next }
+    index($0, lab) == 1 { flush(); inpara=1; buf=$0; next }
+    inpara && NF == 0 { flush(); next }
+    inpara { buf = buf " " $0; next }
+    END { flush() }
+  ' "$2"
+}
+
+# Every row of the register reaches the lineage. A new document cannot be admitted with its works
+# described only in the cell, which is the arrangement this page was made to end.
+unlinked() {
+  local src=$1 line base out=""
+  while IFS= read -r line; do
+    base=$(printf '%s' "$line" | sed -e 's@^| \[`@@' -e 's@`\].*@@')
+    printf '%s' "$line" | grep -q '](LINEAGE\.md#' || out="$out $base"
+  done < <(rows "$src")
+  [ -z "$out" ] || { printf '        no link into the lineage from the row for:%s\n' "$out"; return 1; }
+}
+
+# And every anchor asked for is one the lineage has. A link to a heading that was renamed is the
+# failure GitHub reports as silence: the page opens at the top and the reader never knows.
+dangling_anchor() {
+  local src=$1 lin=$2 a slugs out=""
+  slugs=$(entry_slugs "$lin")
+  while IFS= read -r a; do
+    [ -n "$a" ] || continue
+    printf '%s\n' "$slugs" | grep -qxF "$a" || out="$out $a"
+  done < <(lineage_links "$src" | sort -u)
+  [ -z "$out" ] || { printf '        %s asks the lineage for an entry it has not got:%s\n' "${src##*/}" "$out"; return 1; }
+}
+
+# Every entry is reached from the register. This is the whole difference between a lineage and the
+# reading list INDUCTION.md refuses: an entry exists because a rule here leans on the work, and an
+# entry nothing leans on is scholarship this repository has no standing to keep.
+orphan() {
+  local src=$1 lin=$2 s used out=""
+  used=$(lineage_links "$src" | sort -u)
+  while IFS= read -r s; do
+    [ -n "$s" ] || continue
+    printf '%s\n' "$used" | grep -qxF "$s" || out="$out $s"
+  done < <(entry_slugs "$lin")
+  [ -z "$out" ] || { printf '        no register row reaches:%s\n' "$out"; return 1; }
+}
+
+# Each entry carries all four labels. A thin entry is the failure mode of a page like this — a
+# heading, a citation and nothing a reader could disagree with.
+thin() {
+  local out
+  [ -f "$1" ] || { printf '        there is no lineage page at all: %s\n' "${1##*/}"; return 1; }
+  out=$(awk '
+    function report() {
+      if (h == "") return
+      miss=""
+      if (!w) miss=miss " the work"
+      if (!c) miss=miss " what it claims"
+      if (!a) miss=miss " what the field says against it"
+      if (!t) miss=miss " taken here"
+      if (miss != "") printf "        %s is missing:%s\n", h, miss
+    }
+    index($0, "### ") == 1 { report(); h=substr($0, 5); w=0; c=0; a=0; t=0; next }
+    index($0, "#") == 1 { report(); h=""; next }
+    h == "" { next }
+    index($0, "**The work**") == 1 { w=1; next }
+    index($0, "**What it claims**") == 1 { c=1; next }
+    index($0, "**What the field says against it**") == 1 { a=1; next }
+    index($0, "**Taken here**") == 1 { t=1; next }
+    END { report() }
+  ' "$1")
+  [ -z "$out" ] || { printf '%s\n' "$out"; return 1; }
+}
+
+# The work is dated. The page exists so a reader can go and get it, and a citation with no year is
+# the practice area INDUCTION.md already refuses in the register.
+undated_entry() {
+  local lin=$1 line out=""
+  [ -f "$lin" ] || { printf '        there is no lineage page at all: %s\n' "${lin##*/}"; return 1; }
+  while IFS= read -r line; do
+    printf '%s' "${line#*|}" | grep -qE "$DATED" || out="$out
+        ${line%%|*}"
+  done < <(para '**The work**' "$lin")
+  [ -z "$out" ] || { printf '        no dated work cited by:%s\n' "$out"; return 1; }
+}
+
+# And the objection is cited, or its absence is claimed in as many words. This is the judgement the
+# page was built for: INDUCTION.md admits a rule because the name imports the counter-arguments, and
+# before this page the repository printed one objection for forty-one names.
+unobjected() {
+  local lin=$1 line out=""
+  [ -f "$lin" ] || { printf '        there is no lineage page at all: %s\n' "${lin##*/}"; return 1; }
+  while IFS= read -r line; do
+    printf '%s' "${line#*|}" | grep -qE "$OBJECTED" || out="$out
+        ${line%%|*}"
+  done < <(para '**What the field says against it**' "$lin")
+  [ -z "$out" ] || { printf '        no dated objection and no claim that none was found:%s\n' "$out"; return 1; }
+}
+
 check "every doctrine document carries a \`Named:\` line" 'unnamed "$ROOT/doctrine"'
 check "every \`Named:\` line cites a dated work or declares there is none" 'undated_name "$ROOT/doctrine"'
 check "every doctrine document has a row in README's table of the doctrine" \
@@ -126,6 +257,16 @@ check "the register is found at all, so the judgements over it are not passing o
   '[ "$(rows "$ROOT/INDUCTION.md" | grep -c .)" -ge 2 ]'
 check "README's table is found at all, for the same reason" \
   '[ "$(rows "$ROOT/README.md" | grep -c .)" -ge 2 ]'
+
+check "every register row reaches the lineage" 'unlinked "$ROOT/INDUCTION.md"'
+check "every anchor the register asks the lineage for exists" \
+  'dangling_anchor "$ROOT/INDUCTION.md" "$LINEAGE"'
+check "every lineage entry is reached from the register" 'orphan "$ROOT/INDUCTION.md" "$LINEAGE"'
+check "every lineage entry carries all four labels" 'thin "$LINEAGE"'
+check "every lineage entry cites a dated work" 'undated_entry "$LINEAGE"'
+check "every lineage entry carries a dated objection or claims there is none" 'unobjected "$LINEAGE"'
+check "the lineage is found at all, so the judgements over it are not passing on an empty set" \
+  '[ "$(entry_slugs "$LINEAGE" | grep -c .)" -ge 20 ]'
 
 # The controls. Each judgement above is run against a tree built to fail it, because a matcher that
 # finds no rows at all would pass every one of them in silence.
@@ -161,6 +302,49 @@ exempts_index() {
   out=$({ unlisted "$FIX/doctrine" "$FIX/INDUCTION.md"; unnamed "$FIX/doctrine"; } 2>&1 || true)
   printf '%s' "$out" | grep -q 'kept\.md' && ! printf '%s' "$out" | grep -q 'README\.md'
 }
+mkdir -p "$FIX"
+cat >"$FIX/LINEAGE.md" <<'FIXTURE'
+## A literature
+
+### Thin — Somebody, 1970
+
+**The work** — Somebody, *A Title*, 1970.
+
+**What it claims** — that something is the case.
+
+### Undated — nobody attached to it
+
+**The work** — standard practice, as everyone knows.
+
+**What it claims** — that something is the case.
+
+**What the field says against it** — nothing anybody has written down, and this entry does not say
+so either.
+
+**Taken here** — nowhere.
+FIXTURE
+cat >"$FIX/REGISTER.md" <<'FIXTURE'
+| Document | Named in its best-known form, and the prior work it is named from | Where this repository departs |
+|---|---|---|
+| [`gone.md`](doctrine/gone.md) | **Something** ([Somebody, 1970](LINEAGE.md#renamed-since--somebody-1970)) | none |
+| [`kept.md`](doctrine/kept.md) | **Something else** — asserted, with no link to the lineage | none |
+FIXTURE
+
+check "a row that does not reach the lineage is caught" '! unlinked "$FIX/REGISTER.md" >/dev/null'
+check "an anchor the lineage has not got is caught" \
+  '! dangling_anchor "$FIX/REGISTER.md" "$FIX/LINEAGE.md" >/dev/null'
+check "an entry no row reaches is caught" '! orphan "$FIX/REGISTER.md" "$FIX/LINEAGE.md" >/dev/null'
+check "an entry missing a label is caught" '! thin "$FIX/LINEAGE.md" >/dev/null'
+check "an entry citing no dated work is caught" '! undated_entry "$FIX/LINEAGE.md" >/dev/null'
+check "an objection with neither a year nor the sentence that stands in for one is caught" \
+  '! unobjected "$FIX/LINEAGE.md" >/dev/null'
+# The anchor is the one thing here a human eye gets wrong, so the rule for building it is asserted
+# rather than left to whichever platform's sed ran it.
+check "an em dash and a comma leave the doubled hyphen the anchors carry" \
+  '[ "$(slug "Falsifiability — Popper, 1934")" = falsifiability--popper-1934 ]'
+check "a dash inside a word closes it up, as GitHub does" \
+  '[ "$(slug "The principal–agent problem — Ross, 1973")" = the-principalagent-problem--ross-1973 ]'
+
 check "the index beside the documents is exempt, and the document beside it is not" 'exempts_index'
 
 finish

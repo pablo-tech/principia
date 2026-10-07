@@ -18,6 +18,24 @@ move with `main` can stop at.
 
 ### Added
 
+- **`LINEAGE.md`: one entry per work the doctrine is named from, with its field's objections.**
+  Thirty-nine entries under eleven literature headings, each carrying the full citation, what the
+  work claims *at its own scope*, **what the field says against it**, and the rule here that leans
+  on it. It exists because `INDUCTION.md` admits a rule partly on the grounds that a name "imports
+  the counter-arguments", and the repository printed an objection for one of forty-one names — a
+  condition it had written down and was failing. The page is at the root and not under `doctrine/`
+  on purpose: `adapters/claude-code/adapt.sh` installs every `doctrine/*.md` but `README.md` as a
+  skill, and this is scholarship rather than instruction. It holds no rule, binds nothing, and loses
+  to a doctrine document wherever the two disagree.
+
+- **Seven new judgements in `bin/induction.test.sh`.** Every register row reaches the lineage; every
+  anchor it asks for exists; **every entry is reached from the register**, which is what keeps the
+  page from becoming the reading list `INDUCTION.md` refuses; every entry carries all four labels;
+  every entry cites a dated work; and every entry carries a dated objection or says in as many words
+  that **no serious objection was found** — the same falsifiable escape the register already gives
+  "no prior work was found". Plus the empty-set control, eight fixture controls, and two assertions
+  pinning GitHub's heading-anchor rule, including the doubled hyphen an em dash leaves behind.
+
 - **`INDUCTION.md`: what it takes for a rule to be admitted to `doctrine/`.** A rule is admitted
   only when it can be named *and cited* — stated as an instance of a principle the wider field
   already knows, in the strongest form that field states it, attributed to a specific prior work
@@ -43,6 +61,22 @@ move with `main` can stop at.
   the work cited is the right one; that half stays with review, and INDUCTION.md says so.
 
 ### Changed
+
+- **The register's name-cells are now a handle, a short cite and one clause, the cite linking to its
+  entry.** The prose describing each work moved to `LINEAGE.md`; it did not get copied there. The
+  longest cell dropped from 2,026 characters to 1,202, and every cell is now under 180 characters
+  per name. **The departure column is untouched**: the admitter's reading, and the only place
+  a departure is stated.
+
+- **"Printed in three places" is now "Printed in four places"**, with the fourth reader named: the
+  one who has stopped arguing with the rule and started arguing with its origin. The exemption that
+  licenses the copies is unchanged, because what licenses it — a citation being dated and
+  immutable — does not care how many copies there are. `INDUCTION.md`'s *Proposing an addition*
+  now asks for the lineage entry alongside the name and the work.
+
+- **The doctrine's rules did not change.** No rule was added, removed, softened or lengthened,
+  and no document under `doctrine/` was touched, so no skill description moves and nothing is
+  reinstalled.
 
 - **`doctrine/clean-code.md`, `doctrine/testing.md` and `doctrine/warp.md` gain the last four of the
   nine claims the audit held back.** All four were earned in a tenant and are stated here with the case
