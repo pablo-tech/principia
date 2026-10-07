@@ -68,14 +68,14 @@ departure beside it.
 **Taken here** — [`doctrine/testing.md`](doctrine/testing.md), for one knob per diff. Departures
 stay in [the register](INDUCTION.md#the-register).
 
-### Construct validity — Campbell and Fiske, 1959
+### Construct validity — Cronbach and Meehl, 1955
 
-**The work** — Donald Campbell and Donald Fiske, "Convergent and Discriminant Validation by the
-Multitrait-Multimethod Matrix", *Psychological Bulletin*, 1959; the standard treatment is Thomas
-Cook and Donald Campbell, *Quasi-Experimentation: Design and Analysis Issues for Field Settings*,
-1979. The work the field cites for the term itself is earlier and is probably the better citation:
-Lee Cronbach and Paul Meehl, "Construct Validity in Psychological Tests", *Psychological
-Bulletin* 52(4), 1955, 281–302.
+**The work** — Lee Cronbach and Paul Meehl, "Construct Validity in Psychological Tests",
+*Psychological Bulletin* 52(4), 1955, 281–302, which is where the term is defined. Donald Campbell
+and Donald Fiske, "Convergent and Discriminant Validation by the Multitrait-Multimethod Matrix",
+*Psychological Bulletin*, 1959, supplies the procedure for arguing it from a pattern of agreements
+between instruments; the standard treatment is Thomas Cook and Donald Campbell,
+*Quasi-Experimentation: Design and Analysis Issues for Field Settings*, 1979.
 
 **What it claims** — that whether an instrument measures the thing it names is a separate
 question from whether it measures anything precisely, and that the answer is argued from a pattern
@@ -84,7 +84,7 @@ of agreements and disagreements with other instruments rather than read off the 
 **What the field says against it** — Harold Bechtoldt, "Construct Validity: A Critique",
 *American Psychologist*, 1959, argued that the concept licenses a test to be defended by appeal to
 a theory the test is also the evidence for, which makes the defence unfalsifiable — the objection
-landing in the same year as the work cited above.
+arriving four years later, in the same year as the Campbell and Fiske procedure above.
 
 **Taken here** — [`doctrine/testing.md`](doctrine/testing.md), for a run against a source nobody
 checked. Departures stay in [the register](INDUCTION.md#the-register).
@@ -535,6 +535,31 @@ between designs, and in practice get satisfied by compliance language rather tha
 written into a tracked file. Departures stay in
 [the register](INDUCTION.md#the-register).
 
+### Attested provenance — Torres-Arias, Afzali, Kuppusamy, Curtmola and Cappos, 2019
+
+**The work** — Santiago Torres-Arias, Hammad Afzali, Trishank Karthik Kuppusamy, Reza Curtmola and
+Justin Cappos, "in-toto: Providing farm-to-table guarantees for bits and bytes", *28th USENIX
+Security Symposium*, 2019, 1393–1410. The register asked in writing for a work closer than the
+archival principle for the authorization half of provenance, and this is the answer to that.
+
+**What it claims** — that a chain is not secured by trusting the artifact at the end of it, but by
+requiring every step to be attested by whoever was authorized in advance to perform it, against a
+layout declaring who may do what. Its unit of analysis is the step and its signer, which is the
+thing the archival principle has no account of: the Manual says where a record belongs, not who was
+entitled to make it.
+
+**What the field says against it** — Mahzabin Tamanna, Sivana Hamer, Mindy Tran, Sascha Fahl,
+Yasemin Acar and Laurie Williams, "Analyzing Challenges in Deployment of the SLSA Framework for
+Software Supply Chain Security", 2024, read 1,523 issues across 233 repositories and found adoption
+turning on complex implementation and unclear communication rather than on any disagreement with
+the design — a mechanism mostly unreached, which is the objection that bites hardest where there is
+nobody to run it.
+
+**Taken here** — [`doctrine/git.md`](doctrine/git.md), for the authorization half of a change that
+carries the record of what authorized it: the pull request quotes the phase that authorized it
+rather than linking to it, and the merge is what attests the step. Departures stay in
+[the register](INDUCTION.md#the-register).
+
 ## Risk and internal control
 
 ### Accepted risk — ISO 31000, 2018
@@ -627,8 +652,10 @@ plan and the means chosen at the point of contact. Departures stay in
 ### The principal–agent problem — Ross, 1973
 
 **The work** — Stephen Ross, "The Economic Theory of Agency: The Principal's Problem", *American
-Economic Review*, 1973; Michael Jensen and William Meckling, "Theory of the Firm: Managerial
-Behavior, Agency Costs and Ownership Structure", *Journal of Financial Economics*, 1976.
+Economic Review* 63(2), 1973, 134–139, which is the formulation the name belongs to. Michael Jensen
+and William Meckling, "Theory of the Firm: Managerial Behavior, Agency Costs and Ownership
+Structure", *Journal of Financial Economics* 3(4), 1976, 305–360, is the more cited development,
+and the one a reader is likelier to have met.
 
 **What it claims** — that delegation creates a divergence of both interest and information, that
 the divergence cannot be removed by watching harder because the monitoring is itself costly and
@@ -768,13 +795,11 @@ functions, and proposed describing provenance as a separate series of relationsh
 modern practice descends from Scott, not from the Manual's physical reading.
 
 **Taken here** — [`doctrine/git.md`](doctrine/git.md), for a change that carries the record of what
-authorized it, where the register already declares the use a metaphor and asks for a closer work
-for the authorization half. The search made for this page found one: Santiago Torres-Arias, Hammad
-Afzali, Trishank Karthik Kuppusamy, Reza Curtmola and Justin Cappos, "in-toto: Providing
-farm-to-table guarantees for bits and bytes", *USENIX Security*, 2019, 1393–1410, which is
-provenance in exactly the sense the document means — each step of a chain attested by whoever was
-authorized to perform it. Whether the document should cite it is a question for the register, not
-for this page. Departures stay in [the register](INDUCTION.md#the-register).
+authorized it, where the register declares the use a metaphor and keeps it for the custody half it
+actually states: records of one creator kept together and never intermingled with another's. The
+closer work the register asked for is cited beside it and has its own entry —
+[attested provenance](#attested-provenance--torres-arias-afzali-kuppusamy-curtmola-and-cappos-2019).
+Departures stay in [the register](INDUCTION.md#the-register).
 
 ### As-built documentation — AIA A201, 2017
 

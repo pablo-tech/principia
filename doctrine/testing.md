@@ -60,9 +60,9 @@ its own construction, not about the code.
 a path, a symbolic link, an installed copy, a cached build — it can exercise code that is not the code
 under test, and the result is a green tick answering a question nobody asked. That is a failure of
 **construct validity**: whether an instrument measures the thing it claims to measure, as distinct
-from whether it measures it precisely (Donald Campbell and Donald Fiske, "Convergent and Discriminant
-Validation by the Multitrait-Multimethod Matrix", 1959; the standard treatment is Thomas Cook and
-Donald Campbell, *Quasi-Experimentation: Design and Analysis Issues for Field Settings*, 1979). A test
+from whether it measures it precisely (Lee Cronbach and Paul Meehl, "Construct Validity in
+Psychological Tests", 1955; the standard treatment is Thomas Cook and Donald Campbell,
+*Quasi-Experimentation: Design and Analysis Issues for Field Settings*, 1979). A test
 is a measuring instrument, so a run against the wrong source is an invalid instrument rather than a
 flaky one, and no amount of repetition improves it.
 
