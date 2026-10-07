@@ -18,6 +18,11 @@ move with `main` can stop at.
 
 ### Added
 
+- **An eighth judgement: every `Named:` line reaches the lineage, and reaches an entry that is
+  there.** Both halves are one check because a link that resolves nowhere is worse than none —
+  GitHub reports a renamed heading as silence, opening the page at the top while the reader thinks
+  they are reading about the work. Controlled on both causes at once, over what the failure names.
+
 - **`LINEAGE.md`: one entry per work the doctrine is named from, with its field's objections.**
   Thirty-nine entries under eleven literature headings, each carrying the full citation, what the
   work claims *at its own scope*, **what the field says against it**, and the rule here that leans
@@ -61,6 +66,19 @@ move with `main` can stop at.
   the work cited is the right one; that half stays with review, and INDUCTION.md says so.
 
 ### Changed
+
+- **Every doctrine document's `Named:` line now links to the lineage**, which is the fourth place a
+  citation is printed and the first one reachable from where the rule is applied. One link per
+  document, to the work it is named from first; the one-or-two-work cap on the line is unchanged, so
+  no document becomes a bibliography. `README.md`, `ARCHITECTURE.md` §1, `CONTRIBUTING.md` and the
+  pull-request template say what an addition now owes: the entry, carrying the work's own scope and
+  its field's objection. No frontmatter was touched, so no skill description moves and nothing is
+  reinstalled.
+
+- **`doctrine/README.md` no longer restates what counts as a publish.** "A publish that a merge
+  triggers is still a publish, because the job keys on the push, not on the paths" was the narrower
+  form `doctrine/warp.md` generalized in `b348ac9` — a second statement of a rule, and by then a
+  stale one. The index points at the document instead.
 
 - **The register's name-cells are now a handle, a short cite and one clause, the cite linking to its
   entry.** The prose describing each work moved to `LINEAGE.md`; it did not get copied there. The

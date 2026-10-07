@@ -11,6 +11,7 @@ moment it is found.*
 **Named:** stop the line — Taiichi Ohno, *Toyota Production System*, 1978. As-built record
 documents — AIA Document A201, *General Conditions of the Contract for Construction*, §3.11, which
 requires a record set marked to show the work as actually executed.
+[Lineage](../LINEAGE.md#stop-the-line--ohno-1978).
 
 **The document that describes a system is part of that system.** It is not a report about the work,
 written afterwards by whoever has time. A reader who cannot trust it has to re-derive the system from

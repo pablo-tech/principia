@@ -10,6 +10,7 @@ already agreed with.*
 
 **Named:** pre-registration — Nosek, Ebersole, DeHaven and Mellor, "The preregistration revolution",
 2018. Answer-first exposition — Barbara Minto, *The Pyramid Principle*, 1987.
+[Lineage](../LINEAGE.md#pre-registration--nosek-ebersole-dehaven-and-mellor-2018).
 
 A plan is not a build artefact and does not ship. **Planning documents live in the context
 repository, under a path mirroring the one they would have had inside the repository they plan for**

@@ -243,6 +243,32 @@ unobjected() {
         ${line%%|*}"
   done < <(para '**What the field says against it**' "$lin")
   [ -z "$out" ] || { printf '        no dated objection and no claim that none was found:%s\n' "$out"; return 1; }
+
+# The `Named:` line itself carries the way out to the origin, which the register's rows already do.
+# This is the copy standing where the rule is applied, the one INDUCTION.md says cannot be skipped,
+# so the reader most likely to want to argue with a rule was, before this link, the one who could
+# not reach the work it was named from. A link that resolves nowhere is worse than none, because
+# GitHub reports a renamed heading as silence, so both halves are one judgement.
+unlineaged() {
+  local doc=$1 lin=$2 f block a slugs none="" bad=""
+  [ -f "$lin" ] || { printf '        there is no lineage page at all: %s\n' "${lin##*/}"; return 1; }
+  slugs=$(entry_slugs "$lin")
+  while IFS= read -r f; do
+    block=$(named_block "$f")
+    [ -n "$block" ] || continue
+    if ! printf '%s' "$block" | grep -q '](\.\./LINEAGE\.md#'; then
+      none="$none ${f##*/}"
+      continue
+    fi
+    while IFS= read -r a; do
+      [ -n "$a" ] || continue
+      printf '%s\n' "$slugs" | grep -qxF "$a" || bad="$bad ${f##*/}#$a"
+    done < <(printf '%s' "$block" | grep -o '](\.\./LINEAGE\.md#[a-z0-9-]*)' | sed -e 's/.*#//' -e 's/)$//')
+  done < <(docs "$doc")
+  [ -z "$none" ] || printf '        no lineage link on the `Named:` line of:%s\n' "$none"
+  [ -z "$bad" ] || printf '        a `Named:` line asks the lineage for an entry it has not got:%s\n' "$bad"
+  [ -z "$none$bad" ] || return 1
+}
 }
 
 check "every doctrine document carries a \`Named:\` line" 'unnamed "$ROOT/doctrine"'
@@ -267,6 +293,8 @@ check "every lineage entry cites a dated work" 'undated_entry "$LINEAGE"'
 check "every lineage entry carries a dated objection or claims there is none" 'unobjected "$LINEAGE"'
 check "the lineage is found at all, so the judgements over it are not passing on an empty set" \
   '[ "$(entry_slugs "$LINEAGE" | grep -c .)" -ge 20 ]'
+check "every \`Named:\` line reaches the lineage, and reaches an entry that is there" \
+  'unlineaged "$ROOT/doctrine" "$LINEAGE"'
 
 # The controls. Each judgement above is run against a tree built to fail it, because a matcher that
 # finds no rows at all would pass every one of them in silence.
@@ -330,6 +358,24 @@ cat >"$FIX/REGISTER.md" <<'FIXTURE'
 | [`kept.md`](doctrine/kept.md) | **Something else** — asserted, with no link to the lineage | none |
 FIXTURE
 
+# A document whose `Named:` line links to a heading the lineage has not got. `undated.md` above is
+# the other half — a `Named:` line with no link at all — so the two causes are controlled apart.
+cat >"$FIX/doctrine/renamed.md" <<'FIXTURE'
+# Renamed
+
+*The discipline, stated.*
+
+**Named:** something — Somebody, *A Title*, 1970.
+[Lineage](../LINEAGE.md#renamed-since--somebody-1970).
+FIXTURE
+# One accumulator reports two causes, so the control is asserted over what the failure names.
+names_both_causes() {
+  local out
+  out=$(unlineaged "$FIX/doctrine" "$FIX/LINEAGE.md" 2>&1 || true)
+  printf '%s' "$out" | grep -q 'no lineage link on the `Named:` line of: undated\.md' &&
+    printf '%s' "$out" | grep -q 'has not got: renamed\.md#renamed-since--somebody-1970'
+}
+
 check "a row that does not reach the lineage is caught" '! unlinked "$FIX/REGISTER.md" >/dev/null'
 check "an anchor the lineage has not got is caught" \
   '! dangling_anchor "$FIX/REGISTER.md" "$FIX/LINEAGE.md" >/dev/null'
@@ -338,6 +384,8 @@ check "an entry missing a label is caught" '! thin "$FIX/LINEAGE.md" >/dev/null'
 check "an entry citing no dated work is caught" '! undated_entry "$FIX/LINEAGE.md" >/dev/null'
 check "an objection with neither a year nor the sentence that stands in for one is caught" \
   '! unobjected "$FIX/LINEAGE.md" >/dev/null'
+check "a \`Named:\` line with no link is caught, and so is one whose link resolves nowhere" \
+  'names_both_causes'
 # The anchor is the one thing here a human eye gets wrong, so the rule for building it is asserted
 # rather than left to whichever platform's sed ran it.
 check "an em dash and a comma leave the doubled hyphen the anchors carry" \

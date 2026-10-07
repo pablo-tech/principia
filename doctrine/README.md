@@ -85,9 +85,8 @@ and the usual outcome is that the document is left alone because nobody can stil
 Delegation is only useful if its edges are fixed in advance, so the document fixes them:
 publishing externally, destroying data, spending money above noise, and losing a credential
 irreversibly. The fourth cuts the opposite way from the others — a warp is explicitly authorized
-to *read* credentials, and stops only where a later step could not recover the value. And a
-publish that a merge triggers is still a publish, because the job keys on the push, not on the
-paths.
+to *read* credentials, and stops only where a later step could not recover the value. The document
+states what counts as a publish, and this index does not restate it.
 
 ### [The four controls are ordered, and the ordering is the finding](tenancy.md)
 

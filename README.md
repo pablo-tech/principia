@@ -47,6 +47,10 @@ and `bin/induction.test.sh` refuses a tree where a document, a row above, or a r
 dated work. It is also the fastest way to audit this list from outside: every rule here points at
 something older than this repository, and the day one does not, the document has to say in as many
 words that no prior work was found.
+[`LINEAGE.md`](LINEAGE.md) is where each of those names answers for itself: one entry per work, with
+the full citation, what the work claims at its own scope and in its own field, and what that field
+says against it — which is the half `INDUCTION.md` promises when it admits a rule because the name
+"imports the counter-arguments", and the half this repository owed on forty of forty-one names.
 
 Quoted like that the rules read as slogans, which is the failure mode of every list of principles.
 Two of them worked out show what the shape is actually doing.
@@ -211,6 +215,7 @@ what the repository is protecting — [`ARCHITECTURE.md`](ARCHITECTURE.md) §3.
 |---|---|
 | [`doctrine/`](doctrine/) | the protocol itself, and nothing else is normative — [`doctrine/README.md`](doctrine/README.md) is what each document holds you to |
 | [`INDUCTION.md`](INDUCTION.md) | what it takes for a rule to be admitted to `doctrine/`: named in the strongest form the field states it, cited to a specific prior work, with a register row per document and a departure where this repository takes the weaker version |
+| [`LINEAGE.md`](LINEAGE.md) | one entry per work the doctrine is named from, grouped by the literature it was earned in: the full citation, what the work claims at its own scope, what its own field says against it, and the rule here that leans on it. Not doctrine — it holds no rule and loses to a doctrine document wherever the two disagree |
 | [`AGENTS.md`](AGENTS.md) | the entry point an agent reads: which document to open before which piece of work |
 | [`guards/`](guards/) | the commit-time enforcement: file size, credentials, tenancy, and the identity a commit is made as |
 | [`bin/adapt`](bin/adapt) | the installer, idempotent, `--copy` for a machine that will not follow symlinks |

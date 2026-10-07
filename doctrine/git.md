@@ -9,7 +9,7 @@ description: Commit and branch discipline — who decides to commit and push, wh
 
 **Named:** the end-to-end argument — Jerome Saltzer, David Reed and David Clark, "End-to-End
 Arguments in System Design", 1984. Shift left — Larry Smith, "Shift-Left Testing", *Dr. Dobb's
-Journal*, 2001.
+Journal*, 2001. [Lineage](../LINEAGE.md#the-end-to-end-argument--saltzer-reed-and-clark-1984).
 
 - **Don't commit unless asked. Don't push unless asked.** A warp lifts both for the scope of one
   approved plan, and nothing else does.

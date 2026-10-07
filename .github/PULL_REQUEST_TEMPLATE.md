@@ -32,7 +32,8 @@ Tick only what applies:
       states it and cites the specific prior work it is named from — author, title, year — on a
       `Named:` line under the document's opening line and in [README.md](../README.md)'s table, with
       its departure declared, and every document under `doctrine/` has its row in
-      [INDUCTION.md](../INDUCTION.md)'s register.
+      [INDUCTION.md](../INDUCTION.md)'s register and an entry per work it is named from in
+      [LINEAGE.md](../LINEAGE.md), carrying that work's own scope and its field's objection.
 - [ ] A new or changed guard exits 0 when its policy file is absent, and the chain still fails
       closed when a guard is missing (§3, §4).
 - [ ] An adapter creates but never edits a file the tenant already has, and copies no protocol
