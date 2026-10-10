@@ -18,6 +18,27 @@ move with `main` can stop at.
 
 ### Added
 
+- **The premise the doctrine is derived from, stated in `README.md`, and the admission criterion
+  derived from it in `INDUCTION.md`.** The five conditions were a filter and not a generator: a rule
+  requiring a copyright header on every file is nameable, citable, general, observably breached and
+  has one home, so it passed all five, and nothing written down anywhere said why it obviously did
+  not belong. `README.md` now opens on the premise — work handed to an autonomous agent as an
+  objective and run without anyone watching each step, so the standard it runs under is the
+  arrangement agreed beforehand or it is nothing — cited to the two works already in `LINEAGE.md`
+  that carry it, Moltke 1869 and Ross 1973, which had been filed as `doctrine/warp.md`'s alone when
+  they are what the other six derive from too. `INDUCTION.md` gains **Where a mistake stops being
+  recoverable**, ahead of the conditions so the generator precedes the filter: a rule earns its
+  place by naming a moment at which a cost stops being recoverable, either the act that cannot be
+  undone or the signal that would have let somebody notice while it still could be. It names what
+  that excludes — elegance, simplicity, performance, delivery speed, whether the software is of any
+  use to anyone, each refused by the fourth condition rather than by modesty — and names the two
+  documents to attack if the criterion is wrong, `doctrine/git.md` and `doctrine/tenancy.md`, whose
+  rules predate delegation and derive from the premise only in their placement. Held by review
+  alone, recorded as unenforced with the decision attached. The refusal triage in `CONTRIBUTING.md`
+  and `INDUCTION.md` gains a fourth category to match — **advice**, a rule naming no such moment —
+  so a proposal can be refused on its subject rather than only on its paperwork. Nothing under
+  `doctrine/` changed: a consumer who pulls this gets no new rule and no changed rule.
+
 - **`REFUTATION.md`: one entry per occasion a rule here was stated or applied and failed.** Four to
   start, each resolving to the commit a reader can go and read. `INDUCTION.md`'s fourth condition
   admits a rule only if its breach is observable, and until now a breach that *was* observed had
