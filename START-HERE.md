@@ -70,6 +70,7 @@ fastest way to see the whole thing work at once.
 |---|---|
 | why this exists | [README.md](README.md) |
 | the rules themselves | [`doctrine/README.md`](doctrine/README.md) |
+| where a rule here has been shown to fail | [REFUTATION.md](REFUTATION.md) |
 | which rule to read before which piece of work | [AGENTS.md](AGENTS.md) → [`doctrine/`](doctrine/) |
 | what you may rely on, and what a breaking change is | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | to add support for another AI coding agent | [adapters/README.md](adapters/README.md) |

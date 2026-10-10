@@ -85,8 +85,12 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
+      # Full history here too: bin/refutation.test.sh asks git whether each commit a refutation
+      # entry names exists, and a shallow clone contains none of them — which that suite reports as
+      # a failure rather than skipping, so the clone depth is part of what the job has to supply.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: The bash a tenant may be installing with

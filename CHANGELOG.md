@@ -18,6 +18,21 @@ move with `main` can stop at.
 
 ### Added
 
+- **`REFUTATION.md`: one entry per occasion a rule here was stated or applied and failed.** Four to
+  start, each resolving to the commit a reader can go and read. `INDUCTION.md`'s fourth condition
+  admits a rule only if its breach is observable, and until now a breach that *was* observed had
+  nowhere to live — so the condition could be satisfied in writing by every document and
+  demonstrated by none, which is the shape it exists to refuse. Not doctrine and not a changelog: it
+  records the showing rather than the fix, and the page says in its own words that a rule with no
+  entry has not been vindicated. Held by `bin/refutation.test.sh` — every entry carries all four
+  labels, is dated, names a commit, and names one this repository actually contains, and every
+  document describing this repository still reaches the page. `ARCHITECTURE.md` §1 states the one
+  thing a consumer may rely on there — an entry names a commit this repository contains — and says
+  that an entry existing for a given rule is not a claim at all. `CONTRIBUTING.md` carries the
+  standing invitation that fills it — a particular rather than an argument, an issue rather than a
+  pull request, credited by whatever name the finder gives — which extends to the rules the stance
+  `INDUCTION.md` already took for a citation nobody could find.
+
 - **An eighth judgement: every `Named:` line reaches the lineage, and reaches an entry that is
   there.** Both halves are one check because a link that resolves nowhere is worse than none —
   GitHub reports a renamed heading as silence, opening the page at the top while the reader thinks

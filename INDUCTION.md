@@ -174,7 +174,9 @@ citation there would be the fifth copy — the one with no reader of its own.
 4. **Its breach is observable, and cheap to observe.** Say what the world looks like when the rule is
    broken, and say it concretely enough that someone could notice. A rule whose violation is
    indistinguishable from compliance is a preference, however well argued; it is also the shape that
-   never gets removed, because nothing can ever show it failing.
+   never gets removed, because nothing can ever show it failing. Where a showing goes once somebody
+   has one is [`REFUTATION.md`](REFUTATION.md): this condition is an offer standing against every
+   document here, and an offer with nowhere to be taken up is not an offer.
 5. **It has exactly one home.** [`doctrine/clean-code.md`](doctrine/clean-code.md) is the reason, and
    it applies hardest to this directory: two documents stating one rule produce two slightly
    different rules inside a month. A claim that is mostly an existing document's claim is a sentence

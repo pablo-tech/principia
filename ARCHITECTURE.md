@@ -42,6 +42,11 @@ The fourth place is [LINEAGE.md](LINEAGE.md), one entry per work rather than one
 and a consumer may rely on that too: every name a document is admitted on has an entry carrying that
 work's own scope and a dated objection from its own field, or the claim in as many words that none
 was found, and the same suite refuses a tree where an entry has neither.
+[REFUTATION.md](REFUTATION.md) is the same accounting after the fact: where a rule here was stated or
+applied and failed. It is not doctrine and holds nothing, and what a consumer may rely on there is
+narrow — every entry names a commit this repository contains, and `bin/refutation.test.sh` refuses a
+tree where one does not, which is what makes an entry a claim somebody can check rather than a note
+about a bad day. That an entry exists for any given rule is not a claim, and the page says so.
 
 ## 2. The tenant is the unit
 
