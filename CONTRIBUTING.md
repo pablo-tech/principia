@@ -93,6 +93,28 @@ objection was found. `bin/induction.test.sh` fails the build without any of the 
 cannot get through is not thereby wrong: it is a mechanism, a measurement, or a sentence belonging
 to a document that already exists, and all three have somewhere else to go.
 
+## Showing that a rule here is wrong
+
+This is a contribution, and it is the one this repository is least able to produce for itself.
+[INDUCTION.md](INDUCTION.md#why-the-name-is-the-load-bearing-condition) already takes that position
+for one claim: a document saying no prior work was found is falsifiable, any reader holding a
+citation can refute it, and such a refutation is "a contribution rather than an embarrassment". The
+same offer stands against the rules themselves. The fourth admission condition lets a rule in only
+if its breach is observable and cheap to observe, which is a promise made to a reader who has not
+been found yet — and a rule nothing can show failing is the shape that condition exists to refuse.
+
+What it takes is a particular rather than an argument: the rule, what it cost, and what caught it. A
+case that a rule is unwise is a disagreement about preference, and
+[README.md](README.md#a-doctrine-only-holds-if-it-travels) already says what to do with one — fork
+it, and keep the installer. An issue is enough; no pull request is expected. If the particular is a
+tenant's, describe it at the shape and file it where the section below says, which costs this
+repository nothing: what it records is the general failure and never the afternoon.
+
+It lands in [REFUTATION.md](REFUTATION.md), credited to whoever found it, by whatever name they
+give. What then happens to the rule is a separate judgement — narrowed, kept with the cost recorded,
+or removed — and the entry stands whichever it is. A page of them is the best evidence this
+repository can offer about itself; an empty one is evidence only that nobody has looked.
+
 ## Adding an adapter for another AI coding agent
 
 Most of the work is finding out which environment variable relocates that agent's configuration
