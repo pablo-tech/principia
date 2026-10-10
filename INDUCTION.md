@@ -152,6 +152,48 @@ of it, and who in the field it was taken from thinks it is wrong.
 it is the index beside them rather than doctrine ([`ARCHITECTURE.md`](ARCHITECTURE.md) §7), so a
 citation there would be the fifth copy — the one with no reader of its own.
 
+## Where a mistake stops being recoverable
+
+This is not a theory of good software. The five conditions that follow are a filter — a name, a
+work, a particular left behind, an observable breach, one home — and a rule requiring a copyright
+header on every file passes all five. What they do not say is what a rule has to be *about*.
+
+That comes from the premise [`README.md`](README.md) opens with, and is derived here rather than
+restated: work is handed to an autonomous agent as an objective and run without anyone watching
+each step. Supervision can be withdrawn exactly to the extent that no step in the run is
+unrecoverable and no report coming back can be silently false — so **a rule earns its place by
+naming a moment at which a cost stops being recoverable**, either the act that cannot be undone or
+the signal that would have let somebody notice while it still could be.
+
+Those two are one thing seen from either side. An irreversible act is where supervision has to come
+back; a lost signal is where supervision believes it can stay away and is wrong. The second is the
+dearer of the two, and is most of what is in [`doctrine/`](doctrine/) — a green suite that cannot
+fail, a plan whose goal has to be assembled out of its evidence, a document nobody corrected while
+the evidence was still good.
+
+**What this excludes is worth naming rather than implying.** Elegance, simplicity, performance,
+delivery speed, whether the software is of any use to anyone: a rule about one of those is refused
+here, and not out of modesty. Condition 4 is what refuses it — none of them has a breach anybody
+could notice, so such a rule is a preference however well argued, and nothing could ever show it
+failing. The criterion is narrow on purpose, and the price of being narrow is that it has nothing
+to say about most of what makes software worth having.
+
+It also predicts the refusals. A candidate that is nameable, citable, general, observably breached
+and homed, and that still names no moment at which something stops being recoverable, is **advice**
+— the fourth thing a refused proposal turns out to be, beside a mechanism, a measurement and a
+sentence belonging to a document that already exists.
+
+**How to refute this.** Find a document under `doctrine/` the criterion does not account for. Two
+are the ones to attack, and saying which is cheaper than waiting to be told: `git.md` and
+`tenancy.md` hold for one person working alone, and their rules predate any delegation. What
+derives from the premise there is their *placement* — at the commit rather than the push, in git
+rather than inside an agent — which is Ross's point about monitoring applied to mechanism rather
+than to a person. If not even that holds, the entry belongs in [`REFUTATION.md`](REFUTATION.md) and
+the claim in this section narrows to the documents it does account for. Nothing enforces any of
+this. It is held by review alone, which is recorded here with the decision attached rather than
+left to be discovered, as [`doctrine/as-built.md`](doctrine/as-built.md) requires of a rule nothing
+checks.
+
 ## Five conditions, and they are conjunctive
 
 1. **It is named and cited**, in the strongest form the field states it, from a specific prior work,
