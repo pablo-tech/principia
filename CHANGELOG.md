@@ -112,6 +112,16 @@ move with `main` can stop at.
 
 ### Changed
 
+- **`dangerous-flags.sh` stopped enumerating the guards `--no-verify` turns off, because the list had
+  already drifted.** Both deny messages named "the size, credentials and tenant guards" when
+  `guards/guards.sh:16` dispatches four — `identity-guard.sh` arrived and the sentence describing the
+  chain did not move with it. It was also wrong in the other direction for every consumer, since a
+  tenant adds guards of its own to the same chain and the shared message cannot know them: one
+  measured tenant discards three more than the protocol has. So the messages now name the dispatcher
+  rather than its contents — every guard `guards/guards.sh` dispatches, and every guard the tenant
+  has added to it — which is the same one-home rule `doctrine/clean-code.md` states, applied to a
+  guard's own prose. No verdict changed.
+
 - **The push guard's advice on a deleted remote ref told the reader to do the one thing that cannot
   work.** Denying a `git push --delete` is right and unchanged — an unmerged remote branch is the
   only copy left. What the denial then said was "Delete it after the merge, by hand", which is

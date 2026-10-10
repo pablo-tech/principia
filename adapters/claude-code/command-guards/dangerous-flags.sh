@@ -33,9 +33,10 @@ done
 set +f
 
 if [ -n "$skip" ]; then
-  echo "deny --no-verify (or its one-letter -n) skips the whole shared pre-commit guard chain — the size,
-credentials and tenant guards at once — so it is the one flag that turns
-every other mechanism here off. doctrine/git.md says ask first. Fix what the hook objects to, or ask."
+  echo "deny --no-verify (or its one-letter -n) skips the whole shared pre-commit guard chain at once — every
+guard guards/guards.sh dispatches, and every guard the tenant has added to it — so it is the one flag
+that turns every other mechanism here off. doctrine/git.md says ask first. Fix what the hook objects
+to, or ask."
   exit 0
 fi
 
@@ -53,8 +54,7 @@ case " $(git_clause_args "$bare" config) " in
 esac
 if [ -n "$hooks_off" ]; then
   echo "deny this points core.hooksPath away from .githooks, which turns off the same shared pre-commit chain
---no-verify does — the size, credentials and tenant guards. Fix what the
-hook objects to, or ask."
+--no-verify does, and every guard in it. Fix what the hook objects to, or ask."
   exit 0
 fi
 
