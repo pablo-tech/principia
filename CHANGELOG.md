@@ -112,6 +112,20 @@ move with `main` can stop at.
 
 ### Changed
 
+- **The push guard's advice on a deleted remote ref told the reader to do the one thing that cannot
+  work.** Denying a `git push --delete` is right and unchanged — an unmerged remote branch is the
+  only copy left. What the denial then said was "Delete it after the merge, by hand", which is
+  advice for a world where the forge keeps a merged head branch. Where it does not, the branch went
+  as the merge landed and the suggested command can only fail with `remote ref does not exist`, so
+  the guard spent the reader's next step on a command that was never going to run. The denial now
+  says that: not merged means the remote copy is the only one, merged means there is likely nothing
+  left to delete, and what a merge does leave is the local worktree and the local branch
+  `git worktree remove` does not take with it. Named as the instance rather than the rule, the way
+  `doctrine/git.md:56` already treats head-branch deletion — a setting a repository declares, whose
+  value is read on the day and can change. Found by a consumer measuring it across eight
+  repositories rather than reasoning from a default. No doctrine file changed and no verdict
+  changed; `bin/test.sh` asserts the verdict and never the prose, which is why nothing caught this.
+
 - **Construct validity is cited to Cronbach and Meehl, 1955, not Campbell and Fiske, 1959.** The
   1959 paper is convergent and discriminant *validation* by the multitrait-multimethod matrix — the
   procedure for arguing construct validity from a pattern of agreements between instruments. The
