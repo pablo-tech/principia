@@ -276,8 +276,10 @@ Four answers in the pull request body, which
 4. **What holds it**: a guard, a review, or nothing but the reader, which is the ordinary answer and
    is stated rather than implied.
 
-A rule that cannot get through that is not thereby wrong. It is a mechanism, a measurement, or a
-sentence belonging to a document that already exists — and all three of those have somewhere to go.
+A rule that cannot get through that is not thereby wrong. It is a mechanism, a measurement, a
+sentence belonging to a document that already exists, or advice — a rule naming no moment at which a
+cost stops being recoverable, which is the section above — and all four of those have somewhere to
+go.
 
 ## Leaving
 

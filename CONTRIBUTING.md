@@ -90,8 +90,11 @@ A new document also needs its row in INDUCTION.md's register, which carries the 
 departure, and an entry in [LINEAGE.md](LINEAGE.md) for each work it is named from — that work's own
 scope, and what its own field says against it, or the claim in as many words that no serious
 objection was found. `bin/induction.test.sh` fails the build without any of the four. A rule that
-cannot get through is not thereby wrong: it is a mechanism, a measurement, or a sentence belonging
-to a document that already exists, and all three have somewhere else to go.
+cannot get through is not thereby wrong: it is a mechanism, a measurement, a sentence belonging to a
+document that already exists, or advice — a rule naming no moment at which a cost stops being
+recoverable, which is the subject test
+[INDUCTION.md](INDUCTION.md#where-a-mistake-stops-being-recoverable) states — and all four have
+somewhere else to go.
 
 ## Showing that a rule here is wrong
 
