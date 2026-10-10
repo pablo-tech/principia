@@ -21,8 +21,12 @@ args="${args//\"/}"; args="${args//\'/}"
 
 case " $args " in
   *--delete*|*" -d "*|*" :"*)
-    echo "deny this push deletes a remote ref. If that branch is not merged, the remote copy is the only one left,
-and nothing in this protocol delegates deleting it. Delete it after the merge, by hand."
+    echo "deny this push deletes a remote ref. If that branch is not merged, the remote copy is the only one left
+and nothing in this protocol delegates deleting it. If it is merged, there is likely nothing left to delete:
+where the forge removes a merged head branch — GitHub's delete_branch_on_merge, which git.md files among the
+settings a repository declares — it went as the merge landed, and this command can only fail. What a merge does
+leave is local, and is the cleanup worth doing: the worktree, and the branch git worktree remove does not take
+with it."
     exit 0 ;;
 esac
 
