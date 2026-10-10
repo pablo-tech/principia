@@ -8,6 +8,15 @@ from. Written once, kept apart from the work, belonging to none of it. More on t
 [![Community Health](https://img.shields.io/badge/dynamic/json?url=https://api.github.com/repos/pablo-tech/principia/community/profile&query=$.health_percentage&suffix=%25&label=community%20health)](https://github.com/pablo-tech/principia/community)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+Work is handed to an autonomous agent as an objective and run without anyone watching each step, so
+the standard it runs under is the arrangement agreed beforehand or it is nothing at all. That is an
+old problem rather than a new one — [Moltke, 1869](LINEAGE.md#mission-command--moltke-1869) on
+ordering no more than the situation can be foreseen to hold, and
+[Ross, 1973](LINEAGE.md#the-principalagent-problem--ross-1973) on why the divergence delegation
+opens cannot be closed by watching harder, the monitoring being costly and incomplete itself — and
+what both arrive at is structural: the question is not what the standard says but where it is kept
+and what holds it there.
+
 A working standard — that a plan opens with a summary saying why, that a test must be able
 to fail, that large files never enter history — is usually written into the file an AI coding agent
 reads. Those three are real rules, they are written down here, and they are the subject of the
