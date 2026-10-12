@@ -70,4 +70,32 @@ check "the version pattern can fail" 'fires "$VERSIONS" "unchanged since Sonnet 
 check "the price pattern can fail" 'fires "$PRICES" "the cross-check costs 4 cents a turn"'
 check "the tuning pattern can fail" 'fires "$TUNING" "extended thinking widens a tight frame"'
 
+# Every guard the chain dispatches is named by a doctrine document.
+#
+# A guard with no document above it is the mirror image of the refusal `INDUCTION.md` is built to
+# make: a mechanism enforcing a rule nobody wrote down, which an agent reading the doctrine has no
+# way to anticipate and meets for the first time as a refused commit. `credentials-guard.sh` was
+# exactly that until `git.md` gained its section — the most unrecoverable moment in the repository,
+# enforced in the chain and named in no document.
+#
+# The list is read off the dispatcher rather than restated here, because a copy of it is the drift
+# `clean-code.md` names and the copy would still pass on the day a fifth guard was added.
+guard_names() { sed -n 's/^for g in \(.*\); do$/\1/p' "$DIR/../guards/guards.sh"; }
+named_in_doctrine() { grep -qF -- "guards/$1" "$DIR"/../doctrine/*.md; }
+undocumented() {
+  local g missing=""
+  for g in $(guard_names); do
+    named_in_doctrine "$g" || missing="$missing $g"
+  done
+  [ -z "$missing" ] && return 0
+  printf '        named by no doctrine document:%s\n' "$missing"
+  return 1
+}
+
+# The dispatch list being unreadable is the fail-open case rather than a broken test: `guard_names`
+# answers with nothing, the loop below runs zero times, and the check passes a chain it never read.
+check "the dispatch list is readable from guards.sh" '[ -n "$(guard_names)" ]'
+check "every dispatched guard is named by a doctrine document" 'undocumented'
+check "the coverage check can fail" '! named_in_doctrine not-a-guard.sh'
+
 finish

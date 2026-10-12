@@ -18,6 +18,29 @@ move with `main` can stop at.
 
 ### Added
 
+- **The credentials rule gets a principle: `doctrine/git.md` gains *Credentials: rotation is the only
+  removal*.** `guards/guards.sh` dispatches four guards and three of them traced to a doctrine
+  document; the credentials guard traced to none — so the most unrecoverable moment the repository
+  has a mechanism for was the one no document named, and an agent reading the doctrine met it for the
+  first time as a refused commit. The section states what the mechanism was already assuming:
+  deleting a committed secret does not remove it, because a pushed branch has been fetched and a fork
+  holds its own copy, so the act that ends the exposure is at the issuer and the deletion is
+  housekeeping afterwards. It names the guard by path, names both `.protocol/credentials-allow-*`
+  files as the only exemption there is, and says in as many words that absence is their strict
+  setting rather than their off switch — the one thing about that guard which surprises everybody who
+  reads it, and which until now was written only in the guard's own header. `doctrine/warp.md`'s
+  authorization to commit a credential to the repository that holds them gains the gate it omitted:
+  that is a repository whose own tracked declaration says it holds them, and a warp refused there has
+  found a repository that never made one, which is a stop. No new `LINEAGE.md` entry — shift left and
+  the end-to-end argument are already `git.md`'s own `Named:` line, and its register row in
+  `INDUCTION.md` already states the reversibility departure this rule is an instance of.
+  `bin/doctrine.test.sh` is the practice half and is what makes the class non-recurring: every guard
+  the chain dispatches must be named by path in at least one `doctrine/*.md`, with the list read off
+  the dispatcher rather than restated, and a separate check that the list was read at all — because a
+  dispatch list the suite cannot parse is a chain it passes without having looked at. Two documents
+  that counted the enforced rules as **two** (`doctrine/README.md` and `README.md`) now name all
+  four and the document each belongs to, in the same words.
+
 - **`doctrine/tenancy.md` gains *A control that cannot tell whether it applies refuses*, and
   `guards/guards.sh` gains the suite it never had.** The document already applied fail-safe defaults
   to the policy a guard reads — a repository carrying no file has not opted in, a missing guard in

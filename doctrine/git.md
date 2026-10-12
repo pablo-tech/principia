@@ -1,6 +1,6 @@
 ---
 name: git
-description: Commit and branch discipline — who decides to commit and push, what a commit message says, what a pull request declares about the phase that authorized it, how a promotion works, why the file-size ceiling is enforced at commit rather than push, why a compatibility shim defers a failure past the point where it is cheap, and why every repo-scoped command names its repo.
+description: Commit and branch discipline — who decides to commit and push, what a commit message says, what a pull request declares about the phase that authorized it, how a promotion works, why the file-size ceiling is enforced at commit rather than push, why a committed secret is rotated rather than removed and what declares a repository entitled to hold one, why a compatibility shim defers a failure past the point where it is cheap, and why every repo-scoped command names its repo.
 ---
 
 # Git
@@ -152,3 +152,49 @@ cheap end of that trade.
 
 `core.hooksPath` is local configuration and does **not** travel with a clone. On a fresh clone:
 `git config core.hooksPath .githooks`. The shim fails closed if the guards cannot be found.
+
+## Credentials: rotation is the only removal
+
+**Deleting a committed secret does not remove it.** Dropping the file, amending the commit,
+rewriting the branch — each of those changes what the next reader sees and none of them changes what
+has already been read. A pushed branch has been fetched, a fork holds its own copy, and whatever
+reads the forge read it before the rewrite was written. The one act that ends the exposure happens
+at the issuer: the value stops working, and then it no longer matters who holds it. **A secret that
+reached history is rotated, and deleting it is housekeeping afterwards.**
+
+Which leaves the commit as the last moment the value is still private, and the only moment a
+mechanism can act on. [`guards/credentials-guard.sh`](../guards/credentials-guard.sh) is what holds
+it, dispatched by the same shim, and it judges two things that are not the same question: what a
+staged path is **called**, and what a staged byte **contains**. Both are needed, because a path rule
+knows only the places a secret was expected to land and a secret arrives by landing somewhere new —
+a capture script writes its output under whatever name it was given, and a run that failed part way
+leaves the file behind anyway.
+
+**The breach is observable, and that is the half the gate cannot supply.** A secret already in
+history fails nothing and refuses nothing — the commit it arrived in was accepted, and every commit
+after it reads clean. So the same two rules are run over the whole tree rather than over one staged
+set (`--scan-tree`), which is what a repository is asked before it is made public and what a
+continuous-integration job can ask on every branch. One is the preventive half and the other the
+detective half, and the second is the one that answers *is one already in here*, which is the
+question that decides whether a rotation is owed.
+
+A repository that legitimately tracks credential-shaped material declares it, and the declaration
+is the only exemption there is: `.protocol/credentials-allow-name` for paths whose name has the
+shape and whose content does not, and `.protocol/credentials-allow-content` for the fixtures whose
+whole job is to contain what they pin. Both are read as one path glob per line, not as the regular
+expressions the tenancy declaration carries — so `*` in one of these files is every path, and the
+same character in a denylist would be a line that does not compile. Entries are listed one at a
+time rather than by class, because an exemption covering a class of file is one file per class to
+put a secret in; a repository whose job *is* to hold credentials lists `*` in both, which is that
+repository saying so rather than a gap in the rule. **Both files are allow-lists, so absence is the
+strict setting and not the off switch** — a repository carrying neither exempts nothing and is
+judged at the guard's strictest. That is the opposite of how the tenancy declaration reads, where
+an absent file means the repository never opted in, and they are opposite for the same reason: one
+file lists what is refused and the other lists what is permitted.
+
+**Why at commit rather than at review:** a review is the first point at which a second person reads
+the diff, and by then the value is on a branch somebody else can fetch — a reviewer can report a
+secret and cannot unpublish one. This is the same lever the ceiling above is placed on, moved one
+notch further left because the two failures cost different things. An oversized blob costs a history
+rewrite, which is work. A secret costs the rotation of every system that value opens, and that work
+is owed whether or not anybody noticed.
