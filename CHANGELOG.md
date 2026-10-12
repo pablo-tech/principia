@@ -11,10 +11,35 @@ where you find out what pulling gets you.
 Breaking changes are named as such, and are what a tag is now cut for. A change to the doctrine
 frontmatter contract, to the guard resolution order, to a policy file's name or meaning, or to the
 adapter contract breaks every consumer the moment they pull, so it is announced here first and
-given a version number — a name for the commit before it, which a consumer who would rather not
-move with `main` can stop at.
+given a version number. **The tag names the commit that carries the break, not the last one
+without it** — it is the release that change is in, and a consumer who would rather not move with
+`main` pins the tag below it. That sentence read the other way until `2.0.0`, which is the first
+breaking change there has been to read it against, and either reading left a consumer pinning the
+wrong commit.
 
 ## [Unreleased]
+
+## [2.0.0] — 2026-10-12
+
+**One thing breaks, and a tenant adapted before this release meets it on its next commit.**
+`bin/adapt` used to seed an empty `.protocol/identity` into every tenant, and the identity guard
+exited 0 on an empty allow-list — so the file claimed *everybody* while two documents said it
+claimed *nobody*. Absent and present-and-empty are now different states: absent stands the guard
+down and the installer no longer writes the file, and a list naming nobody refuses every commit
+until somebody says who. **Fill the file in, or delete it** — deleting it is the state the tenant
+was actually in, and `tenant-template/.protocol/identity` is there to be copied back when it
+matters. A second behaviour change reaches only a repository that had relied on one: the credentials
+guard's two allow-lists are read from the index, so an exemption in an untracked `.local` overlay,
+or in an unstaged edit, no longer grants one.
+
+Everything else here is additive. The release is four phases of one audit — the repository read
+against its own sentence, *"The protocol is these documents. Everything else in this repository
+exists to install them or to enforce them"* — and what the audit found was not fifty unrelated
+defects but four classes of one shape: a claim in a document and a behaviour in a mechanism that
+disagree, where the document is the only evidence and so it reads as coverage. That shape was
+already named in `doctrine/as-built.md`, about a rule nothing enforces, and nothing applied it to
+this repository's own as-built documents. It does now, and three of the counts those documents make
+are derived from the mechanisms they count rather than written down.
 
 ### Added
 
