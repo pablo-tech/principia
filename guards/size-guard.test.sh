@@ -24,4 +24,15 @@ check "the staged blob is what counts, not the file on disk" "! guard"
 stage $((2 * MB)) two.bin
 check "PROTOCOL_MAX_FILE_MB lowers the ceiling" "! (cd '$t/repo' && PROTOCOL_MAX_FILE_MB=1 bash '$DIR/size-guard.sh' >/dev/null 2>&1)"
 
+# Both were seen passing against the guard as it stood: a renamed path reached no guard at all, and
+# an unreadable index read as an empty one.
+stage $((25 * MB + 1)) over.bin
+git -C "$t/repo" commit -qm x
+git -C "$t/repo" mv over.bin renamed.bin
+check "an oversized file renamed is still measured, not skipped as a rename" "! guard"
+
+stage $((2 * MB)) two.bin
+check "an index git cannot read refuses rather than reading as nothing staged" \
+  "! (cd '$t/repo' && printf x > .git/bad-index && GIT_INDEX_FILE=.git/bad-index bash '$DIR/size-guard.sh' >/dev/null 2>&1)"
+
 finish

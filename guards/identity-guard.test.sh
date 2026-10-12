@@ -149,4 +149,15 @@ as "Someone Else" "else@example.test"
 commit "one it does not"
 check "and finds the commit it does not" "! scan"
 
+# An allowlist that does not compile already refused every identity, which is the safe direction —
+# so what is pinned here is that the refusal says which line is broken. Without that it reads as a
+# verdict about who you are, and the two are fixed by opposite edits.
+claims 'Someone (unverified'
+as "Someone" "someone@example.test"
+check "an allowlist that does not compile refuses" "! guard"
+check "and the refusal names the line grep would not take" \
+  "[ -n \"\$( (cd '$t/repo' && bash '$DIR/identity-guard.sh' 2>&1) | grep -F 'Someone (unverified' )\" ]"
+check "rather than reading as a verdict about the identity" \
+  "[ -z \"\$( (cd '$t/repo' && bash '$DIR/identity-guard.sh' 2>&1) | grep -F 'does not claim' )\" ]"
+
 finish

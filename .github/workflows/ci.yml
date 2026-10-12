@@ -26,14 +26,22 @@ jobs:
         run: bin/test.sh
 
       # Every bash script, found rather than listed — the same reason bin/test.sh finds its suites.
-      # Two of them have no .sh extension, so the shebang is what identifies them; the two helpers
-      # that are only ever sourced have no shebang and are reached by -x from the scripts that
-      # source them, which is also what makes their `source=` directives worth carrying.
+      # Two selections, unioned, because neither is complete on its own: a shebang scan finds the
+      # three scripts with no .sh extension and misses the helpers that are only ever sourced, which
+      # have no shebang to find; a name scan finds those and misses the three. Selecting by shebang
+      # alone is what left `guards/policy.sh`, `bin/check.sh` and `bin/tenant.sh` out of this sweep,
+      # reached only as -x dependencies of the scripts that source them — so a finding in one was
+      # reported against whichever caller happened to be checked, or not at all if the directive
+      # above it named a different shell. Their `shell=bash` directives are what makes the second
+      # selection work, the same way their `source=` directives serve the first.
       - name: shellcheck
         run: |
-          mapfile -t scripts < <(git ls-files | while read -r f; do
-            head -c 64 "$f" | grep -qE '^#!.*\b(bash|sh)\b' && printf '%s\n' "$f"
-          done)
+          mapfile -t scripts < <({
+            git ls-files '*.sh' 'bin/*'
+            git ls-files | while read -r f; do
+              head -c 64 "$f" | grep -qE '^#!.*\b(bash|sh)\b' && printf '%s\n' "$f"
+            done
+          } | sort -u)
           printf 'checking %d scripts\n' "${#scripts[@]}"
           shellcheck -x "${scripts[@]}"
 

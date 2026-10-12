@@ -42,6 +42,25 @@ fi
 [ -n "$allowed" ] || exit 0
 PATTERN="$(printf '%s' "$allowed" | paste -sd'|' -)"
 
+# The same construct as tenant-guard's, and it fails the other way: `grep` exits 2 on a pattern it
+# cannot compile, `claimed` reads that as "not claimed", and every identity is refused. That is
+# fail-closed and so the right direction — but the refusal it produces says the identity is not on
+# the list, when the list is what is broken, and the two are fixed by opposite edits. Named here
+# instead.
+if ! compiles "$PATTERN"; then
+  echo "pre-commit: refusing to commit: $where does not compile as a regular expression."
+  echo "pre-commit: These lines are what grep would not take:"
+  while IFS= read -r term; do
+    compiles "$term" || echo "pre-commit:   $term"
+  done <<<"$allowed"
+  echo "pre-commit:"
+  echo "pre-commit: Until it compiles, every identity is refused — which is the safe direction and"
+  echo "pre-commit: not the one to read as a verdict about who you are. Each line is an extended"
+  echo "pre-commit: regular expression: a literal parenthesis, brace or bracket in a name is escaped."
+  echo "pre-commit: (bypass: git commit --no-verify)"
+  exit 1
+fi
+
 claimed() { grep -qiE -- "$PATTERN" <<<"$1"; }
 
 # `git var` answers with what this commit would actually be made as — the configuration git will

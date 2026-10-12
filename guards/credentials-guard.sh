@@ -142,21 +142,44 @@ offends() { # path content
   return 1
 }
 
+require_index credentials-guard
+
+# Offenders are newline-delimited, not space-joined: `my deploy.env` was reported as two paths, and
+# a refusal naming a file that does not exist is one the reader has to second-guess.
+#
+# Both loops read `-z`. `core.quotePath` defaults on, so git hands back `"caf\303\251.env"` for a
+# path with a byte over 0x7f — which ends in a quote rather than `.env`, so the shape rule missed it,
+# and is not a path `git show` resolves, so the content rule read an empty string and missed it too.
+# One omission, both axes. `size-guard.sh` has always read `-z` and says why.
 offenders=""
 if [ "${1:-}" = "--scan-tree" ]; then
-  while IFS= read -r path; do
+  while IFS= read -r -d '' path; do
+    # `-e` follows the link and is false for a dangling one, so a tracked symlink was skipped
+    # entirely — the shape rule included, and `bin/adapt` installs tracked symlinks into every
+    # tenant by design. The path rule is asked first and the content is read through `git show`,
+    # which answers with the link's target rather than with the file it points at.
+    if [ -L "$path" ]; then
+      offends "$path" "$(git show ":$path" 2>/dev/null | tr -d '\0')" && offenders="$offenders
+$path"
+      continue
+    fi
     [ -f "$path" ] || continue
-    offends "$path" "$(tr -d '\0' <"$path" 2>/dev/null)" && offenders="$offenders $path"
-  done < <(git ls-files)
+    offends "$path" "$(tr -d '\0' <"$path" 2>/dev/null)" && offenders="$offenders
+$path"
+  done < <(git ls-files -z)
 else
-  while IFS= read -r path; do
-    offends "$path" "$(git show ":$path" 2>/dev/null | tr -d '\0')" && offenders="$offenders $path"
-  done < <(git diff --cached --name-only --diff-filter=AM)
+  # `--diff-filter=d` excludes deletions and keeps everything else, where `=AM` kept only additions
+  # and modifications: rename detection is on by default, so `git mv notes.txt deploy.env` is
+  # reported as `R` and was handed to no guard at all.
+  while IFS= read -r -d '' path; do
+    offends "$path" "$(git show ":$path" 2>/dev/null | tr -d '\0')" && offenders="$offenders
+$path"
+  done < <(git diff --cached --name-only --diff-filter=d -z)
 fi
 
 if [ -n "$offenders" ]; then
   echo "pre-commit: refusing to commit credential material:"
-  for f in $offenders; do echo "pre-commit:   $f"; done
+  printf '%s\n' "$offenders" | sed '/^$/d;s/^/pre-commit:   /'
   echo "pre-commit:"
   echo "pre-commit: Credentials belong in the repository that exists to hold them, not this one —"
   echo "pre-commit: that split is what keeps this repository portable to machines you do not own."
