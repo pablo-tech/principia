@@ -260,11 +260,25 @@ check "an identity the tenant does not claim is a problem, named against the ten
   "refuses \"which \$under/.protocol/identity does not claim\""
 
 # A tenant installed before `.protocol/identity` existed carries none, and the guard keys its fallback
-# on the file rather than on the repository's shape — so this repository inherits through it.
+# on the file rather than on the repository's shape — so with no file in either place there is nothing
+# here to enforce, and which identity a commit is made as goes back to being a question about this
+# machine. A note, because it is a shape and not a fault.
 worked_on
 rm -f "$under/.protocol/identity"
-check "a tenant carrying no list of its own leaves this repository claiming nobody" \
+check "no list in either place is reported as nothing having opted in" \
   "says 'no identity declared'"
+check "and not as a repository claiming nobody, which is the opposite state" \
+  "! grep -q 'claims none' <<<\"\$(doctor 2>&1)\""
+
+# Present and naming nobody is that opposite state, and the guard refuses every commit in it — so
+# this is a fault and not a note. The two were one `note` until 2026-10-12, which is how the report
+# came to describe the state that refuses everything in the words of the state that refuses nothing.
+worked_on
+printf '# nobody is named here\n' >"$under/.protocol/identity"
+check "a tenant's list that names nobody is a fault, no commit here being possible" \
+  "refuses 'no commit here can be made'"
+check "and the remedy is the tenant's file or a list of this repository's own, both named" \
+  "refuses \"\$under/.protocol/identity\" && refuses 'its own .protocol/identity'"
 
 # Two checkouts is what every machine has — `bin/adapt` writes the well-known path and a tenant's
 # `protocol/` is its own — so the pair of paths is not the finding, and a note that fired on it would

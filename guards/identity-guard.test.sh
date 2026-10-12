@@ -32,8 +32,26 @@ scan() { (cd "$t/repo" && bash "$DIR/identity-guard.sh" --scan-history "$@" >/de
 scratch_repo "$t/repo" >/dev/null
 check "a repository that claims no identity is not policed" "guard"
 
+# A file naming nobody is not the same state, and it is the whole hinge of this guard: carrying the
+# file is how a repository opts in (ARCHITECTURE.md §3), so a list with no lines in it is the
+# repository answering "nobody" — which refuses every identity there is. The two are the same picture
+# to a test for a non-empty list, and until 2026-10-12 this suite asserted they were the same thing.
 claims '# nobody is named here'
-check "nor is one whose list is only comments" "guard"
+check "but one whose list is only comments claims nobody, and so refuses everybody" "! guard"
+
+# Said in its own words, not through the refusal for an unclaimed identity: that one reports an
+# identity the list does not carry and this one has no list to carry anything, so the two are fixed
+# by opposite edits. Both remedies are real and which is right is the repository's to say, so the
+# message carries both rather than reading as a verdict about who you are.
+# shellcheck disable=SC2034 # read inside the check expressions below
+empty_report="$( (cd "$t/repo" && bash "$DIR/identity-guard.sh" 2>&1) )"
+check "and the refusal names the file, not the identity, which is what is wrong here" \
+  "grep -q 'names no identity at all' <<<\"\$empty_report\" &&
+   grep -q '\.protocol/identity' <<<\"\$empty_report\" &&
+   ! grep -q 'does not claim' <<<\"\$empty_report\""
+check "and names both ways out, naming them being the reason it is not a verdict" \
+  "grep -q 'name the identities' <<<\"\$empty_report\" &&
+   grep -q 'or delete' <<<\"\$empty_report\""
 
 claims 'someone@example\.test'
 as "Someone" "someone@example.test"
@@ -105,11 +123,17 @@ check "and the refusal names the tenant's file, which is not in this repository"
 
 # Carrying the file is how a repository opts into the rule (ARCHITECTURE.md §3), so carrying an
 # empty one is a repository saying it claims nobody rather than one that has said nothing. The
-# tenant's list does not reach past an answer the repository has already given.
+# tenant's list does not reach past an answer the repository has already given — which here means
+# the tenant's list cannot rescue it, and the repository refuses its own commits until it decides.
 claims '# this repository claims nobody, and means it'
 under "$t/tenant"
 as "Someone Else" "else@example.test"
-check "a list of its own, even an empty one, is the only list it is judged by" "guard"
+check "a list of its own, even an empty one, is the only list it is judged by" "! guard"
+# shellcheck disable=SC2034 # read inside the check expressions below
+own_report="$( (cd "$t/repo" && bash "$DIR/identity-guard.sh" 2>&1) )"
+check "and it is held to its own empty list by name, the tenant's going unread" \
+  "grep -q 'refusing to commit: \.protocol/identity names no identity' <<<\"\$own_report\" &&
+   ! grep -q \"\$t/tenant\" <<<\"\$own_report\""
 
 # A tenant that has moved or been removed leaves the setting behind pointing at nothing. Refusing
 # every commit in that repository until somebody re-runs an installer would be a guard picking a

@@ -31,7 +31,9 @@ at commit time.>
 The tenants this repository is **not** are declared in [`.protocol/tenant`](.protocol/tenant), and a
 commit naming one is refused. Add a tenant there when you take one on — not to this file.
 
-The identities this repository's commits may be made as are declared in
-[`.protocol/identity`](.protocol/identity), and a commit made as another is refused. A clone
-carries no identity of its own, so a machine's default is what a commit here would otherwise be
-made as.
+The identities this repository's commits may be made as are declared in `.protocol/identity`, and a
+commit made as another is refused — **if this repository carries that file**, which the installer
+deliberately does not create. A clone carries no identity of its own, so a machine's default is what
+a commit here would otherwise be made as, and until somebody decides, that is the answer. Copy
+`protocol/tenant-template/.protocol/identity` in and fill it in to decide: carrying it is how a
+repository opts in, so an empty one refuses every commit rather than policing none.

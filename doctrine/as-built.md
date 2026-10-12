@@ -1,6 +1,6 @@
 ---
 name: as-built
-description: The document that describes a system is part of that system — changed in the same change that changes the system, corrected on the spot when it is merely found to be wrong, recording a rule nothing enforces as unenforced with the decision attached, and shipping the measurement that would settle any comparative claim it makes.
+description: The document that describes a system is part of that system — changed in the same change that changes the system, corrected on the spot when it is merely found to be wrong, recording a rule nothing enforces as unenforced with the decision attached, shipping the measurement that would settle any comparative claim it makes, and checking a claim about a mechanism against the mechanism rather than leaving a sentence that reads as coverage.
 ---
 
 # As-built
@@ -47,6 +47,22 @@ the system, which is the cost the document existed to remove.
   because the party making the claim and the party publishing it are the same one, so nobody with an
   incentive to try will contradict it. Either the measurement that would settle it ships beside the
   claim, or the claim is cut back to what the document can show.
+- **A claim a document makes about a mechanism is checked against the mechanism, or it is cut back to
+  what can be checked.** This is the unenforced-rule line above read from the other end, and the
+  two failures are mirror images that feel nothing alike: there a rule is written down and nothing
+  carries it out, here something is carried out and the document says the wrong thing about what.
+  The argument is the same one and it is the reason this needs its own line — a false claim about a
+  mechanism leaves no trace either, so the document asserting it is the only evidence there is, and
+  it reads as coverage exactly the way an unenforced rule does. A count that was true when it was
+  typed, a list called complete, a sentence about what something does when nothing has configured
+  it: each is a claim a reader will act on and none of them fails anything when it goes wrong. The
+  comparative-claim line above is this one narrowed to *faster* and *cheaper*, where the
+  measurement has to be taken; here it does not, because what would settle the claim is the
+  mechanism itself and it is in the same repository as the sentence. So either something derives
+  the claim from the mechanism, or the claim is recorded as unenforced with the decision attached,
+  under the line above. **A document that describes its own enforcement is as-built documentation
+  about the thing its reader is standing in**, which is why the rule belongs here and not in a
+  document about tests.
 
 ## A decision record
 

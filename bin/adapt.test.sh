@@ -24,11 +24,12 @@ check "the protocol is reachable from the tenant root" "[ -d '$t/tenant/protocol
 check "the protocol entry is gitignored, being a machine-local path" "grep -qx '/protocol' '$t/tenant/.gitignore'"
 check "the tenant gets an AGENTS.md to fill in" "[ -f '$t/tenant/AGENTS.md' ]"
 check "the tenant gets a denylist to fill in" "[ -f '$t/tenant/.protocol/tenant' ]"
-# Empty as it is seeded, so it polices nothing until somebody fills it in. A tenant that never
-# does is exactly where it was before the file existed, which is what makes seeding it safe.
-check "and an identity allowlist, which claims nobody until it is filled in" \
-  "[ -f '$t/tenant/.protocol/identity' ] &&
-   [ -z \"\$(sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' '$t/tenant/.protocol/identity')\" ]"
+# And NOT an identity allow-list, which is the one seed this installer does not write. Carrying that
+# file is how a repository opts into the rule and an empty one claims nobody, so seeding it would
+# refuse the first commit in a tenant that has not yet decided whose commits these are — the state
+# this check asserted, and named "claims nobody until it is filled in", until 2026-10-12.
+check "and no identity allow-list, which would refuse the first commit here" \
+  "[ ! -e '$t/tenant/.protocol/identity' ]"
 check "the pre-commit shim is installed and executable" "[ -x '$t/tenant/.githooks/pre-commit' ]"
 check "git is pointed at it, which a clone does not carry" "[ \"\$(git -C '$t/tenant' config --get core.hooksPath)\" = .githooks ]"
 check "the well-known path resolves to this checkout" "[ \"\$(readlink -f '$t/home/.principia')\" = '$PROTOCOL' ]"
@@ -227,6 +228,23 @@ adapt --copy --agent claude-code >/dev/null
 check "--copy leaves no symlink for a machine that will not follow one" \
   "[ -z \"\$(find '$t/tenant' -type l -not -path '*/.git/*')\" ] &&
    [ -f '$t/tenant/skills/warp/SKILL.md' ] && [ -f '$t/tenant/commands/turn-cost.md' ]"
+# A copy of a clone is a clone, and its `.git` is what would make it one a `git pull` could move on
+# — which is the opposite of what --copy is for, so the copy this run made has it removed.
+check "and the history of the copy it made is removed, that copy not being a checkout" \
+  "[ ! -e '$t/tenant/protocol/.git' ]"
+
+# But only the copy THIS RUN made. A tenant that put its own clone at protocol/ and keeps it current
+# by hand is a shape `bin/doctor` reports on, and it is skipped above rather than installed — so
+# until 2026-10-12 this ran anyway and deleted that clone's entire history, reporting one word.
+fresh
+mkdir -p "$t/tenant/protocol/.git" && printf 'ref: refs/heads/main
+' >"$t/tenant/protocol/.git/HEAD"
+# shellcheck disable=SC2034 # read inside the check expression below
+out="$(adapt --copy --agent claude-code)"
+check "a protocol/ the tenant put there itself keeps its history, being nothing this run created" \
+  "[ -f '$t/tenant/protocol/.git/HEAD' ]"
+check "and the installer says it skipped it rather than reporting a strip it did not do" \
+  "grep -qE '^  skip +protocol$' <<<\"\$out\" && ! grep -q 'strip' <<<\"\$out\""
 
 fresh
 adapt >/dev/null
