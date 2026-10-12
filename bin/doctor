@@ -299,16 +299,19 @@ else
   # is worked on under, and one that carries the file is judged by it alone, empty or not — carrying
   # it is how a repository opts in, and an empty one claims nobody. So the fallback keys on `policy`'s
   # exit status, which separates "no such file" from "a file claiming nobody"; the two are the same
-  # picture to a test for a non-empty list, and they mean opposite things.
+  # picture to a test for a non-empty list, and they mean opposite things — one is a repository that
+  # never opted in, where who a commit is made as is a question about this machine, and the other
+  # refuses every commit until somebody answers it. So they are reported as different things below.
   whose="this repository"
   where=".protocol/identity"
+  declared=1
   if ! allowed="$(cd "$TENANT" && . "$PROTOCOL/guards/policy.sh" && policy identity)"; then
-    if [ -n "$UNDER" ]; then
-      allowed="$(cd "$TENANT" && . "$PROTOCOL/guards/policy.sh" && policy identity "$UNDER")" || allowed=""
+    if [ -n "$UNDER" ] &&
+       allowed="$(cd "$TENANT" && . "$PROTOCOL/guards/policy.sh" && policy identity "$UNDER")"; then
       whose="this repository's tenant"
       where="$UNDER/.protocol/identity"
     else
-      allowed=""
+      declared=""; allowed=""
     fi
   fi
   # The file is named and never read out: the identity below is this machine's own git configuration,
@@ -316,8 +319,18 @@ else
   # other and its lines stay unprinted.
   held=""
   [ "$whose" = "this repository" ] || held="held to $where"
-  if [ -z "$allowed" ]; then
-    note "commits here are made as $ident" "no identity declared — $where claims none"
+  if [ -z "$declared" ]; then
+    note "commits here are made as $ident" "no identity declared — nothing here has opted in"
+  elif [ -z "$allowed" ]; then
+    # Not a note: the guard refuses every commit in this state, so nothing can be committed here at
+    # all. A file naming nobody is an answer, and the remedy depends on whose answer it is.
+    if [ "$whose" = "this repository" ]; then
+      bad "no commit here can be made — $where names no identity" \
+          "name them in $where, or delete it and the question goes back to this machine"
+    else
+      bad "no commit here can be made — $where names no identity" \
+          "name them there, or give this repository its own .protocol/identity"
+    fi
   elif printf '%s' "$ident" | grep -qiE -- "$(printf '%s' "$allowed" | paste -sd'|' -)"; then
     ok "commits here are made as $ident" "$held"
   else

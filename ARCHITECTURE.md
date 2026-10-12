@@ -61,8 +61,22 @@ carries five things, all of which `bin/adapt` installs:
 | `.protocol/protocol-version` | which commit of this protocol installed the tenant (§11) | the installer, rewritten every run |
 | `.githooks/pre-commit` | the shim that runs `protocol/guards/guards.sh` (§5) | seeded, then the tenant's |
 
-Nothing in this repository knows the name of any tenant, and nothing in a tenant repository is
-copied from this one except the seeds, which exist to be edited.
+Nothing in this repository knows the name of any tenant. **What arrives in a tenant arrives one of
+three ways, and which one it is decides who may edit it:**
+
+| How | What | Who may edit it |
+|---|---|---|
+| **Linked** | `protocol/`, and every `skills/<name>/SKILL.md` and `commands/<name>.md` an adapter installs | nobody — editing one edits this repository |
+| **Seeded** | the four files above that are not `protocol/`, copied once from `tenant-template/` and skipped ever after | the tenant, which is what they are for |
+| **Written whole** | an agent's own configuration an adapter composes — `CLAUDE.md`, `settings.json`, `.agents/cortex/*` — written once if absent, never touched again | the tenant, and §1 is why: an adapter is deletable, so what it writes is not doctrine |
+
+So a tenant does carry copies of material from this repository, and the number of them is not fixed
+— `--copy` turns every link in the first row into a copy, for a machine that will not follow one,
+and that is the mode whose cost is that a `git pull` here no longer reaches it. `bin/doctor` reports
+a copied install as a note for exactly that reason (§11). This sentence read "nothing in a tenant
+repository is copied from this one except the seeds" until 2026-10-12, which was false in both
+directions at once: four of the installed paths are copies in the default mode and all of them are
+under `--copy`.
 
 ## 3. A guard reads a policy file the tenant carries, and what an absent policy means is the guard's own decision
 
@@ -121,6 +135,15 @@ and inheriting those would hand a repository the tenant's holes. The rule stands
 repository that carries `.protocol/identity` is judged by it and by nothing else, empty or not,
 because carrying the file is how a repository opts in and an empty one claims nobody.
 
+**Which is why `bin/adapt` does not install `.protocol/identity`, and is the one seed it withholds.**
+An empty list claims nobody and so refuses every commit, so seeding one would refuse the first
+commit in a tenant that has not yet decided whose commits these are — and the tenant would read the
+refusal as the installer being broken rather than as a question it has not answered. The template
+carries the file for a tenant to copy in and fill in on the day the answer matters. It *was* seeded
+empty until 2026-10-12, under a test whose own name said "claims nobody", while the guard exited 0
+on an empty list and claimed everybody; the document said one thing, the installer created the
+other, and nothing was enforced in any tenant on the machine.
+
 **`bin/doctor --in <dir>` reads this shape rather than a tenant missing its install.** It is the one
 place the wiring above is visible at all, local configuration being invisible in a tree, and before
 it knew the shape it reported a correctly wired repository as a broken tenant and named `bin/adapt`
@@ -142,7 +165,15 @@ The policy files in use:
 | `.protocol/identity` | `identity-guard.sh` | extended regular expressions; the identities this repository's commits may be made as. The one policy with a fallback — see above |
 | `.protocol/credentials-allow-name` | `credentials-guard.sh` | globs exempt from the *shape* rule — a file whose name looks like a credential and holds none |
 | `.protocol/credentials-allow-content` | `credentials-guard.sh` | globs that may *contain* credential-shaped text — the suites whose fixtures pin these rules |
-| `.protocol/<name>.local` | whichever guard reads `<name>` | the untracked overlay, appended to the tracked file of that name |
+| `.protocol/<name>.local` | whichever guard reads `<name>` | the untracked overlay, appended to the tracked file of that name — **except for the two `credentials-allow-*` files, which are read from the index alone** |
+
+**The overlay is for a list that tightens, and the exception is the proof of it.** Its whole
+justification above is that a *denylist* in a repository anyone can read cannot state what it
+refuses. An exemption list is the other kind: an overlay there would be a hole in no commit, which
+review never sees and no clone carries, so `credentials-guard.sh` reads its two files with
+`git show :<path>` and consults no overlay at all. The same read is what makes an unstaged edit to
+the tracked file grant nothing — the index is what a commit would record, which is §4's rule for
+every staged blob — so an exemption added in the same commit still works and arrives in the diff.
 
 Comments are whole-line only. A policy line is a path or a regular expression and may legitimately
 contain `#`.
@@ -170,8 +201,32 @@ commit is made as is neither a staged path nor a staged byte: it is `git var GIT
 asked of git rather than derived, so the guard judges the identity the commit will actually carry
 rather than a second implementation of that lookup.
 
-The bypass is `git commit --no-verify`, deliberately and universally. A control with no bypass is
-a control that gets uninstalled.
+**The sanctioned bypass is `git commit --no-verify`, deliberately and universally.** A control with
+no bypass is a control that gets uninstalled, and that one is loud: it is typed per commit, it
+discards the whole chain at once rather than one rule, and it is the string every guard prints as it
+refuses. **There are three quieter ones, and this sentence named none of them until 2026-10-12** —
+which is the defect in it, because a bypass nobody has written down is one nobody can decide to
+close:
+
+- **`PROTOCOL_GUARDS`** redirects the entire chain at another directory (§6). It cannot be closed,
+  because it is how the shim finds the guards at all where there is no `protocol/`, and a guard
+  cannot judge the checkout it is being run from. What holds it is that a commit it let through is
+  judged by whatever is in that directory, and `bin/doctor` reports which checkout the shim
+  resolves for exactly that reason.
+- **`PROTOCOL_MAX_FILE_MB`** moves the size ceiling (§6), and a blob then lands in history at a size
+  the ceiling refuses with nothing in the commit recording that the ceiling moved. **It now prints
+  one line whenever it differs from 25, on a pass as well as a refusal** — the override stays, and
+  stops being silent.
+- **An exemption that is in no commit.** `credentials-allow-name` and `credentials-allow-content`
+  were read through the two-layer `policy()` like every other file, so an untracked
+  `.protocol/credentials-allow-*.local` granted an exemption no clone carries and no review sees,
+  and an unstaged edit to the tracked file exempted the very commit it was not part of.
+  **Closed:** those two files are read from the index alone (§3), which is the rule this section
+  already states for every staged blob.
+
+The first is a documented override, the second is now recorded every time it is used, and the third
+is closed. What distinguishes all three from `--no-verify` is that none of them had to be typed
+twice, and none of them left a trace.
 
 ## 5. A shim resolves the guards in four steps, in this order
 
@@ -209,15 +264,23 @@ around this in git, which is the second reason the guards are not the only contr
 
 ## 6. Environment variables
 
-The complete set. All are optional and all are read at run time.
+**Every `PROTOCOL_*` variable anything here reads, and `bin/doctrine.test.sh` holds this table to
+that list** — a count or a set called complete is a claim about a mechanism, and the mechanism is
+in the same repository as the sentence. All are optional and all are read at run time.
 
 | Variable | Default | Effect |
 |---|---|---|
 | `PROTOCOL_GUARDS` | unset | the `guards/` directory to run, overriding resolution (§5) |
 | `PROTOCOL_DIR` | `$HOME/.principia` | the well-known protocol path |
-| `PROTOCOL_MAX_FILE_MB` | `25` | the size ceiling `size-guard.sh` enforces |
+| `PROTOCOL_MAX_FILE_MB` | `25` | the size ceiling `size-guard.sh` enforces — a value other than the default prints one line per run (§4) |
 | `PROTOCOL_COMMAND_GUARDS` | unset | the command-guard directory one adapter's hooks run |
 | `PROTOCOL_PROTECTED_BRANCH` | `main` | the branch those guards refuse a push or a pick onto |
+| `PROTOCOL_WORK_LOG` | `$XDG_STATE_HOME/warp/work-log.jsonl` | where one adapter's turn-cost hook appends; set empty to turn the append off |
+
+Two more are read and are **not** this protocol's to name: `XDG_STATE_HOME`, which is the
+specification's, and `CLAUDE_CONFIG_DIR`, which is one agent's — both in the Claude Code adapter
+alone, and an adapter is deletable (§1). They are listed here because a reader checking the table
+against the tree finds them, not because this protocol defines either.
 
 ## 7. The adapter contract
 
@@ -252,8 +315,16 @@ The guarantee a consumer may rely on: **deleting every adapter leaves the protoc
 
 ## 8. `bin/adapt` is idempotent and additive
 
-It skips anything already present, prints one line per change, and never removes anything. A second
-run installs nothing: `skip` for each file already there. The one file it rewrites rather than skips
+It skips anything already present and prints one line per change. **It removes exactly one thing,
+and only ever what the same run created:** under `--copy`, the `.git` of the `protocol/` copy it
+just made, printed as `strip`. A copy is not a checkout, and carrying the protocol's own `.git` in
+would have git answer about the repository the copy was taken from — so the copy would report
+whatever that repository is at now, which is worse than reporting nothing. The condition that it be
+this run's own copy is the whole of what makes that safe, and **it was missing until 2026-10-12**: a
+tenant that had put its own clone at `protocol/` and kept it current by hand — a shape `bin/doctor`
+reports on — had that clone's entire history deleted by an installer that reported one word and
+whose own section said it never removed anything. A second run installs nothing: `skip` for each
+file already there, and no `strip`, there being nothing this run made. The one file it rewrites rather than skips
 is the receipt in `.protocol/protocol-version` (§11), printed as `record`, and every field of that
 line is read out of the protocol checkout — so a second run from the same commit writes the same
 bytes and the tenant is left byte for byte as it was. `--copy` substitutes copies for symlinks throughout, for a machine
@@ -265,10 +336,30 @@ read a link.
 
 ## 9. Testing
 
-Every script has a `*.test.sh` beside it. `bin/test.sh` finds them rather than listing them, so an
-adapter that brings its own suites is tested by existing. `bin/check.sh` is the assertion helper
-they share. The suites are bash and take no arguments, no network and no fixtures outside their own
-`mktemp -d`.
+Every script has a `*.test.sh` beside it, **except the ten below**. `bin/test.sh` finds the suites
+rather than listing them, so an adapter that brings its own suites is tested by existing.
+`bin/check.sh` is the assertion helper they share. The suites are bash and take no arguments, no
+network and no fixtures outside their own `mktemp -d`.
+
+**The ten, and the decision for each.** `bin/doctrine.test.sh` holds this list to the tree, by the
+same selection CI's shellcheck sweep uses — so a new script with no suite turns the check red and
+arrives here as a decision rather than quietly enlarging the exception. Six are covered by a suite
+that is not beside them, which is recorded rather than left to be inferred; four are unenforced by
+decision, which is `doctrine/as-built.md`'s requirement and the reason none of them is merely absent
+from this page.
+
+| Script | Decision |
+|---|---|
+| `adapters/claude-code/adapt.sh` | covered by `bin/adapt.test.sh`, which installs through it and asserts every path it writes, including the `.gitignore` exception a tenant carved out |
+| `adapters/cortex/adapt.sh` | covered the same way, by the same suite |
+| `adapters/cortex/run` | covered by `bin/adapt.test.sh`, which asserts it is written and byte-identical to the one shipped. What it does when run is that agent's behaviour, not this protocol's |
+| `bin/tenant.sh` | covered by `bin/adapt.test.sh`'s ignore-rule assertions, `say` and `ignore` having no caller but the installer and the adapters |
+| `.githooks/pre-commit` | covered by every commit made to this repository, which is the only thing it is for — four lines resolving the guards beside it |
+| `tenant-template/.githooks/pre-commit` | covered by `bin/adapt.test.sh`'s last case, which makes a real commit through the shim that run installed |
+| `adapters/claude-code/detect.sh` | **unenforced.** It answers whether that agent is installed on this machine, so a suite could assert only what is true of the machine running it — which is a test of the machine |
+| `adapters/cortex/detect.sh` | **unenforced**, for the same reason |
+| `bin/test.sh` | **unenforced.** It is the runner: it finds and runs the suites, so it cannot be one of them, and a suite asserting on it would be started by it |
+| `bin/check.sh` | **unenforced**, and the one with a known defect attached: `check()` always returns 0 and only `finish` exits non-zero, so a suite that never reaches `finish` — truncated, or with a stray `exit 0` — reports success. A suite for the harness would be written in the harness. It is the harness all of these suites and every consumer's share, so changing it changes every test run at once, which is its own change with its own door |
 
 `bin/adapt.test.sh` ends with an end-to-end case: it installs into a scratch tenant, then makes a
 real commit through the shim that run installed, resolving the guards through the well-known path.

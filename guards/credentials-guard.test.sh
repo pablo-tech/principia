@@ -35,6 +35,27 @@ stage infra/prod.env "PASSPHRASE=hunter2correct"
 allow credentials-allow-name 'infra/prod.env'
 check "a path exempt from the shape rule is still read for content" "! guard"
 
+# An exemption is read from the index and from nowhere else, which is this one guard departing from
+# `policy()` and from the two-layer shape every other guard has. §3 justifies that overlay only for
+# a list that TIGHTENS; these two say what is exempt, so an overlay here would be an exemption in no
+# commit, reviewed by nobody and absent from every clone. Untested until 2026-10-12, and granted.
+fresh
+stage infra/prod.env "REGION=us-west-2"
+mkdir -p "$t/repo/.protocol"
+printf 'infra/prod.env\n' >"$t/repo/.protocol/credentials-allow-name.local"
+check "an exemption from the untracked overlay exempts nothing, unlike every other policy" "! guard"
+
+# The quieter half of the same hole: an edit nobody has staged would otherwise exempt the commit it
+# is not part of. Staging it works, and arrives in the diff a reviewer reads — which is the whole
+# reason the rule is that an exemption be tracked.
+fresh
+stage infra/prod.env "REGION=us-west-2"
+mkdir -p "$t/repo/.protocol"
+printf 'infra/prod.env\n' >"$t/repo/.protocol/credentials-allow-name"
+check "nor does an edit to the tracked file that nobody has staged" "! guard"
+git -C "$t/repo" add -A
+check "and staging that same edit is what grants it" "guard"
+
 fresh
 stage infra/a.env x && stage infra/b.env y
 allow credentials-allow-name 'infra/*.env'

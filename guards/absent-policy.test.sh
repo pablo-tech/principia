@@ -55,6 +55,15 @@ bare infra/prod.env "REGION=us-west-2"
 allow credentials-allow-name '# nothing here is exempt yet'
 check "credentials: an empty allow-list is no different from an absent one" "! guard credentials"
 
+# And the identity allow-list is the row that goes the other way, which is why the two sit together
+# here: there absence and emptiness are the same, and here they are opposites. Carrying the file is
+# how a repository opts in, so an empty one is the repository answering "nobody" rather than saying
+# nothing — the one list that refuses everything by being empty. Both sentences are ARCHITECTURE.md
+# §3's, and a reader who has learned the row above would get this one backwards.
+bare notes.md "anything at all"
+allow identity '# this repository has not decided whose commits these are'
+check "identity: an empty allow-list refuses, where an absent one stood down" "! guard identity"
+
 # Which leaves exactly one way to say it, and saying it is the point: the repository whose job IS to
 # hold credentials declares that, in a tracked file, where review can see it.
 bare keys/deploy.env "PASSPHRASE=hunter2correct"

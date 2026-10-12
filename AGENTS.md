@@ -42,21 +42,25 @@ including the ones that do not exist yet.
 
 ## What a tenant repository carries
 
-A tenant is whoever the work belongs to. Its context repository carries six things, all of which
+A tenant is whoever the work belongs to. Its context repository carries five things, all of which
 `bin/adapt` installs:
 
 ```
 protocol/            this repository (symlinked; gitignored — it is a machine-local path)
 AGENTS.md            the tenant's own file: its facts, and a pointer to protocol/AGENTS.md
 .protocol/tenant     the terms belonging to the tenants this repository is NOT
-.protocol/identity   the identities this repository's commits may be made as
 .protocol/protocol-version
                      which commit of this protocol installed the tenant, rewritten by every run
                      of bin/adapt — a receipt, never edited by hand
 .githooks/pre-commit the shim that runs protocol/guards/guards.sh
 ```
 
-`bin/doctor`, run from inside a tenant, checks those six against what is actually on disk — which
+A sixth, `.protocol/identity` — the identities this repository's commits may be made as — is
+deliberately **not** installed, because carrying it is how a repository opts into that rule and an
+empty one claims nobody, which refuses every commit. A tenant copies
+`tenant-template/.protocol/identity` in and fills it in on the day whose commits these are matters.
+
+`bin/doctor`, run from inside a tenant, checks those five against what is actually on disk — which
 protocol `protocol/` resolves to and how far behind its origin it is, every skill symlink against
 its target, `core.hooksPath` against a clone that does not carry it, the denylist by term count,
 and which identity a commit made there would be made as, against what the tenant claims. It also
@@ -65,7 +69,7 @@ installer wrote whole and has skipped ever since, still carrying what an older v
 protocol put there.
 
 `bin/doctor --in <dir>` asks the same questions of a **repository worked on under a tenant**, which
-is deliberately not a tenant and carries none of those six (see `ARCHITECTURE.md` §3). Two of the
+is deliberately not a tenant and carries none of those five (see `ARCHITECTURE.md` §3). Two of the
 answers come from somewhere else there: which protocol judges a commit is decided by its shim rather
 than by a `protocol/` it is not supposed to have, so the checkout the shim resolves is what gets
 reported — and noted, where that checkout and the one its tenant reads its doctrine from are not at

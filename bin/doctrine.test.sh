@@ -98,4 +98,93 @@ check "the dispatch list is readable from guards.sh" '[ -n "$(guard_names)" ]'
 check "every dispatched guard is named by a doctrine document" 'undocumented'
 check "the coverage check can fail" '! named_in_doctrine not-a-guard.sh'
 
+# ---- claims a document makes about a mechanism, checked against the mechanism -------------------
+#
+# `as-built.md` requires that a claim about a mechanism be derived from the mechanism or cut back to
+# what can be checked, for the reason the unenforced-rule rule gives: a false claim leaves no trace
+# either, so the sentence asserting it is the only evidence there is and it reads as coverage. These
+# three are the ones whose mechanism is in this repository and can therefore be asked. Each is
+# written to go red when the MECHANISM changes — a guard added, a variable read, a script written
+# with no suite — which is the direction that matters: the document is what goes stale.
+#
+# All three were false when this was written. The guard count said two where the chain ran four, §6
+# called five variables the complete set where six are read, and §9 said every script had a suite
+# beside it where ten do not.
+
+# One: the count of commit-enforced rules in doctrine/README.md, against the dispatch list above.
+word_for() { # n — the number as that sentence spells it
+  case "$1" in 1) echo One ;; 2) echo Two ;; 3) echo Three ;; 4) echo Four ;; 5) echo Five ;;
+    6) echo Six ;; 7) echo Seven ;; 8) echo Eight ;; *) echo "$1" ;; esac
+}
+guard_count_agrees() {
+  local n word
+  n="$(guard_names | wc -w | tr -d ' ')"
+  word="$(word_for "$n")"
+  grep -q "^$word of the rules in these documents are enforced at commit time" \
+    "$DIR/../doctrine/README.md" && return 0
+  printf '        guards.sh dispatches %s; doctrine/README.md does not say "%s"\n' "$n" "$word"
+  return 1
+}
+check "doctrine/README.md's count of commit-enforced rules is the dispatch list's" 'guard_count_agrees'
+check "and that count can fail" '! grep -q "^$(word_for 7) of the rules in these documents" "$DIR/../doctrine/README.md"'
+
+# Two: ARCHITECTURE.md §6 calls its table every PROTOCOL_* variable anything here reads. Read off
+# the scripts, not the suites: a variable a suite exports to drive a script is that script's, and a
+# variable only a suite invents is not this protocol's to document.
+vars_read() {
+  local f
+  for f in $(cd "$DIR/.." && git ls-files); do
+    case "$f" in *.md|*.test.sh|*.json|*.yml) continue ;; esac
+    head -c 64 "$DIR/../$f" 2>/dev/null | grep -qE '^#!.*\b(bash|sh)\b' ||
+      case "$f" in *.sh) ;; *) continue ;; esac
+    grep -ohE 'PROTOCOL_[A-Z_]+' "$DIR/../$f" 2>/dev/null
+  done | sort -u
+}
+vars_documented() { grep -ohE '^\| `PROTOCOL_[A-Z_]+`' "$DIR/../ARCHITECTURE.md" | tr -d '|` ' | sort -u; }
+vars_agree() {
+  local missing
+  missing="$(comm -23 <(vars_read) <(vars_documented) | tr '\n' ' ')"
+  [ -z "${missing// /}" ] && return 0
+  printf '        read by a script and absent from ARCHITECTURE.md §6: %s\n' "$missing"
+  return 1
+}
+check "§6's table is readable, which is the fail-open case" '[ -n "$(vars_documented)" ]'
+check "every PROTOCOL_* variable a script reads is in it" 'vars_agree'
+check "and the completeness check can fail" \
+  'printf "%s\n" PROTOCOL_NOT_A_VARIABLE | comm -23 - <(vars_documented) | grep -q .'
+
+# Three: ARCHITECTURE.md §9 names the scripts with no suite beside them. The selection is the one
+# CI's own static-analysis sweep makes, verbatim in shape — one definition of "a script here"
+# rather than two that drift — and the direction that matters is a script ARRIVING with no suite,
+# which lands as a decision to write down rather than as a silent enlargement of the exception.
+scripts_without_suite() {
+  local f
+  for f in $(cd "$DIR/.." && { git ls-files '*.sh' 'bin/*'
+      git ls-files | while read -r g; do
+        head -c 64 "$g" | grep -qE '^#!.*\b(bash|sh)\b' && printf '%s\n' "$g"; done; } | sort -u); do
+    case "$f" in *.test.sh) continue ;; esac
+    [ -f "$DIR/../${f%.sh}.test.sh" ] || printf '%s\n' "$f"
+  done | sort -u
+}
+# The §9 table alone: scoped to the section, because other sections carry tables whose first cell is
+# also a backticked path.
+scripts_excused() {
+  sed -n '/^## 9\. Testing/,/^## 10\./p' "$DIR/../ARCHITECTURE.md" |
+    grep -ohE '^\| `[^`]+` \|' | tr -d '|` ' | sort -u
+}
+suite_exceptions_agree() {
+  local unrecorded stale
+  unrecorded="$(comm -23 <(scripts_without_suite) <(scripts_excused) | tr '\n' ' ')"
+  stale="$(comm -13 <(scripts_without_suite) <(scripts_excused) | tr '\n' ' ')"
+  [ -z "${unrecorded// /}" ] && [ -z "${stale// /}" ] && return 0
+  [ -z "${unrecorded// /}" ] || printf '        no suite and no decision recorded: %s\n' "$unrecorded"
+  [ -z "${stale// /}" ] || printf '        excused in §9 and no longer needs it: %s\n' "$stale"
+  return 1
+}
+check "§9's list of scripts with no suite is readable, the fail-open case again" \
+  '[ -n "$(scripts_excused)" ] && [ -n "$(scripts_without_suite)" ]'
+check "every script with no suite beside it is one §9 records a decision for" 'suite_exceptions_agree'
+check "and §9 excuses nothing that has since got a suite" \
+  '! comm -13 <(scripts_without_suite) <(scripts_excused) | grep -q .'
+
 finish

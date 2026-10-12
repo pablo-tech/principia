@@ -18,6 +18,26 @@ move with `main` can stop at.
 
 ### Added
 
+- **`bin/doctrine.test.sh` holds three of the repository's own counts to the mechanisms they count,
+  and `ARCHITECTURE.md` §9 carries the decision for every script with no suite beside it.** The rule
+  being applied is `doctrine/as-built.md`'s, extended there in the same commit from *an unenforced
+  rule* to *a claim about a mechanism*: a false claim about a mechanism leaves no trace either, so
+  the document asserting it is the only evidence there is, and it reads as coverage in exactly the
+  same way. Three claims were mechanizable and are now derived — `doctrine/README.md`'s count of
+  commit-enforced rules against the dispatch list, §6's table of environment variables against every
+  `PROTOCOL_*` a non-suite script actually reads, and §9's list of scripts with no suite against the
+  same union selection CI's own static-analysis sweep makes, in both directions, so a script that
+  since gained a suite is reported as a stale excuse. Each check ships with its own readability
+  check, because a table the suite cannot parse is a claim it passes without having read; each was
+  proved able to fail by mutating the mechanism rather than the document. §9 says `except the ten
+  below` and the ten are a table: six covered by a suite that is not beside them, and four
+  unenforced by decision with the reason attached — among them `bin/check.sh`, whose own defect (a
+  suite that never reaches `finish` reports success, since only `finish` exits non-zero) is recorded
+  there rather than left to be rediscovered, the harness being shared with every consumer's test run
+  at once. Two rules of `doctrine/git.md` are recorded as enforced by nothing at commit time for the
+  same reason, with what prevents each from being a commit guard said in the document rather than
+  inferred.
+
 - **The credentials rule gets a principle: `doctrine/git.md` gains *Credentials: rotation is the only
   removal*.** `guards/guards.sh` dispatches four guards and three of them traced to a doctrine
   document; the credentials guard traced to none — so the most unrecoverable moment the repository
@@ -153,6 +173,56 @@ move with `main` can stop at.
   that authorized it, and that is still what the register names it for.
 
 ### Changed
+
+- **BREAKING: an absent `.protocol/identity` and an empty one stop meaning the same thing, and
+  `bin/adapt` no longer installs the file.** Two sentences in `ARCHITECTURE.md` and `bin/doctor`
+  said an empty list "claims nobody"; the guard exited 0 on an empty list, so it claimed everybody —
+  and the installer seeded exactly that state into every tenant, under a test whose own name said
+  "claims nobody until it is filled in." So the one guard whose subject is a person rather than the
+  work was off in every tenant that had not thought about it, and the document asserting otherwise
+  was the only evidence there was. The code was the defect, not the document, by this repository's
+  own rule that absence is an allow-list's strictest setting — but inverting the guard alone would
+  have refused the first commit in every fresh tenant, so the resolution splits the two states
+  instead. **Absent** is a repository that never opted in: which identity a commit is made as is a
+  question about the machine, and the guard stands down, which is why the installer withholds the
+  seed and says so in its header. **Present** is the repository having answered, and it is judged by
+  its own list and nothing else, empty or not — so a list naming nobody refuses every commit there
+  is, in its own words, naming the file rather than the identity and naming both ways out, because
+  which one is right is the repository's to say and not the guard's. `bin/doctor` reports the three
+  states apart by reading the policy's exit status rather than whether the list came back empty: a
+  note where nothing has opted in, and a fault where no commit can be made at all. **What a consumer
+  must do:** a tenant adapted before this commit carries a seeded empty `.protocol/identity`, and
+  its next commit is refused. Fill the file in with the identities those commits are made as, one
+  extended regular expression per line, or delete it — deleting it is the state the tenant was
+  actually in, and `tenant-template/.protocol/identity` is there to be copied back in on the day it
+  matters.
+
+- **An exemption from the credentials guard must be in a commit, which closes two ways past it that
+  left no trace.** `.protocol/credentials-allow-name` and `-content` were read through the shared
+  two-layer `policy()`, so a gitignored `.protocol/credentials-allow-name.local` granted an
+  exemption that travelled to no clone and appeared in no diff — and an edit to the tracked file
+  alone granted one in the working tree while the commit being judged contained no such line.
+  `guards/absent-policy.test.sh` said in its own comment that neither was possible. Both now read
+  the index, through the guard's own reader rather than through `policy()`: the overlay is justified
+  for a list that **tightens**, and these two say what is exempt, so for them it was a hole in no
+  commit at all. Reading the index is also the rule this guard already applies to every staged blob,
+  so an exemption added in the same commit as the file it exempts still works and arrives where a
+  reviewer sees it. **What a consumer should expect:** a repository relying on an untracked
+  `credentials-allow-*.local`, or on an unstaged edit to the tracked file, now has that commit
+  refused. Move the lines into the tracked file and stage them.
+
+- **`size-guard.sh` prints a line whenever the ceiling is not the protocol's, and `bin/adapt`
+  removes only what the same run created.** `ARCHITECTURE.md` §4 said the bypass was
+  `git commit --no-verify`, "deliberately and universally", and there were three quieter ones; what
+  distinguished them is that none had to be typed twice and none left a trace.
+  `PROTOCOL_MAX_FILE_MB` now says so on every run it changes, so a raised ceiling is in the output
+  of the commit it permitted. `PROTOCOL_GUARDS` cannot be closed — a chain that cannot be pointed
+  somewhere else cannot be tested — and §4 now records that rather than omitting it. And §8's "never
+  removes anything" was false in one place: under `--copy`, `rm -rf "$TENANT/protocol/.git"` could
+  not tell the copy the run had just made from a clone the tenant made by hand, and would destroy
+  that clone's whole history reporting one word. It now strips only a `.git` belonging to a copy
+  this run placed, reports `skip` for a `protocol/` it found already there, and §8 says what the one
+  removal is.
 
 - **Six places where a guard reported a commit clean because it could not tell.** Each is a
   behaviour change for a consumer, and in every case the behaviour it replaces is a guard that was

@@ -20,6 +20,21 @@ Journal*, 2001. [Lineage](../LINEAGE.md#the-end-to-end-argument--saltzer-reed-an
   may execute outside any checkout. A command that relies on the current directory is a command that
   eventually runs in the wrong one.
 
+**Two of the rules on this page are enforced by nothing at commit time, and that is a decision
+rather than an omission**: the `--no-verify`/`--force`/`--amend` line above, and *Promote whole,
+never by cherry-pick* below. One agent's adapter refuses all four at the moment the command is
+typed, which is the only point any of them is visible — a command-guard directory under
+[`adapters/`](../adapters/), where an agent that can intercept a command is wired to do it — and
+[`ARCHITECTURE.md`](../ARCHITECTURE.md) §1 says an adapter is deletable, so on a machine with no
+adapter wired what holds these two is review and nothing else. Neither could be a commit guard and
+keep its meaning. `--no-verify` is the string every guard in the chain prints as it refuses, so the
+chain is the one thing that structurally cannot see it being used. `--force` and `--amend` act on
+history, which `pre-commit` has finished looking at. And whether a promotion is whole is a property
+of a branch and a merge — not of any one commit, which is all a hook on one is given. This is
+recorded because a rule nothing enforces leaves no trace at all, so the sentence asserting it is
+the only evidence there is and it reads as coverage: [`as-built.md`](as-built.md)'s requirement,
+applied to this page rather than quoted on it.
+
 ## A compatibility shim runs the lever backwards
 
 **Shift left** — the lever this document is named from — moves a check toward the point where the

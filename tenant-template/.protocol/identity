@@ -3,10 +3,14 @@
 # the commit being made. Whole-line comments and blank lines are ignored. A commit made as an
 # identity no line matches is refused.
 #
-# Empty as it ships, which polices nothing — the same state this repository was in before the file
-# arrived. Fill it in on the day whose commits these are matters: which identity a commit is made
-# as is configured per machine, a fresh clone carries none of this repository's own, and git says
-# nothing when the answer it falls back to is somebody else's.
+# `bin/adapt` does not install this file, and that is deliberate. Carrying it is how a repository
+# opts into the rule, so an empty one is not the state this repository was in before the file
+# arrived — it is this repository answering "nobody", which refuses every commit there is. Copy it
+# in on the day whose commits these are matters, and fill it in in the same edit.
+#
+# Why that day comes: which identity a commit is made as is configured per machine, a fresh clone
+# carries none of this repository's own, and git says nothing when the answer it falls back to is
+# somebody else's.
 #
 # See protocol/doctrine/tenancy.md. `protocol/guards/identity-guard.sh --scan-history` applies the
 # same list to the commits already on the branch.

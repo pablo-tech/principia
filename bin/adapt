@@ -13,14 +13,20 @@
 #   <tenant>/protocol          this repository, symlinked (gitignored — a machine-local path)
 #   <tenant>/AGENTS.md         the entry point every agent reads, if the tenant has none
 #   <tenant>/.protocol/tenant    the denylist naming the tenants this repository is not
-#   <tenant>/.protocol/identity  the identities its commits may be made as, empty until set
-#                                (their untracked `.local` overlays are gitignored, never seeded)
+#                                (its untracked `.local` overlay is gitignored, never seeded)
 #   <tenant>/.protocol/protocol-version
 #                              which commit of this protocol installed the tenant, rewritten each run
 #   <tenant>/.githooks/        the pre-commit shim, and core.hooksPath pointed at it
 #   agent configuration        whatever each detected adapter installs — for Claude Code, one skill
 #                              per doctrine file and the commands under adapters/claude-code/
 #   ~/.principia               the well-known path the shim falls back to
+#
+# What it deliberately does NOT install:
+#   <tenant>/.protocol/identity  the identities a commit here may be made as. Carrying that file is
+#                                how a repository opts into the rule and an empty one claims nobody,
+#                                so seeding it would refuse the first commit in a tenant that has
+#                                not yet decided whose commits these are. Copy
+#                                `tenant-template/.protocol/identity` in on the day it matters.
 set -euo pipefail
 
 PROTOCOL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -51,13 +57,18 @@ TENANT="$(cd "$TENANT" && pwd)"
 # shellcheck disable=SC1091
 . "$PROTOCOL/bin/tenant.sh"
 
+# Whether the last `place` call created what it was asked for, or found it already there. The
+# distinction is the caller's to use and was being discarded: see the strip below.
+PLACED=""
 place() { # src dst — symlink or copy, whichever the run asked for, and never twice
   local src=$1 dst=$2
+  PLACED=""
   if [ -e "$dst" ] || [ -L "$dst" ]; then say skip "${dst#"$TENANT"/}"; return; fi
   # -L, because --copy exists for a machine that will not follow a symlink: this repository holds one
   # of its own (the shim it ships is the shim it runs), and copying it as a link would hand that
   # machine the very thing it cannot read.
   if [ "$MODE" = copy ]; then cp -RL "$src" "$dst"; else ln -s "$src" "$dst"; fi
+  PLACED=1
   say "$MODE" "${dst#"$TENANT"/}"
 }
 
@@ -120,7 +131,12 @@ place "$PROTOCOL" "$TENANT/protocol"
 # A copy is not a checkout. Carrying the protocol's own `.git` in would have git answer about the
 # repository the copy was taken from — so the copy would report whatever that repository is at now,
 # which is worse than reporting nothing, and it is `bin/doctor` that then has no way to say so.
-if [ "$MODE" = copy ] && [ ! -L "$TENANT/protocol" ] && [ -e "$TENANT/protocol/.git" ]; then
+#
+# `$PLACED` is the whole of the condition that matters, and it was missing: a `protocol/` the tenant
+# put there itself — a clone it keeps current by hand, which is a shape `bin/doctor` reports on — is
+# skipped above, and this ran anyway and deleted that clone's entire history, reporting one word.
+# This installer removes only what this run of it created.
+if [ "$MODE" = copy ] && [ -n "$PLACED" ] && [ ! -L "$TENANT/protocol" ] && [ -e "$TENANT/protocol/.git" ]; then
   rm -rf "$TENANT/protocol/.git"
   say strip "protocol/.git"
 fi
@@ -131,7 +147,6 @@ fi
 ignore "/protocol" "/.protocol/*.local"
 seed AGENTS.md
 seed .protocol/tenant
-seed .protocol/identity
 seed .protocol/protocol-version
 record
 seed .githooks/pre-commit

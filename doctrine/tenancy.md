@@ -135,7 +135,10 @@ So a repository states it, the way it states the tenants it is not. `.protocol/i
 identities its commits may be made as, one extended regular expression per line, and
 [`guards/identity-guard.sh`](../guards/identity-guard.sh) refuses a commit whose author or
 committer matches none of them. A repository without that file claims no identity and is not
-policed. `--scan-history` applies the same list to the commits already on the branch, which is the
+policed — and one carrying the file with nothing in it is the opposite state rather than the same
+one: carrying it is how a repository opts in, so an empty list is the repository answering
+"nobody", and every commit is refused until somebody says who. Nothing installs the file, for that
+reason. `--scan-history` applies the same list to the commits already on the branch, which is the
 only way a header written on a machine with no hook configured is ever found.
 
 This one is an allowlist where the tenancy declaration is a denylist, for the reason that one is

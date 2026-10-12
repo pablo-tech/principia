@@ -25,12 +25,33 @@ set -uo pipefail
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 . "$(dirname "${BASH_SOURCE[0]}")/policy.sh"
 
-# `|| true`, and not the `|| exit 0` the other policy-reading guards use, because "no such policy"
-# is not a reason to stand down here: both files are ALLOW-lists, so a repository carrying neither
-# exempts nothing and this guard then runs at its STRICTEST. Absent is the strict setting and not the
-# off switch, which is the one thing about this guard that surprises everybody who reads it.
-ALLOWED_NAME="$(policy credentials-allow-name || true)"
-ALLOWED_CONTENT="$(policy credentials-allow-content || true)"
+# exemptions <name>: this repository's exemption list, read from the INDEX and from nowhere else.
+#
+# Not `policy`, which every other guard uses, and the difference is the one thing in this file that
+# is not shared. `policy` reads two layers — the tracked file from the worktree, then an untracked
+# `.protocol/<name>.local` overlay — and §3's justification for that overlay covers only a list that
+# TIGHTENS: a denylist stating what it refuses cannot be published, so the proper nouns go in a file
+# that stays on the machine. These two files are the opposite kind. They say what is EXEMPT, so an
+# overlay would hand a repository an exemption that is in no commit, reviewed by nobody and absent
+# from every clone — a hole with no trace, which is the shape this whole class of defect takes.
+#
+# Reading the index rather than the worktree closes the quieter half of the same hole: an
+# uncommitted edit to the tracked file would otherwise exempt the very commit that edit is not part
+# of. The index is what a commit would record, which is the rule §4 already states for every staged
+# blob this guard reads — so an exemption added in the same commit still works and arrives in the
+# diff a reviewer is reading, which is the whole point of requiring it be tracked.
+#
+# Exit status is discarded, and not the `|| exit 0` the other policy-reading guards use, because "no
+# such list" is not a reason to stand down here: both files are ALLOW-lists, so a repository
+# carrying neither exempts nothing and this guard then runs at its STRICTEST. Absent is the strict
+# setting and not the off switch, which is the one thing about this guard that surprises everybody
+# who reads it.
+exemptions() {
+  git show ":.protocol/$1" 2>/dev/null |
+    sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' -e 's/[[:space:]]*$//'
+}
+ALLOWED_NAME="$(exemptions credentials-allow-name)"
+ALLOWED_CONTENT="$(exemptions credentials-allow-content)"
 
 listed() { # path list
   local pat

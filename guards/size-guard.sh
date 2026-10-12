@@ -17,8 +17,20 @@ set -uo pipefail
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 . "$(dirname "${BASH_SOURCE[0]}")/policy.sh"
 
-MAX_MB="${PROTOCOL_MAX_FILE_MB:-25}"
+DEFAULT_MAX_MB=25
+MAX_MB="${PROTOCOL_MAX_FILE_MB:-$DEFAULT_MAX_MB}"
 MAX_BYTES=$((MAX_MB * 1024 * 1024))
+
+# A raised ceiling says so, every run, whatever the outcome. The override is documented and it is
+# deliberate, but an environment variable leaves no trace in the commit it let through: the blob is
+# in history at a size the ceiling refuses and nothing anywhere records that the ceiling was moved.
+# A guard that is quieter when it is doing less is the shape this repository refuses, so the one
+# line is printed on a pass as well as on a refusal, and a lowered ceiling is reported too — an
+# unexpected refusal is read as a bug in the guard until the reader is told why.
+if [ "$MAX_MB" != "$DEFAULT_MAX_MB" ]; then
+  echo "pre-commit: size-guard: ceiling is ${MAX_MB} MB, not the protocol's ${DEFAULT_MAX_MB} MB" \
+       "(PROTOCOL_MAX_FILE_MB)"
+fi
 
 require_index size-guard
 

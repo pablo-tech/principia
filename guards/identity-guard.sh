@@ -14,7 +14,9 @@
 # tenant it is worked on under, if local git configuration names one (`principia.tenant`, see
 # policy.sh) — because a repository worked on under a tenant is deliberately not a tenant and so has
 # no `.protocol/` of its own to state this in. A repository that carries the file is judged by it
-# alone, empty or not: carrying it is how a repository opts in, and an empty one claims nobody.
+# alone, empty or not: carrying it is how a repository opts in, and an empty one claims nobody —
+# which refuses every identity, because claiming nobody is an answer and not the absence of one.
+# Nothing installs this file; a repository that has not opted in does not have it.
 #
 #   --scan-history [<range>]   apply the rules to the commits in <range> (default: HEAD) instead of
 #                              to the commit being made, so a header that reached the branch past
@@ -28,18 +30,47 @@ set -uo pipefail
 
 # Whose list this is, which the report below has to say: being refused by a file that is not in the
 # repository you are committing to is otherwise unreadable.
+#
+# Three answers rather than two, which is why this reads `policy`'s exit status and not whether the
+# list came back empty. A file ABSENT in both layers, and in the tenant's if there is one, is a
+# repository that never opted in: which identity a commit is made as is then a question about this
+# machine, and there is nothing here to enforce. A file PRESENT and naming nobody is the repository
+# answering that question with "nobody", which refuses every identity there is. The two are the same
+# picture to a test for a non-empty list and they mean opposite things, which is the whole of why
+# the file is not seeded into a tenant that has not decided.
 whose="this repository"
 where=".protocol/identity"
 if ! allowed="$(policy identity)"; then
-  if tenant="$(tenant_root)"; then
-    allowed="$(policy identity "$tenant")" || allowed=""
+  if tenant="$(tenant_root)" && allowed="$(policy identity "$tenant")"; then
     whose="this repository's tenant"
     where="$tenant/.protocol/identity"
   else
-    allowed=""
+    exit 0
   fi
 fi
-[ -n "$allowed" ] || exit 0
+
+# An empty list refuses, and says so in its own words rather than through the refusal below: that one
+# reports an identity the list does not carry, and here the list carries nothing, so the two are
+# fixed by opposite edits. Both remedies are real ones and which is right is the repository's to say.
+if [ -z "$allowed" ]; then
+  echo "pre-commit: refusing to commit: $where names no identity at all."
+  echo "pre-commit: Carrying that file is how a repository opts into this rule, so a list with no"
+  echo "pre-commit: lines in it is $whose saying its commits are made as nobody — which is every"
+  echo "pre-commit: identity refused, and a different state from never having opted in. Either:"
+  echo "pre-commit:"
+  echo "pre-commit:   name the identities those commits are made as, one extended regular"
+  echo "pre-commit:   expression per line, in $where"
+  echo "pre-commit:"
+  if [ "$whose" = "this repository" ]; then
+    echo "pre-commit:   or delete $where, and which identity a commit is made as goes back to being"
+    echo "pre-commit:   a question about this machine — where it was before the file arrived."
+  else
+    echo "pre-commit:   or give this repository its own .protocol/identity, and it is judged by that"
+    echo "pre-commit:   and by nothing else."
+  fi
+  echo "pre-commit: (bypass: git commit --no-verify)"
+  exit 1
+fi
 PATTERN="$(printf '%s' "$allowed" | paste -sd'|' -)"
 
 # The same construct as tenant-guard's, and it fails the other way: `grep` exits 2 on a pattern it
