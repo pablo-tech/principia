@@ -94,8 +94,9 @@ cited is the one the field cites, not the earliest antecedent a search turns up.
 
 **What happened** — construct validity was cited to Campbell and Fiske, 1959, which is the
 multitrait–multimethod procedure for *arguing* construct validity rather than the work that defines
-it. The field cites Cronbach and Meehl, 1955. Corrected in `6b98fa9`, in all three places that
-carried it.
+it. The field cites Cronbach and Meehl, 1955. Corrected in `6b98fa9`, in the three places that
+commit went looking in. A fourth carried it, and still did five days later — see the entry of
+2026-10-12 below.
 
 **What caught it** — writing the lineage entry, which cannot be written without stating what the
 work claims at its own scope. The `Named:` line and the register row had both carried it unexamined.
@@ -128,16 +129,49 @@ of the fact bounds how the copies can disagree but not whether they will, becaus
 a choice of work and not only its date. `clean-code.md`'s claim is that a second copy needs somebody
 who has undertaken to keep it true, and the exemption was granted without naming who that was. One
 of the four now has a check — `unlineaged` requires a `Named:` line to reach an entry that exists —
-and nothing reconciles the three texts.
+and nothing reconciles the three texts. Two more arrived on 2026-10-12: the year a copy prints is
+held to the year inside the lineage anchor beside it, and every work a `Named:` line names is held
+to carrying one. Neither reaches the disagreement this entry records, which was about *which work*,
+and nothing mechanical does.
+
+### A correction said it was complete, and it was not — 2026-10-12
+
+**The rule** — [`doctrine/as-built.md`](doctrine/as-built.md) requires the record to be corrected to
+what was actually built, and [`INDUCTION.md`](INDUCTION.md#printed-in-four-places-deliberately)
+takes its four-places exemption on the ground that a disagreement between the copies is a typo "a
+reader catches for free."
+
+**What happened** — `6b98fa9` corrected construct validity from Campbell and Fiske, 1959 to
+Cronbach and Meehl, 1955 and reported that it had done so "in all three places that carried it."
+Four carried it. The fourth was a `CHANGELOG.md` bullet, fifty-four lines below the bullet
+announcing the correction and inside the same unreleased section, and the entry above on this page
+repeated the count of three. So the page recording that the exemption had failed carried the
+failure, and the commit message a reader would check it against asserted completeness it had not
+measured. Corrected here and in `CHANGELOG.md`; the claim that was wrong is `6b98fa9`'s.
+
+**What caught it** — an audit of the whole repository against its own sentence about what the
+documents are for, five days later. Not a reader, not the suite, and not the correction's own author
+on the day.
+
+**What it says about the rule** — a claim that a correction is complete is a claim about a count,
+and it was made by the party who had just done the counting, with no second count anywhere. That is
+the shape [`doctrine/as-built.md`](doctrine/as-built.md) names for a comparative claim — that the
+means of falsifying it ship beside it — applied to the one kind of claim this page is made of. What
+was available and unused is grep. So two checks now stand where the exemption's "for free" was:
+`bin/induction.test.sh` holds the year in a copy to the year in the lineage anchor beside it, and
+holds every work a `Named:` line names to carrying one, which is the half of this that a script can
+count. The half it cannot is whether a correction reached every place — the copies are in files
+nothing enumerates — and that is recorded here as unenforced rather than left to the next reader.
 
 ---
 
 ## What found them
 
-All four were found on one day, and none was found by review. Three surfaced while writing
-[`LINEAGE.md`](LINEAGE.md), which forced every citation to be restated somewhere it had never been
-stated before, and the fourth by a linter that had been running all along over a construction no
-reader looks for. The general claim is the one
+Four were found on one day and the fifth five days later, and none was found by review. Three
+surfaced while writing [`LINEAGE.md`](LINEAGE.md), which forced every citation to be restated
+somewhere it had never been stated before, the fourth by a linter that had been running all along
+over a construction no reader looks for, and the fifth by an audit that restated the claim a third
+way — as a check, which is the one form that counts rather than reads. The general claim is the one
 [`doctrine/as-built.md`](doctrine/as-built.md) already makes about documents and this page extends to
 rules: what audits a claim is being made to state it again, at a different length, for a different
 reader. Re-reading it where it already sits finds nothing.

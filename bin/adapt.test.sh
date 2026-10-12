@@ -101,9 +101,37 @@ check "the settings the agent writes into are machine-local, both files" \
   "grep -qx '/settings.json' '$t/tenant/.gitignore' &&
    grep -qx '/settings.local.json' '$t/tenant/.gitignore'"
 
+# One hash of a named file, over whichever of the two tools this machine has. The pipeline this
+# replaced was three GNU-only ones in a row — `sort -z`, `xargs -r`, `sha256sum` — and on a machine
+# carrying none of them every stage failed, `digest` printed nothing, and the check below compared
+# the empty string to the empty string and passed. That is doctrine/testing.md's vacuous pass in the
+# one check whose comment says idempotence "is measured instead", so the absence is a stop here
+# rather than a degradation: a suite that cannot take the measurement must not report on it.
+if command -v shasum >/dev/null 2>&1; then
+  sha256() { shasum -a 256 "$@" ; }
+elif command -v sha256sum >/dev/null 2>&1; then
+  sha256() { sha256sum "$@" ; }
+else
+  echo "adapt.test: neither shasum nor sha256sum is on this machine, so the idempotence check" >&2
+  echo "adapt.test: cannot be taken. Stopping rather than reporting a measurement nobody made." >&2
+  exit 1
+fi
 # Every file in the tenant, hashed: `record` below rewrites rather than skips, so "a second run
-# changes nothing" stopped being readable off the output alone and is measured instead.
-digest() { find "$t/tenant" -name .git -prune -o -type f -print0 | sort -z | xargs -0 -r sha256sum | sha256sum; }
+# changes nothing" stopped being readable off the output alone and is measured instead. The count is
+# part of the digest and is asserted on its own below, because a comparison of two digests is
+# satisfied by two runs that hashed nothing at all. Each name is printed relative to the tenant, so
+# a file moved between runs changes the digest rather than cancelling out, and `sort` runs under
+# LC_ALL=C so the order is the bytes rather than the machine's locale. The loop is bash rather than
+# `xargs` because what it replaced was the portability defect.
+digest() {
+  local f lines="" n=0
+  while IFS= read -r -d '' f; do
+    lines="$lines$(sha256 "$f" | cut -d' ' -f1)  ${f#"$t/tenant/"}
+"
+    n=$((n + 1))
+  done < <(find "$t/tenant" -name .git -prune -o -type f -print0)
+  printf '%s files %s\n' "$n" "$(printf '%s' "$lines" | LC_ALL=C sort | sha256 | cut -d' ' -f1)"
+}
 # shellcheck disable=SC2034 # read inside the check expressions below, which shellcheck does not follow
 before="$(digest)"
 # shellcheck disable=SC2034 # as above
@@ -116,6 +144,10 @@ check "a second run installs nothing" \
 # writes the same bytes — which is the thing worth asserting, and is asserted.
 check "and leaves every file in the tenant byte for byte as it was" \
   "[ \"\$(digest)\" = \"\$before\" ]"
+# And that the comparison above was over the tenant rather than over nothing. An install writes
+# tens of files; the floor is low on purpose, since what this rules out is zero and not a number.
+check "and the measurement was taken over the tenant's files, not over an empty list" \
+  "[ \"\${before%% *}\" -ge 10 ]"
 
 # The receipt. `protocol/` is a symlink, so the checkout behind it can be moved on with no file in
 # the tenant changing; what is written down is which commit the files installed here came from, and
@@ -198,6 +230,47 @@ check "an exception the tenant carved out survives the adapter's own ignore rule
   "git -C '$t/tenant' diff --cached --name-only | grep -qx 'projects/p/memory/note.md' &&
    ! git -C '$t/tenant' diff --cached --name-only | grep -q session.jsonl"
 git -C "$t/tenant" reset -q
+
+# What that skip costs when it is silent, and the narrowing that stopped it being wrong. Until
+# 2026-10-12 a tenant line was compared on its first path segment alone, so `skills/omarchy` — one
+# ignored directory inside a tenant that shares every other skill — read as a ruling on the whole of
+# `skills/`, and `/skills/synced/` was declined on that ground with nothing printed. That tenant is
+# real and had to add the line by hand. The comparison is now a path-prefix one at a `/` boundary,
+# which is still not a pattern matcher and deliberately not one: two patterns are compared as the
+# literal paths they name, so a tenant's rule covers this one when it names the same path or a
+# parent of it, and not when it merely starts with the same letters.
+fresh
+printf 'skills/omarchy\n' >"$t/tenant/.gitignore"
+# shellcheck disable=SC2034 # as above
+out="$(adapt --agent claude-code)"
+check "a tenant rule about a sibling path does not swallow the rule for this one" \
+  "grep -qxF -- '/skills/synced/' '$t/tenant/.gitignore'"
+check "and the tenant's own line is left exactly as the tenant wrote it" \
+  "grep -qxF -- 'skills/omarchy' '$t/tenant/.gitignore'"
+
+# The other half: where the tenant's line really does rule on this path, the decision is the
+# tenant's and the adapter's job is to say it made one. A skip printing nothing is how the operator
+# above was left to work out from an absence that anything had been considered at all, so the line
+# names both the pattern declined and the tenant's rule it was declined for.
+fresh
+printf '/cache\n' >"$t/tenant/.gitignore"
+# shellcheck disable=SC2034 # as above
+out="$(adapt --agent claude-code)"
+check "a pattern the tenant's own rules already cover is skipped, and said to be" \
+  "grep -q \"skip   /cache/ (the tenant's own '/cache' already rules on it)\" <<<\"\$out\""
+check "and nothing is appended about it" \
+  "! grep -qxF -- '/cache/' '$t/tenant/.gitignore'"
+
+# A .gitignore whose last line carries no newline takes an append onto the end of that line: the
+# tenant's last rule becomes something neither party wrote, and the pattern being installed is not
+# installed either. `>>` cannot see that, so the file is asked before it is written to.
+fresh
+printf '/secrets.env' >"$t/tenant/.gitignore"
+adapt --agent claude-code >/dev/null
+check "a tenant's last rule survives an append to a file that ended without a newline" \
+  "grep -qxF -- '/secrets.env' '$t/tenant/.gitignore'"
+check "and the pattern that append was carrying arrives on its own line" \
+  "grep -qxF -- '/protocol' '$t/tenant/.gitignore'"
 
 fresh
 printf 'my own rules\n' >"$t/tenant/CLAUDE.md"

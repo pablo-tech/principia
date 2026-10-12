@@ -19,6 +19,66 @@ wrong commit.
 
 ## [Unreleased]
 
+### Added
+
+- **The installer says what it decided not to do, in the three places it used to decide in
+  silence.** A `.gitignore` pattern declined because the tenant's own rules already cover that path
+  now prints both the pattern and the tenant's line, so the skip is a judgement the operator can see
+  and overrule rather than an absence to infer something from — a live tenant had `/skills/synced/`
+  declined on that ground and had to add the line by hand. A directory with no `.git` gets a note
+  saying `.githooks/` is installed and nothing will run it, which is the state a tenant adapted
+  before `git init` is actually in. And a run that stops names the step it stopped in and says that
+  `bin/adapt` is idempotent, because `set -e` stops at the right place and tells the operator
+  nothing about how far the install got, while a part-installed tenant looks wired.
+- **Two checks stand where the four-places citation exemption's "a reader catches it for free"
+  was.** `bin/induction.test.sh` holds the year a copy prints to the year inside the lineage anchor
+  beside it, and holds every work a `Named:` line names to carrying a year rather than only the
+  first. The exemption is granted on the ground that a disagreement between the four copies is a
+  typo a reader catches for nothing; the A201 citation stood at 2017 in the lineage and in every
+  anchor pointing at it and carried no year at all in the document or the register for as long as
+  the page existed, which is that prediction failing for the second time. Both checks were proved
+  red against the real defect and each carries a fixture control naming its own cause. What they
+  cannot reach — whether a correction reached every copy, the copies being in files nothing
+  enumerates — is recorded in `REFUTATION.md` as unenforced rather than left to the next reader.
+- **A third check holds the refusal triage character-identical across the three documents that
+  print it.** It is the one sanctioned near-duplicate whose justification is two readers of one
+  sentence, and the sentence had drifted to three categories in `AGENTS.md` against four in
+  `INDUCTION.md` — the missing one being *advice*, which is the category that lets a proposal be
+  refused on its subject rather than on its form.
+- **`bin/adapt.test.sh` asserts the ignore rules it only used to exercise**: that a tenant rule
+  about a sibling path does not swallow the rule for this one, that a covered pattern is skipped
+  *and said to be*, and that a `.gitignore` whose last line carries no newline keeps its last rule.
+
+### Fixed
+
+- **A tenant's `.gitignore` line is compared as the path it names, not as its first segment.** The
+  reduction to a first path segment read `skills/omarchy` — one ignored directory in a tenant that
+  shares every other skill — as a ruling on the whole of `skills/`. The comparison is now a
+  path-prefix one at a `/` boundary, which is narrower than that and wider than equality on purpose:
+  equality would reintroduce the hazard the function exists for, where a broader rule appended
+  underneath wins as the last matching pattern and silently undoes the exception a tenant carved
+  out. It is not a second implementation of git's matcher and deliberately not one — both sides are
+  compared literally, so a rule covers this pattern when it names the same path or a parent of it.
+- **`bin/adapt.test.sh`'s idempotence measurement is taken rather than reported.** `digest()` was
+  three GNU-only tools in one pipeline — `sort -z`, `xargs -r`, `sha256sum` — so on a machine
+  carrying none of them every stage failed, the digest was empty, and the check compared the empty
+  string to the empty string and passed. That is this repository's own vacuous pass, in the one
+  check whose comment says idempotence "is measured instead". It is now `shasum` or `sha256sum`,
+  whichever the machine has, with a probe that stops the suite rather than letting it degrade, and
+  the file count is part of the digest and asserted on its own — because two digests agreeing is
+  also what two runs that hashed nothing look like.
+- **The A201 citation carries its year**, 2017, in `doctrine/as-built.md` and in `INDUCTION.md`'s
+  register, read out of `LINEAGE.md` rather than retyped.
+- **Two claims on `REFUTATION.md` corrected, and the correction recorded as the fifth entry.**
+  `6b98fa9` reported correcting a citation "in all three places that carried it" and four carried
+  it; the fourth was a `CHANGELOG.md` bullet fifty-four lines below the bullet announcing the
+  correction, and this page repeated the count. A claim about a correction's completeness that was
+  itself incomplete is what that page is for, so it is an entry rather than a quiet edit, and
+  `## What found them` now accounts for a fifth finding five days after the other four.
+- **`CHANGELOG.md` says forty lineage entries**, which is what `2.0.0` shipped. The count is a dated
+  claim about a release and is deliberately not derived: a check reading today's `LINEAGE.md` would
+  be right about `[2.0.0]` today and wrong at `2.1.0`.
+
 ## [2.0.0] — 2026-10-12
 
 **One thing breaks, and a tenant adapted before this release meets it on its next commit.**
@@ -147,7 +207,7 @@ are derived from the mechanisms they count rather than written down.
   they are reading about the work. Controlled on both causes at once, over what the failure names.
 
 - **`LINEAGE.md`: one entry per work the doctrine is named from, with its field's objections.**
-  Thirty-nine entries under eleven literature headings, each carrying the full citation, what the
+  Forty entries under eleven literature headings, each carrying the full citation, what the
   work claims *at its own scope*, **what the field says against it**, and the rule here that leans
   on it. It exists because `INDUCTION.md` admits a rule partly on the grounds that a name "imports
   the counter-arguments", and the repository printed an objection for one of forty-one names — a
@@ -348,12 +408,12 @@ are derived from the mechanisms they count rather than written down.
   Shasha, 1996), which is DRY's existing rule given the question that decides a case. **A passing run is
   evidence about what it executed, which is not always what you changed** — where a test resolves its
   inputs through the environment it can exercise code that is not the code under test, and the green
-  tick answers a question nobody asked. That is a failure of construct validity (Campbell and Fiske,
-  1959; Cook and Campbell, 1979), and it is worse here than in the field that named it: a badly
-  constructed survey yields a number somebody can argue with, while an invalid test yields a pass, which
-  is the one output nobody re-examines. It is distinct from the oracle problem the same document already
-  states — there the judgement is too weak to decide a real result, here the judgement is sound and the
-  result came from somewhere else. **An automated action fires on its declared condition, not on what
+  tick answers a question nobody asked. That is a failure of construct validity (Cronbach and Meehl,
+  1955; the standard treatment is Cook and Campbell, 1979), and it is worse here than in the field that
+  named it: a badly constructed survey yields a number somebody can argue with, while an invalid test
+  yields a pass, which is the one output nobody re-examines. It is distinct from the oracle problem the
+  same document already states — there the judgement is too weak to decide a real result, here the
+  judgement is sound and the result came from somewhere else. **An automated action fires on its declared condition, not on what
   you think you changed** — `warp.md`'s publish-on-merge sentence is generalized in place rather than
   restated in `git.md`, which would have been the second home condition 5 refuses; the failure is an
   automation surprise (Sarter and Woods, 1995) and the remedy is to read the declaration, blast radius
