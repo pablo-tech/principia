@@ -76,4 +76,45 @@ stage notes.md "the deploy is green"
 check "and the overlay itself is never staged, so nothing scans it" \
   "guard && [ -z \"\$(git -C '$t/repo' diff --cached --name-only | grep 'tenant\\.local')\" ]"
 
+# A control that cannot determine whether it applies refuses — doctrine/tenancy.md. Each check below
+# was seen passing against the guard as it stood, which is what made it a defect rather than a
+# worry: the guard reported every file clean and exited 0.
+
+tenant 'Acme(Corp'
+stage notes.md "met with Initech about the migration"
+check "a denylist that does not compile refuses instead of finding nothing" "! guard"
+
+tenant 'Acme(Corp'
+# `grep -F` rather than `grep -qF`: the suite runs under `pipefail`, and `-q` closes the pipe on the
+# first match, which makes the guard upstream of it exit non-zero. That is the trap tenant-guard.sh's
+# own comment at `first_match` is about, met here.
+check "and the refusal names the line grep would not take" \
+  "[ -n \"\$( (cd '$t/repo' && bash '$DIR/tenant-guard.sh' 2>&1) | grep -F 'Acme(Corp' )\" ]"
+
+tenant 'Initech'
+stage notes.md "the deploy is green"
+git -C "$t/repo" commit -qm x
+git -C "$t/repo" mv notes.md initech-plan.md
+check "a path renamed into a term is refused, not skipped as a rename" "! guard"
+
+tenant 'Initech'
+stage "café/initech.md" "nothing sensitive here"
+check "a path git C-quotes is still judged by the path rule" "! guard"
+
+tenant 'Initech'
+stage "café/notes.md" "met with Initech about the migration"
+check "and by the content rule" "! guard"
+
+tenant 'Initech'
+stage notes.md "the deploy is green"
+ln -sfn /nonexistent/target "$t/repo/initech-link.md"
+git -C "$t/repo" add -A
+git -C "$t/repo" commit -qm x
+check "--scan-tree judges a tracked symlink rather than skipping it" "! scan"
+
+tenant 'Initech'
+stage notes.md "met with Initech about the migration"
+check "an index git cannot read refuses rather than reading as nothing staged" \
+  "! (cd '$t/repo' && printf x > .git/bad-index && GIT_INDEX_FILE=.git/bad-index bash '$DIR/tenant-guard.sh' >/dev/null 2>&1)"
+
 finish

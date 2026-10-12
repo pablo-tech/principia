@@ -139,4 +139,39 @@ stage db/0002_seed.sql "INSERT INTO credentials (account_id, method, wrapped_pri
 allow credentials-allow-content 'db/0002_seed.sql'
 check "credentials-allow-content exempts a named seed from the wrapped-key rule" "guard"
 
+# Each of these was seen passing against the guard as it stood. The last is the one that is not
+# about an exit code at all: one offender was reported as two paths, and a refusal naming a file
+# that does not exist is one the reader has to second-guess.
+fresh
+stage notes.txt "nothing to see"
+git -C "$t/repo" commit -qm x
+git -C "$t/repo" mv notes.txt deploy.env
+check "a path renamed into a credential shape is refused, not skipped as a rename" "! guard"
+
+fresh
+stage "café.env" "REGION=us-west-2"
+check "a path git C-quotes is still judged by the shape rule" "! guard"
+
+fresh
+stage "café/notes.md" "$KEY"
+check "and its content is still read" "! guard"
+
+fresh
+stage "my deploy.env" "REGION=us-west-2"
+check "a path with a space in it is reported as one path, not two" \
+  "[ -n \"\$( (cd '$t/repo' && bash '$DIR/credentials-guard.sh' 2>&1) | grep -F 'my deploy.env' )\" ]"
+
+fresh
+stage notes.md "nothing to see"
+ln -sfn /nonexistent/target "$t/repo/deploy.env"
+git -C "$t/repo" add -A
+git -C "$t/repo" commit -qm x
+check "--scan-tree judges a tracked symlink rather than skipping it" \
+  "! (cd '$t/repo' && bash '$DIR/credentials-guard.sh' --scan-tree >/dev/null 2>&1)"
+
+fresh
+stage infra/prod.env "REGION=us-west-2"
+check "an index git cannot read refuses rather than reading as nothing staged" \
+  "! (cd '$t/repo' && printf x > .git/bad-index && GIT_INDEX_FILE=.git/bad-index bash '$DIR/credentials-guard.sh' >/dev/null 2>&1)"
+
 finish

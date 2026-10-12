@@ -18,6 +18,25 @@ move with `main` can stop at.
 
 ### Added
 
+- **`doctrine/tenancy.md` gains *A control that cannot tell whether it applies refuses*, and
+  `guards/guards.sh` gains the suite it never had.** The document already applied fail-safe defaults
+  to the policy a guard reads — a repository carrying no file has not opted in, a missing guard in
+  the chain blocks — and said nothing about the guard's own inputs, which had acquired the opposite
+  default without anyone choosing it. The new section is that one level up: an absent policy and an
+  unreadable one are not the same answer, because absence is a decision somebody took and an
+  unreadable input is the control failing while looking like it worked. It also says why failing
+  closed is not sufficient on its own — an allowlist that will not compile refuses every identity,
+  which is the safe direction and arrives as a verdict about whoever is committing, and the list and
+  the identity are repaired by opposite edits — so a refusal names the input it could not read
+  rather than stating the conclusion the rule would have reached. No new `LINEAGE.md` entry: Saltzer
+  and Schroeder are already this document's own `Named:` line, and the tenancy row in `INDUCTION.md`
+  records the strong form reaching further than it did. `guards/guards.test.sh` is the practice half
+  of the same sentence — `ARCHITECTURE.md` §4 makes four claims about the 27-line file that carries
+  the whole fail-closed promise, and until now nothing asserted any of them. Twelve checks, reading
+  the guard list off the dispatcher rather than restating it, and the CI shellcheck sweep now selects
+  by name as well as by shebang, which is what puts `guards/policy.sh`, `bin/check.sh` and
+  `bin/tenant.sh` in it as files of their own rather than as somebody else's `-x` dependency.
+
 - **The premise the doctrine is derived from, stated in `README.md`, and the admission criterion
   derived from it in `INDUCTION.md`.** The five conditions were a filter and not a generator: a rule
   requiring a copyright header on every file is nameable, citable, general, observably breached and
@@ -111,6 +130,27 @@ move with `main` can stop at.
   that authorized it, and that is still what the register names it for.
 
 ### Changed
+
+- **Six places where a guard reported a commit clean because it could not tell.** Each is a
+  behaviour change for a consumer, and in every case the behaviour it replaces is a guard that was
+  enforcing nothing while reporting success. `tenant-guard.sh` read `grep`'s exit 2 on a pattern it
+  cannot compile as exit 1, "no match", so one unbalanced parenthesis in a hand-maintained denylist
+  passed every file in the tree — in the pre-commit hook and in the `--scan-tree` step CI depends
+  on, both green. `identity-guard.sh` had the same construct with its sense inverted, so it failed
+  closed and then blamed the identity for a broken list. All four guards read `git diff --cached`
+  with `--diff-filter=AM`, which hands a renamed, copied or type-changed path to no guard at all, so
+  `git mv notes.txt deploy.env` walked past the credential shape rule; it is now `--diff-filter=d`,
+  which excludes only the one status with no staged blob to read. `credentials-guard.sh` and
+  `tenant-guard.sh` read their path lists newline-delimited, so a path git C-quotes escaped both the
+  name rule and the content rule; both now use `-z`, as `size-guard.sh` already did. `[ -f "$path" ]`
+  follows symlinks, so `--scan-tree` skipped every tracked symlink — `bin/adapt` installs those into
+  every tenant by design — and the link target is now read through `git show :<path>` as the staged
+  branch already does. And the whole chain exited 0 when git declined to say what was staged, which
+  is indistinguishable from nothing being staged: `require_index` in `guards/policy.sh` refuses
+  instead, naming the guard and saying that no rule was applied. **What a consumer should expect:** a
+  repository whose policy file does not compile, or whose index git cannot read, now has its commits
+  refused where it previously had them approved unexamined. That is not a new restriction on
+  legitimate work — it is the first report that the control was not running.
 
 - **`dangerous-flags.sh` stopped enumerating the guards `--no-verify` turns off, because the list had
   already drifted.** Both deny messages named "the size, credentials and tenant guards" when

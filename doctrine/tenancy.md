@@ -1,6 +1,6 @@
 ---
 name: tenancy
-description: Working for more than one tenant from one set of tools — what a tenant is, why the commit is the only boundary that binds every agent, how .protocol/tenant declares the ones this repo is not and .protocol/identity declares whose commits these are, why no mechanical control can decide what a file is for and placement is therefore the only lever, why a policy root is the unit of enforcement, the four controls in order of what actually carries weight, and why a tenant reports a protocol defect on itself rather than upstream.
+description: Working for more than one tenant from one set of tools — what a tenant is, why the commit is the only boundary that binds every agent, how .protocol/tenant declares the ones this repo is not and .protocol/identity declares whose commits these are, why no mechanical control can decide what a file is for and placement is therefore the only lever, why a policy root is the unit of enforcement, why a control that cannot determine whether it applies refuses rather than reporting clean, the four controls in order of what actually carries weight, and why a tenant reports a protocol defect on itself rather than upstream.
 ---
 
 # Tenancy
@@ -85,6 +85,38 @@ another at all: the roots are **inventoried**, each carries its own enrolment, a
 recorded value rather than the default reading of an empty directory. Where a root is put belongs to
 this too — placement decides which controls are even available to it, so it is a decision about
 enforcement and not about filing.
+
+## A control that cannot tell whether it applies refuses
+
+It does not report clean, and reporting clean is what it does by default. A guard reads a policy
+file and a list of staged paths and answers one question — does anything here offend. Every way of
+failing to read those inputs produces the same answer as reading them and finding nothing: a pattern
+`grep` cannot compile exits 2 where no-match exits 1, and a caller testing for non-zero cannot tell
+those apart; an index git declines to answer about yields an empty list, which is what a commit with
+nothing staged yields; a blob the guard could not look up is passed over like a path that was never
+there. In each of them no rule ran, and the commit is approved by the silence.
+
+That is **fail-safe defaults** applied one level up — to the control's own inputs rather than to the
+policy it reads. The guards already have it on the policy: a repository carrying no file has not
+opted in, and a missing guard in the chain blocks rather than being skipped. The inputs acquired the
+opposite default without anyone choosing it, because a shell reports "nothing matched" and "could
+not look" as the same kind of failure unless something separates them.
+
+**An absent policy and an unreadable one are not the same answer**, which is the distinction worth
+the section. Absence is a decision somebody took — carrying the file is how a repository opts in, so
+*nothing to enforce* is the correct report and the paragraphs above are what make it legible. An
+input the control could not read is not a decision at all: it is the control failing while looking
+like it worked. From outside the two are indistinguishable, so the second one has to say so. This is
+[`as-built.md`](as-built.md)'s rule one level down, where what reads as coverage is a guard's exit
+status rather than a document's sentence — and it is the sharper case, because a sentence at least
+sits somewhere a reader can find it, while a guard that did not run leaves nothing behind at all.
+
+**Failing closed is not sufficient on its own, because a refusal is also a report.** An allowlist
+that will not compile refuses every identity, which is the safe direction and arrives as a verdict
+about whoever is committing — and the list and the identity are repaired by opposite edits. So the
+refusal names the input it could not read and says that no rule was applied, rather than stating the
+conclusion the rule would have reached had it run. A refusal whose remedy cannot be derived from it
+leaves the operator the one remedy always available, which is to bypass the chain.
 
 ## Whose commits these are
 
