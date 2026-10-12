@@ -37,8 +37,13 @@ small it looks:
 - **Spending money above noise.**
 - **Losing a credential irreversibly.** This is the only one that is about *reading* rather than
   writing, and it cuts the other way: a warp is explicitly authorized to read credentials, and to
-  commit one to the repository that holds them. It stops only where a later step could not recover
-  the value. The ordering that follows is: salvage the credential first, then delete whatever held it.
+  commit one to the repository that holds them. It stops in two places. One is where a later step
+  could not recover the value, and the ordering that follows is: salvage the credential first, then
+  delete whatever held it. The other is the repository — *the one that holds them* is a repository
+  whose own tracked declaration says it does, not merely the one the value was found in, because
+  [rotation is the only removal](git.md#credentials-rotation-is-the-only-removal). So a warp refused
+  there has not hit an obstacle; it has found a repository that never made that declaration, and
+  committing the value anyway is the first bullet rather than a step in this one.
 
 **An automated action fires on its declared condition, not on what you think you changed.** Where
 merging to a branch runs a release job, that merge belongs to the owner however small the diff, and

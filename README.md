@@ -245,10 +245,11 @@ by name from inside the guard. [`ARCHITECTURE.md`](ARCHITECTURE.md) is the contr
 
 ## What this does not catch
 
-**Most of the doctrine is not machine-checkable, and is not meant to be.** Two of the rules have a
-guard behind them — the size ceiling and the tenancy declaration. The rest are held by whoever
-reads them, which is the ordinary condition of a standard: no script judges whether a plan's
-summary says why rather than only how.
+**Most of the doctrine is not machine-checkable, and is not meant to be.** Four of the rules have a
+guard behind them — the size ceiling and the credentials rule from *Git*, and the tenancy
+declaration and the identity allowlist from *Tenancy*. The rest are held by whoever reads them,
+which is the ordinary condition of a standard: no script judges whether a plan's summary says why
+rather than only how.
 
 **It gates commits, not reads.** The guards run at `pre-commit`. Nothing here stops an agent from
 *reading* another tenant's files, or from putting their contents in a prompt that leaves the

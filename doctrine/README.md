@@ -108,8 +108,9 @@ control that protects the tenant is running at the moment the report is written.
 
 ## What a machine checks, and what it does not
 
-Two of these documents are enforced at commit time by [`guards/`](../guards/) — the size ceiling
-from *Git*, and the declaration from *Tenancy*. [`ARCHITECTURE.md`
+Four of the rules in these documents are enforced at commit time by [`guards/`](../guards/) — the
+size ceiling and the credentials rule from *Git*, and the tenancy declaration and the identity
+allowlist from *Tenancy*. [`ARCHITECTURE.md`
 §4](../ARCHITECTURE.md#4-the-guard-chain-runs-in-order-and-fails-closed) is how that chain works
 and why it fails closed. The rest are held by whoever reads them, which is the ordinary
 condition of a standard and not a gap to be closed: most of what is written here is not the kind
