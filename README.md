@@ -39,13 +39,13 @@ matters.
 
 | Document | What it holds you to | Named from |
 |---|---|---|
-| [`planning.md`](doctrine/planning.md) | "Every plan opens with an executive summary." | pre-registration — Nosek and colleagues, 2018 |
-| [`testing.md`](doctrine/testing.md) | "A test must be able to fail." | falsifiability — Popper, 1934 |
-| [`clean-code.md`](doctrine/clean-code.md) | "The same fact or logic in two places will drift, and one of them becomes a lie with no signal which." | don't repeat yourself — Hunt and Thomas, 1999 |
-| [`git.md`](doctrine/git.md) | "Large files live in object storage. Repositories keep information extracted from them, never the files themselves." | the end-to-end argument — Saltzer, Reed and Clark, 1984 |
-| [`as-built.md`](doctrine/as-built.md) | "A document found to disagree with the system is corrected in the change that found it." | stop the line — Ohno, 1978 |
-| [`warp.md`](doctrine/warp.md) | "Take the plan from approval to deployed product with no further check-ins." | mission command — Moltke, 1869 |
-| [`tenancy.md`](doctrine/tenancy.md) | "The ordering matters more than the list. A great deal of effort is commonly spent on 3 while 1 is quietly violated, which buys nothing." | complete mediation — Saltzer and Schroeder, 1975 |
+| [`planning.md`](doctrine/planning.md) | "Every plan opens with an executive summary." | [pre-registration — Nosek and colleagues, 2018](LINEAGE.md#pre-registration--nosek-ebersole-dehaven-and-mellor-2018) |
+| [`testing.md`](doctrine/testing.md) | "A test must be able to fail." | [falsifiability — Popper, 1934](LINEAGE.md#falsifiability--popper-1934) |
+| [`clean-code.md`](doctrine/clean-code.md) | "The same fact or logic in two places will drift, and one of them becomes a lie with no signal which." | [don't repeat yourself — Hunt and Thomas, 1999](LINEAGE.md#dont-repeat-yourself--hunt-and-thomas-1999) |
+| [`git.md`](doctrine/git.md) | "Large files live in object storage. Repositories keep information extracted from them, never the files themselves." | [the end-to-end argument — Saltzer, Reed and Clark, 1984](LINEAGE.md#the-end-to-end-argument--saltzer-reed-and-clark-1984) |
+| [`as-built.md`](doctrine/as-built.md) | "A document found to disagree with the system is corrected in the change that found it." | [stop the line — Ohno, 1978](LINEAGE.md#stop-the-line--ohno-1978) |
+| [`warp.md`](doctrine/warp.md) | "Take the plan from approval to deployed product with no further check-ins." | [mission command — Moltke, 1869](LINEAGE.md#mission-command--moltke-1869) |
+| [`tenancy.md`](doctrine/tenancy.md) | "The ordering matters more than the list. A great deal of effort is commonly spent on 3 while 1 is quietly violated, which buys nothing." | [complete mediation — Saltzer and Schroeder, 1975](LINEAGE.md#complete-mediation--saltzer-and-schroeder-1975) |
 
 **The third column is a condition of entry, not a bibliography.** A rule is admitted to `doctrine/`
 only when it can be named as an instance of something the wider field already knows *and* attributed
@@ -63,8 +63,10 @@ says against it — which is the half `INDUCTION.md` promises when it admits a r
 [`REFUTATION.md`](REFUTATION.md) is the same accounting after the fact, and the one a repository of
 rules has no incentive to keep: one entry per occasion a rule here was stated or applied and failed,
 each naming the commit a reader can go and read. `INDUCTION.md` admits a rule only if its breach is
-observable — a condition every document can satisfy in writing and none demonstrate — and four of
-them are demonstrated there.
+observable — a condition every document can satisfy in writing and none demonstrate — and five of
+them are demonstrated there. That number is derived from the page rather than typed here: it said
+four on the day the audit that added the fifth went in, which is this sentence's own subject
+arriving on the front page and nothing going red.
 
 Quoted like that the rules read as slogans, which is the failure mode of every list of principles.
 Two of them worked out show what the shape is actually doing.
@@ -180,10 +182,15 @@ server-side push limit, which is the wrong end of the trade — see step 2.
    pre-commit:   keep only what you extract from the file, not the file.
    pre-commit:   unstage with:  git restore --staged <path>
    pre-commit:   if it is a build artifact or dependency, gitignore it instead.
+   pre-commit: (bypass: git commit --no-verify)
    ```
 
    The guard read the diff, not the conversation. Whether an agent, an editor or a person staged
-   that file makes no difference to it.
+   that file makes no difference to it. The last line is the one this block left out until
+   2026-10-13 — the page showed a refusal with no way past it, which is the opposite of what the
+   chain does and the opposite of what §4 of `ARCHITECTURE.md` calls "the string every guard
+   prints as it refuses". `bin/doctrine.test.sh` now reads the block out of `guards/size-guard.sh`
+   rather than trusting that it was transcribed.
 
 5. **The same file reaching a second agent.** With the tenant as the configuration directory, one
    agent lists `git` among its skills; point a second agent at its own adapter directory and it

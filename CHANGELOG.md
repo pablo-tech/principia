@@ -21,6 +21,32 @@ wrong commit.
 
 ### Added
 
+- **Every cross-file anchor in the tree is checked, where 41 of 113 were.** `dangling_anchor`
+  already existed, already took a source and a target, and was called at one site: over the anchors
+  `INDUCTION.md` points at `LINEAGE.md`. The other 72 were held by nothing — including all 41
+  `LINEAGE.md` points back, and every anchor in `REFUTATION.md`, `CONTRIBUTING.md` and `README.md`.
+  The fix is that helper called for every `](FILE.md#…)` pair the tree contains, with a fixture
+  control that breaks one. `README.md`'s table of the doctrine now carries the `LINEAGE.md` anchor
+  each row's citation names, which is what puts the fourth sanctioned copy of a citation inside the
+  check that holds the other three: until now it was reachable only by a check asserting that some
+  four-digit year appeared somewhere in the row.
+- **A count a document states about this repository is derived from the thing it counts.** Eleven
+  such sentences now are, where four were — the seven doctrine documents, the four steps a shim
+  resolves the guards in, the three suites that define a `verdict()` of their own, the three rows
+  of the adapter contract, the three files an adapter directory holds, the two guards that take
+  `--scan-tree`, the three variables in §6's table that bind an agent's hooks rather than the
+  commit, and the one file `bin/adapt` rewrites in a tenant that already has it. Each is matched as
+  the literal sentence a reader reads, with the number spelled out, against the flattened document
+  — rather than against a list naming which sentences carry a count, which would be the same defect
+  one level up. `CHANGELOG.md` is excluded on purpose: a count here is a dated record of what was
+  true then, and deriving it would rewrite history to match today.
+- **Cross-file duplication is recorded as unenforced, with the measurement that decided it.**
+  Measured over the tracked `*.md` less `CHANGELOG.md`, fenced blocks stripped, whitespace
+  collapsed, twelve consecutive words as the unit: **42 pairs or triples of documents share at
+  least one run**, 347 runs in all, and no two documents share a byte-identical sentence. A check
+  would have to be handed the list of copies that are sanctioned, and a list of sanctioned copies
+  maintained by hand is the thing it would be checking for. The unit is stated so the number can be
+  taken again rather than believed.
 - **A passing run now says what it executed, and a suite that did not reach its verdict fails.**
   `doctrine/testing.md` has said since 1.0.0 that a passing run is evidence about what it executed,
   and this harness printed `all suites passed` over any number of checks including none. Two things
@@ -50,6 +76,36 @@ wrong commit.
 
 ### Fixed
 
+- **Three sentences that stated a rule and left its one exception out now derive the exception.**
+  A rule with its single exception omitted is indistinguishable, to a reader, from a rule that has
+  none — which is `doctrine/as-built.md`'s own test, and all three were sentences this repository
+  prints about its own mechanism. `ARCHITECTURE.md` §2 called the seeded files "skipped ever after"
+  and `CONTRIBUTING.md` said `bin/adapt` "never edits a file the tenant already has", while
+  `record()` rewrites `.protocol/protocol-version` on every run: the table has a Rewritten row now,
+  the bullet names the file, and the path is read out of `record()` rather than out of either
+  sentence. §4 said "each guard that reads the tree judges the staged blob, not the file on disk",
+  which was false of the two audit modes and false in the direction that reads as coverage; it is
+  scoped to the commit path, and the departure is stated where it happens. And `README.md`'s worked
+  refusal — the only one on the front page — omitted `(bypass: git commit --no-verify)`, so the
+  page a first reader meets showed a refusal with no way past it; the block is now read out of
+  `guards/size-guard.sh` instead of transcribed. A fourth was found by the check rather than by a
+  reader: §4 said two adapter variables sat outside the bypass list and there are three, the
+  unnamed one being `PROTOCOL_WORK_LOG`.
+- **Both `--scan-tree` modes judge a symlink by the target on disk, where they read it out of the
+  index.** An audit mode's subject is the tree as it stands, and that held for every tracked entry
+  but one: a symlink's target is the content these two guards are handed for it, and both took it
+  from the index — so a retarget nobody had staged was invisible to the only mode that is run as an
+  audit, in the guards that refuse a tenant's name and a credential. Both use `readlink` now, and
+  `guards/tenant-guard.test.sh` and `guards/credentials-guard.test.sh` each carry a control that
+  goes red against the index read.
+- **A check in `bin/induction.test.sh` could report a failure that was not there, and whether it
+  did depended on scheduling.** `grep -q` exits on its first match, the producer upstream then dies
+  of SIGPIPE, and `pipefail` makes that 141 the pipeline's status — so a check that found what it
+  was looking for reported that it had not. It is a false *positive*, which is the harmless
+  direction, but it had been green since the day it was written and went red only under
+  `bin/test.sh`, because whether the producer finishes writing before `grep` leaves is a matter of
+  scheduling: a suite can pass alone and fail in the run. All 19 pipelines of that shape in the
+  file are here-strings now.
 - **`finish` returns on a pass rather than exiting, which is how a suite that prints after its
   verdict stays catchable.** For one commit on `main` it exited on every path, and that had two
   costs. The runner's rule — refuse any suite whose last line is not the verdict its own output
@@ -90,8 +146,6 @@ wrong commit.
 - **`bin/adapt.test.sh` asserts the ignore rules it only used to exercise**: that a tenant rule
   about a sibling path does not swallow the rule for this one, that a covered pattern is skipped
   *and said to be*, and that a `.gitignore` whose last line carries no newline keeps its last rule.
-
-### Fixed
 
 - **A guard that cannot read an input it needs now refuses, where two of the four reported clean.**
   `doctrine/tenancy.md` has a section headed *"A control that cannot tell whether it applies

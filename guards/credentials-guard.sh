@@ -195,10 +195,15 @@ if [ "${1:-}" = "--scan-tree" ]; then
   while IFS= read -r -d '' path; do
     # `-e` follows the link and is false for a dangling one, so a tracked symlink was skipped
     # entirely — the shape rule included, and `bin/adapt` installs tracked symlinks into every
-    # tenant by design. The path rule is asked first and the content is read through `git show`,
-    # which answers with the link's target rather than with the file it points at.
+    # tenant by design. The path rule is asked first and the content is the link's target, read
+    # with `readlink` rather than through the file it points at.
+    #
+    # `readlink`, not `git show ":$path"`, since 2026-10-13: this mode's subject is the tree on
+    # disk, and reading one kind of entry out of the index made a retarget nobody had staged
+    # invisible to the only mode that is run as an audit. The staged read is right in the branch
+    # below, where the subject is what a commit would record.
     if [ -L "$path" ]; then
-      offends "$path" "$(git show ":$path" 2>/dev/null | tr -d '\0')" && offenders="$offenders
+      offends "$path" "$(readlink "$path" 2>/dev/null | tr -d '\0')" && offenders="$offenders
 $path"
       continue
     fi

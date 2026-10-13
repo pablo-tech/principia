@@ -31,6 +31,12 @@ source "$DIR/check.sh"
 
 ROOT="$DIR/.."
 
+# Every tracked markdown file, found rather than listed, for the tree-wide anchor sweep below —
+# the same reason bin/test.sh finds its suites. A list would be one more claim about the tree.
+# Held as one space-separated string and split at the call site on purpose: no tracked path here
+# has a space in it, and `.gitattributes`-free `git ls-files` would quote one if it did.
+TRACKED_MD="$(cd "$ROOT" && git ls-files '*.md' | tr '\n' ' ')"
+
 # A dated work, or the one sentence that stands in for having looked and found none. A year is the
 # cheapest available evidence that something was published rather than asserted. The range reaches
 # back past the twentieth century on purpose: the register already cites 1869 and 1898, and a pattern
@@ -87,7 +93,7 @@ uncited() {
   local src=$1 line base out=""
   while IFS= read -r line; do
     base=$(printf '%s' "$line" | sed -e 's@^| \[`@@' -e 's@`\].*@@')
-    printf '%s' "$line" | grep -qE "$DATED" || out="$out $base"
+    grep -qE "$DATED" <<<"$line" || out="$out $base"
   done < <(rows "$src")
   [ -z "$out" ] || { printf '        %s names no dated work for:%s\n' "${src##*/}" "$out"; return 1; }
 }
@@ -109,7 +115,7 @@ undated_name() {
   while IFS= read -r f; do
     block=$(named_block "$f")
     [ -n "$block" ] || continue
-    printf '%s' "$block" | grep -qE "$DATED" || out="$out ${f##*/}"
+    grep -qE "$DATED" <<<"$block" || out="$out ${f##*/}"
   done < <(docs "$1")
   [ -z "$out" ] || { printf '        `Named:` line carries no dated work:%s\n' "$out"; return 1; }
 }
@@ -163,7 +169,7 @@ unlinked() {
   local src=$1 line base out=""
   while IFS= read -r line; do
     base=$(printf '%s' "$line" | sed -e 's@^| \[`@@' -e 's@`\].*@@')
-    printf '%s' "$line" | grep -q '](LINEAGE\.md#' || out="$out $base"
+    grep -q '](LINEAGE\.md#' <<<"$line" || out="$out $base"
   done < <(rows "$src")
   [ -z "$out" ] || { printf '        no link into the lineage from the row for:%s\n' "$out"; return 1; }
 }
@@ -175,9 +181,63 @@ dangling_anchor() {
   slugs=$(entry_slugs "$lin")
   while IFS= read -r a; do
     [ -n "$a" ] || continue
-    printf '%s\n' "$slugs" | grep -qxF "$a" || out="$out $a"
+    # A here-string, not `printf … | grep -q`, for the reason the sweep below records: `grep -q`
+    # exits on its first match, the producer upstream then dies of SIGPIPE, and `pipefail` makes
+    # that 141 the pipeline's status — so the check reports a broken anchor against a heading that
+    # is there. Whether the producer has finished writing before grep leaves is a matter of
+    # scheduling, which is why this passed on its own and failed under `bin/test.sh` on
+    # 2026-10-13, having been green here since the day it was written.
+    grep -qxF "$a" <<<"$slugs" || out="$out $a"
   done < <(lineage_links "$src" | sort -u)
   [ -z "$out" ] || { printf '        %s asks the lineage for an entry it has not got:%s\n' "${src##*/}" "$out"; return 1; }
+}
+
+# The same question asked of every anchor in the tree rather than of the 41 the register points at
+# the lineage. Those 41 were checked and the other 72 were not — including all 41 the lineage
+# points back, which is the same link read from the other end, and every anchor into README.md and
+# INDUCTION.md. The helper above cannot be pointed at them: it knows the lineage's shape, `### `
+# headings and a single target. This one knows neither, so it resolves the target against the file
+# carrying the link and reads headings at any level, which is what GitHub does.
+#
+# A broken anchor is the failure GitHub reports as silence — the page opens at its top and the
+# reader never learns the heading was renamed. That is why reach rather than accuracy was the
+# finding here: all 113 resolved when this was written, and nothing was holding 72 of them.
+heading_slugs() {
+  local h
+  while IFS= read -r h; do slug "$h"; done < <(sed -nE 's/^#{1,6} +//p' "$1" 2>/dev/null)
+}
+anchor_refs() {   # root, then paths relative to it — one `src<TAB>target<TAB>anchor` row per link
+  local root=$1 f ref
+  shift
+  for f in "$@"; do
+    [ -f "$root/$f" ] || continue
+    while IFS= read -r ref; do
+      [ -n "$ref" ] || continue
+      printf '%s\t%s\t%s\n' "$f" "${ref%%#*}" "${ref#*#}"
+    done < <(grep -ohE '\]\([A-Za-z0-9_./-]+\.md#[A-Za-z0-9_-]+\)' "$root/$f" |
+      sed -e 's/^](//' -e 's/)$//')
+  done
+}
+#
+# The lookup is a here-string rather than a pipe into `grep -q`, and that is not a style choice.
+# Under `set -o pipefail` the two together report a MATCH as a miss: `grep -q` exits on the first
+# hit, the producer upstream of it dies of SIGPIPE, and the pipeline's status is that 141 rather
+# than grep's 0. It cost four false findings against headings that were all there, which is the
+# direction worth naming — a check that invents failures gets disbelieved and then ignored.
+dangling_anchors() {   # root, then paths relative to it
+  local root=$1 src target anchor dir path out="" seen="" slugs=""
+  while IFS=$'\t' read -r src target anchor; do
+    case $src in */*) dir="$root/${src%/*}" ;; *) dir="$root" ;; esac
+    path="$dir/$target"
+    if [ ! -f "$path" ]; then
+      out="$out        $src points at no such file: $target"$'\n'
+      continue
+    fi
+    if [ "$path" != "$seen" ]; then slugs="$(heading_slugs "$path")"; seen="$path"; fi
+    grep -qxF "$anchor" <<<"$slugs" ||
+      out="$out        $src asks $target for a heading it has not got: #$anchor"$'\n'
+  done < <(anchor_refs "$@" | sort -u -t$'\t' -k2,2 -k1,1 -k3,3)
+  [ -z "$out" ] || { printf '%s' "$out"; return 1; }
 }
 
 # Every entry is reached from the register. This is the whole difference between a lineage and the
@@ -188,7 +248,7 @@ orphan() {
   used=$(lineage_links "$src" | sort -u)
   while IFS= read -r s; do
     [ -n "$s" ] || continue
-    printf '%s\n' "$used" | grep -qxF "$s" || out="$out $s"
+    grep -qxF "$s" <<<"$used" || out="$out $s"
   done < <(entry_slugs "$lin")
   [ -z "$out" ] || { printf '        no register row reaches:%s\n' "$out"; return 1; }
 }
@@ -226,7 +286,7 @@ undated_entry() {
   local lin=$1 line out=""
   [ -f "$lin" ] || { printf '        there is no lineage page at all: %s\n' "${lin##*/}"; return 1; }
   while IFS= read -r line; do
-    printf '%s' "${line#*|}" | grep -qE "$DATED" || out="$out
+    grep -qE "$DATED" <<<"${line#*|}" || out="$out
         ${line%%|*}"
   done < <(para '**The work**' "$lin")
   [ -z "$out" ] || { printf '        no dated work cited by:%s\n' "$out"; return 1; }
@@ -239,7 +299,7 @@ unobjected() {
   local lin=$1 line out=""
   [ -f "$lin" ] || { printf '        there is no lineage page at all: %s\n' "${lin##*/}"; return 1; }
   while IFS= read -r line; do
-    printf '%s' "${line#*|}" | grep -qE "$OBJECTED" || out="$out
+    grep -qE "$OBJECTED" <<<"${line#*|}" || out="$out
         ${line%%|*}"
   done < <(para '**What the field says against it**' "$lin")
   [ -z "$out" ] || { printf '        no dated objection and no claim that none was found:%s\n' "$out"; return 1; }
@@ -257,13 +317,13 @@ unlineaged() {
   while IFS= read -r f; do
     block=$(named_block "$f")
     [ -n "$block" ] || continue
-    if ! printf '%s' "$block" | grep -q '](\.\./LINEAGE\.md#'; then
+    if ! grep -q '](\.\./LINEAGE\.md#' <<<"$block"; then
       none="$none ${f##*/}"
       continue
     fi
     while IFS= read -r a; do
       [ -n "$a" ] || continue
-      printf '%s\n' "$slugs" | grep -qxF "$a" || bad="$bad ${f##*/}#$a"
+      grep -qxF "$a" <<<"$slugs" || bad="$bad ${f##*/}#$a"
     done < <(printf '%s' "$block" | grep -o '](\.\./LINEAGE\.md#[a-z0-9-]*)' | sed -e 's/.*#//' -e 's/)$//')
   done < <(docs "$doc")
   [ -z "$none" ] || printf '        no lineage link on the `Named:` line of:%s\n' "$none"
@@ -307,7 +367,7 @@ year_disagrees() {
     text=${chunk#*|}
     for y in $(printf '%s' "$text" | grep -o 'LINEAGE\.md#[a-z0-9-]*-[0-9][0-9][0-9][0-9])' |
                sed 's/.*-\([0-9][0-9][0-9][0-9]\))$/\1/' | sort -u); do
-      printf '%s' "$text" | visible | grep -q "$y" || out="$out $label($y)"
+      grep -q "$y" <<<"$(visible <<<"$text")" || out="$out $label($y)"
     done
   done
   [ -z "$out" ] || {
@@ -374,6 +434,10 @@ check "README's table is found at all, for the same reason" \
 check "every register row reaches the lineage" 'unlinked "$ROOT/INDUCTION.md"'
 check "every anchor the register asks the lineage for exists" \
   'dangling_anchor "$ROOT/INDUCTION.md" "$LINEAGE"'
+check "every cross-file anchor in the tree resolves, not only those 41" \
+  'dangling_anchors "$ROOT" $TRACKED_MD'
+check "and there are enough of them for that to be a judgement rather than an empty set" \
+  '[ "$(anchor_refs "$ROOT" $TRACKED_MD | grep -c .)" -ge 100 ]'
 check "every lineage entry is reached from the register" 'orphan "$ROOT/INDUCTION.md" "$LINEAGE"'
 check "every lineage entry carries all four labels" 'thin "$LINEAGE"'
 check "every lineage entry cites a dated work" 'undated_entry "$LINEAGE"'
@@ -386,6 +450,14 @@ check "every \`Named:\` line dates every work it names, and not only the first" 
   'named_chunks "$ROOT/doctrine" | undated_work'
 check "the year in a lineage link is the year the copy carrying it prints" \
   'named_chunks "$ROOT/doctrine" | year_disagrees && row_chunks "$ROOT/INDUCTION.md" | year_disagrees'
+# README's table is the fourth sanctioned copy of a citation and carried no lineage anchor at all
+# until 2026-10-13, so it was the one copy `year_disagrees` structurally could not reach — covered
+# only by `uncited`, which asks whether a four-digit year appears somewhere in the row. Now it
+# answers for its anchors like the other three.
+check "and README's table reaches the lineage from every row, as the register does" \
+  'unlinked "$ROOT/README.md"'
+check "and the year in each of those links is the year that row prints" \
+  'row_chunks "$ROOT/README.md" | year_disagrees'
 check "all three copies of the refusal triage name the same four things" 'triage_drift "$ROOT"'
 
 # The controls. Each judgement above is run against a tree built to fail it, because a matcher that
@@ -420,7 +492,7 @@ check "a \`Named:\` line naming a practice and no work is caught" '! undated_nam
 exempts_index() {
   local out
   out=$({ unlisted "$FIX/doctrine" "$FIX/INDUCTION.md"; unnamed "$FIX/doctrine"; } 2>&1 || true)
-  printf '%s' "$out" | grep -q 'kept\.md' && ! printf '%s' "$out" | grep -q 'README\.md'
+  grep -q 'kept\.md' <<<"$out" && ! grep -q 'README\.md' <<<"$out"
 }
 mkdir -p "$FIX"
 cat >"$FIX/LINEAGE.md" <<'FIXTURE'
@@ -464,13 +536,38 @@ FIXTURE
 names_both_causes() {
   local out
   out=$(unlineaged "$FIX/doctrine" "$FIX/LINEAGE.md" 2>&1 || true)
-  printf '%s' "$out" | grep -q 'no lineage link on the `Named:` line of: undated\.md' &&
-    printf '%s' "$out" | grep -q 'has not got: renamed\.md#renamed-since--somebody-1970'
+  grep -q 'no lineage link on the `Named:` line of: undated\.md' <<<"$out" &&
+    grep -q 'has not got: renamed\.md#renamed-since--somebody-1970' <<<"$out"
 }
 
 check "a row that does not reach the lineage is caught" '! unlinked "$FIX/REGISTER.md" >/dev/null'
 check "an anchor the lineage has not got is caught" \
   '! dangling_anchor "$FIX/REGISTER.md" "$FIX/LINEAGE.md" >/dev/null'
+# And the tree-wide sweep, on a pair built the way the tree is: a heading that is there, one that
+# was renamed, a file that is not there at all, and a link reached from a subdirectory so the
+# resolution against the carrying file is exercised rather than assumed. The matching one is in the
+# fixture because a sweep that reported every anchor broken would pass this control too.
+mkdir -p "$FIX/sub"
+cat >"$FIX/target.md" <<'FIXTURE'
+# Target
+
+## A heading that is here
+
+## A heading that was renamed since
+FIXTURE
+cat >"$FIX/links.md" <<'FIXTURE'
+[here](target.md#a-heading-that-is-here) and [gone](target.md#a-heading-that-was-renamed)
+and [nowhere](absent.md#anything)
+FIXTURE
+printf '[up](../target.md#a-heading-that-is-here)\n' >"$FIX/sub/deep.md"
+check "an anchor into any document, not only the lineage, is resolved against that document" \
+  'dangling_anchors "$FIX" target.md sub/deep.md'
+check "a renamed heading is caught, and the anchor beside it that still resolves is not" \
+  '[ "$(dangling_anchors "$FIX" links.md | grep -c .)" = 2 ]'
+# Command substitution rather than a pipe, because `dangling_anchors` returns 1 when it finds
+# something and `pipefail` would report that as the grep having failed.
+check "and a link to a file that is not there is caught as that rather than as a bad anchor" \
+  'grep -q "points at no such file: absent.md" <<<"$(dangling_anchors "$FIX" links.md)"'
 check "an entry no row reaches is caught" '! orphan "$FIX/REGISTER.md" "$FIX/LINEAGE.md" >/dev/null'
 check "an entry missing a label is caught" '! thin "$FIX/LINEAGE.md" >/dev/null'
 check "an entry citing no dated work is caught" '! undated_entry "$FIX/LINEAGE.md" >/dev/null'
@@ -516,16 +613,16 @@ FIXTURE
 halfdated_caught() {
   local out
   out=$(named_chunks "$FIX/doctrine" | undated_work 2>&1 || true)
-  printf '%s' "$out" | grep -q 'halfdated\.md names a work with no year' &&
-    ! printf '%s' "$out" | grep -q 'mistyped\.md'
+  grep -q 'halfdated\.md names a work with no year' <<<"$out" &&
+    ! grep -q 'mistyped\.md' <<<"$out"
 }
 mistyped_caught() {
   local a b
   a=$(named_chunks "$FIX/doctrine" | year_disagrees 2>&1 || true)
   b=$(row_chunks "$FIX/MISTYPED.md" | year_disagrees 2>&1 || true)
-  printf '%s' "$a" | grep -q 'mistyped\.md(1970)' &&
-    ! printf '%s' "$a" | grep -q 'halfdated\.md' &&
-    printf '%s' "$b" | grep -q 'gone\.md(1970)'
+  grep -q 'mistyped\.md(1970)' <<<"$a" &&
+    ! grep -q 'halfdated\.md' <<<"$a" &&
+    grep -q 'gone\.md(1970)' <<<"$b"
 }
 
 check "a \`Named:\` line that dates one work and leaves the other undated is caught" 'halfdated_caught'
@@ -538,7 +635,7 @@ cp "$FIX/AGENTS.md" "$FIX/CONTRIBUTING.md"
 triage_names_the_one_that_drifted() {
   local out
   out=$(triage_drift "$FIX" 2>&1 || true)
-  printf '%s' "$out" | grep -q 'in: INDUCTION\.md$'
+  grep -q 'in: INDUCTION\.md$' <<<"$out"
 }
 check "a copy that does not carry the triage in those words is caught, and the two that do are not" \
   'triage_names_the_one_that_drifted'

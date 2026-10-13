@@ -67,7 +67,8 @@ three ways, and which one it is decides who may edit it:**
 | How | What | Who may edit it |
 |---|---|---|
 | **Linked** | `protocol/`, and every `skills/<name>/SKILL.md` and `commands/<name>.md` an adapter installs | nobody — editing one edits this repository |
-| **Seeded** | the four files above that are not `protocol/`, copied once from `tenant-template/` and skipped ever after | the tenant, which is what they are for |
+| **Seeded** | three of the four files above that are not `protocol/` — `AGENTS.md`, the `.protocol/*` policies and `.githooks/pre-commit` — copied from `tenant-template/` if absent and skipped ever after | the tenant, which is what they are for |
+| **Rewritten** | `.protocol/protocol-version` alone, seeded like the others on the first run and rewritten by `record()` on every run after it | nobody by hand — it is the installer's receipt, and `bin/doctor` reads it back |
 | **Written whole** | an agent's own configuration an adapter composes — `CLAUDE.md`, `settings.json`, `.agents/cortex/*` — written once if absent, never touched again | the tenant, and §1 is why: an adapter is deletable, so what it writes is not doctrine |
 
 So a tenant does carry copies of material from this repository, and the number of them is not fixed
@@ -78,6 +79,15 @@ repository is copied from this one except the seeds" until 2026-10-12, which was
 directions at once: four of the installed paths are copies in the default mode and all of them are
 under `--copy`.
 
+**The Rewritten row is new on 2026-10-13, and the Seeded row said "the four files above" and
+"skipped ever after" until then.** That was false of exactly one of the four, and false in the
+direction that reads as coverage: `record()` (`bin/adapt`) rewrites `.protocol/protocol-version` on
+every run, which the first table on this page already said one row higher and which
+`CONTRIBUTING.md` denied outright. A sentence that states a rule and omits its single exception is
+indistinguishable to a reader from one that has no exception, so the exception is now derived rather
+than remembered: `bin/doctrine.test.sh` reads the path out of `record()` and asks both documents to
+name it, and a second path arriving in that function reds the check in both files at once.
+
 ## 3. A guard reads a policy file the tenant carries, and what an absent policy means is the guard's own decision
 
 `guards/policy.sh` resolves `.protocol/<name>` relative to the committing repository's root,
@@ -86,7 +96,10 @@ strips whole-line comments and blank lines, and returns non-zero when the file i
 A policy has **two layers**, read in that order and concatenated into one list: the tracked
 `.protocol/<name>`, then an untracked `.protocol/<name>.local`. Either may be absent; only both
 being absent is the "no such policy" answer. What a guard does with that answer is the guard's own,
-and it is not the same in all four — the subsections below say what it means where it bites.
+and it is not the same for each of the four policy files — the subsections below say what it means
+where it bites. Three guards read one of those files; the fourth, `size-guard.sh`, reads none, and
+the sentence counts the files rather than the guards because that is the number this paragraph is
+about. `bin/doctrine.test.sh` asks both of the guards.
 `bin/adapt` gitignores the overlay in every tenant, before one can exist.
 
 The overlay is what lets a policy file survive being published. A list of the terms a repository
@@ -220,15 +233,29 @@ non-zero exit. A guard that is missing or not executable **blocks the commit** r
 skipped: a silently skipped guard lets the thing it was meant to catch reach history, and the
 absence never announces itself.
 
-Each guard that reads the tree judges the staged blob, not the file on disk — `git show :<path>`,
-not `cat <path>` — because the index is what a commit would record. `size-guard.sh` and
-`credentials-guard.sh` also compare against staged size and staged bytes for the same reason.
+**Judging a commit, each guard reads the staged blob and not the file on disk** — `git show
+:<path>`, not `cat <path>` — because the index is what a commit would record. `size-guard.sh` and
+`credentials-guard.sh` also compare against staged size and staged bytes for the same reason. This
+sentence opened "each guard that reads the tree" until 2026-10-13, which was false of the audit
+modes below and false in the direction that reads as coverage: they read disk on purpose, and
+anyone taking the sentence at its word would have concluded an audit cannot see an edit nobody has
+staged — which is the one thing an audit is for.
 
 Two guards take `--scan-tree`, which applies their rules to every tracked file instead of the
 staged set, and `identity-guard.sh` takes `--scan-history`, which applies its list to the commits
 already on the branch. That is the audit mode: it reads the terms from the repository rather than
 from a document that then drifts — and for the history it is also the only mode there is, since a
 header a machine with no hook configured wrote is past the hook by the time anyone looks.
+
+**Both scan modes read the file on disk, and that is the departure from the rule above rather than
+an oversight of it.** An audit's subject is the repository as it stands, so an edit nobody staged
+has to be visible to it; a scan reading the index would be a second copy of the commit check
+wearing the name of an audit. That held for every tracked entry but one until 2026-10-13: a
+symlink's target is the content these two guards are handed for it, and both read that target out
+of the index, so a retarget nobody staged was judged by whatever the link used to point at. Both
+use `readlink` now, and `guards/tenant-guard.test.sh` and `guards/credentials-guard.test.sh` each
+carry a control that goes red on the index read — which is what holds the paragraph rather than
+the paragraph holding itself.
 
 `identity-guard.sh` is the one guard that does not read the staged set at all. Which identity a
 commit is made as is neither a staged path nor a staged byte: it is `git var GIT_AUTHOR_IDENT`,
@@ -238,15 +265,28 @@ rather than a second implementation of that lookup.
 **The sanctioned bypass is `git commit --no-verify`, deliberately and universally.** A control with
 no bypass is a control that gets uninstalled, and that one is loud: it is typed per commit, it
 discards the whole chain at once rather than one rule, and it is the string every guard prints as it
-refuses. **There are three quieter ones, and this sentence named none of them until 2026-10-12** —
+refuses. **There are quieter ones, and this sentence named none of them until 2026-10-12** —
 which is the defect in it, because a bypass nobody has written down is one nobody can decide to
-close:
+close. The variable ones are derived rather than listed by hand: **every `PROTOCOL_*` the shim or a
+guard expands is one of these by construction**, the shim's deciding which guards run and a guard's
+deciding what it refuses, and in both cases the commit records nothing. `bin/doctrine.test.sh` holds
+this list to that set. The three adapter variables in §6's table are deliberately outside it —
+`PROTOCOL_COMMAND_GUARDS`, `PROTOCOL_PROTECTED_BRANCH` and `PROTOCOL_WORK_LOG` bind one agent's
+hooks rather than the commit, and §1 says an adapter is deletable. That count said two until
+2026-10-13 and left the third unnamed, which is the omission above arriving a second time in the
+paragraph that records it — so the exclusion is now derived too: it is §6's table less the set the
+sentence before it derives, and a variable joining either side reds this.
 
 - **`PROTOCOL_GUARDS`** redirects the entire chain at another directory (§6). It cannot be closed,
   because it is how the shim finds the guards at all where there is no `protocol/`, and a guard
   cannot judge the checkout it is being run from. What holds it is that a commit it let through is
   judged by whatever is in that directory, and `bin/doctor` reports which checkout the shim
   resolves for exactly that reason.
+- **`PROTOCOL_DIR`** does the same thing one step later and was the omission that made the count
+  above worth deriving. It is step 4 of §5 where `PROTOCOL_GUARDS` is step 1, so it redirects the
+  chain only where no `protocol/` and no `guards/` sit in the tree — which is every repository
+  carrying the shim and nothing else, and those are the ones with no second copy to disagree with
+  it. Same remedy: `bin/doctor` prints the checkout that was resolved, whichever step resolved it.
 - **`PROTOCOL_MAX_FILE_MB`** moves the size ceiling (§6), and a blob then lands in history at a size
   the ceiling refuses with nothing in the commit recording that the ceiling moved. **It now prints
   one line whenever it differs from 25, on a pass as well as a refusal** — the override stays, and
@@ -261,9 +301,9 @@ close:
   "those two files are read from the index alone" while the other two were still read the old way,
   which made the class read as closed on the strength of the half of it that was.
 
-The first is a documented override, the second is now recorded every time it is used, and the third
-is closed. What distinguishes all three from `--no-verify` is that none of them had to be typed
-twice, and none of them left a trace.
+The first two are documented overrides, the third is now recorded every time it is used, and the
+fourth is closed. What distinguishes all of them from `--no-verify` is that none of them had to be
+typed twice, and none of them left a trace.
 
 ## 5. A shim resolves the guards in four steps, in this order
 
@@ -314,10 +354,17 @@ in the same repository as the sentence. All are optional and all are read at run
 | `PROTOCOL_PROTECTED_BRANCH` | `main` | the branch those guards refuse a push or a pick onto |
 | `PROTOCOL_WORK_LOG` | `$XDG_STATE_HOME/warp/work-log.jsonl` | where one adapter's turn-cost hook appends; set empty to turn the append off |
 
-Two more are read and are **not** this protocol's to name: `XDG_STATE_HOME`, which is the
-specification's, and `CLAUDE_CONFIG_DIR`, which is one agent's — both in the Claude Code adapter
-alone, and an adapter is deletable (§1). They are listed here because a reader checking the table
-against the tree finds them, not because this protocol defines either.
+The variables read here that are **not** this protocol's to name are these, and
+`bin/doctrine.test.sh` holds the sentence to the tree the way it holds the table above:
+`XDG_STATE_HOME`, which is the specification's, `CLAUDE_CONFIG_DIR`, which is one agent's, and
+`CORTEX_BIN`, which is another's — the first two in the Claude Code adapter and the third in the
+Cortex one, and an adapter is deletable (§1). They are named here because a reader checking this
+section against the tree finds them, not because this protocol defines any of them.
+
+**This sentence said two, in one adapter, until 2026-10-13**, which is the shape of a check that
+stops at a table's edge: the table above it was derived and the prose under it was not, so the
+third variable was read by a script in the tree and named nowhere. It is derived now, and in both
+directions — a variable arriving reds it, and so does a name here that nothing reads.
 
 ## 7. The adapter contract
 
@@ -420,6 +467,22 @@ this page.
 real commit through the shim that run installed, resolving the guards through the well-known path.
 Every link between `bin/adapt` and `guards/tenant-guard.sh` is exercised at once, because each of
 them individually is the kind of thing that passes its own unit test and is wired to nothing.
+
+**Cross-file duplication is unenforced, and that is a decision rather than a gap nobody noticed.**
+Measured 2026-10-13 over the tracked `*.md` less `CHANGELOG.md`, with fenced blocks stripped,
+whitespace collapsed and twelve consecutive words as the unit: **42 pairs or triples of documents
+share at least one run**, 347 runs in all. Most are
+sanctioned and named elsewhere — `LINEAGE.md` beside each `doctrine/*.md` it cites is the citation
+copy `INDUCTION.md` requires, and `README.md` beside `doctrine/README.md` is the register printed
+twice on purpose. The rest are sentences that drifted into two homes, and nothing tells the two
+apart but reading them.
+
+A check would have to be given the list, and a list of sanctioned copies maintained by hand is the
+thing it would be checking for: the first unsanctioned copy to be registered rather than removed
+makes the check agree with the tree and say nothing. So the measurement is recorded here, dated
+and reproducible from the unit above, and the enforcement is that a reader who finds the same
+sentence in two documents is entitled to treat the second as the bug. `REFUTATION.md` already
+records the same gap for the citation copies, which is the half of this that has a receipt.
 
 ## 10. Explicitly out of scope
 
