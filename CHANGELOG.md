@@ -35,9 +35,9 @@ wrong commit.
   counting lines alone is unsafe because `bin/doctor` prints `  ok    %s` byte-identically — which
   is why there are two and why they count independently. **Every old verdict line is a
   character-for-character prefix of its new one**, so a consumer matching on the first words keeps
-  matching. `finish` also exits explicitly on both arms and treats zero checks as a failure: a
-  suite truncated, one with a debugging `exit 0` left in, one with a syntax error before its last
-  check and one running no checks at all used to exit 0 and be reported as passes. Discovery gained
+  matching. `finish` also exits on failure and treats zero checks as one: a suite truncated, one
+  with a debugging `exit 0` left in, one with a syntax error before its last check and one running
+  no checks at all used to exit 0 and be reported as passes. Discovery gained
   `\( -type f -o -type l \)` so a directory named `x.test.sh` is not handed to bash and a
   symlinked suite is not dropped, `</dev/null` per suite so a suite reading standard input cannot
   consume the list of suites still to run, and an empty discovery is a failure rather than the
@@ -47,6 +47,21 @@ wrong commit.
   rule was red against the old runner before the new one existed. The harness formatter is
   `verdict_line` rather than `verdict` because three suites here define a `verdict()` of their own
   after sourcing the harness, and that collision is a check rather than a sentence advising care.
+
+### Fixed
+
+- **`finish` returns on a pass rather than exiting, which is how a suite that prints after its
+  verdict stays catchable.** For one commit on `main` it exited on every path, and that had two
+  costs. The runner's rule — refuse any suite whose last line is not the verdict its own output
+  implies, and name the line it saw — could no longer fire, because the output it refuses had become
+  impossible to emit: a stronger instrument quietly replaced by a quieter one. And a function that
+  exits on every path makes the end of every script sourcing the harness unreachable, so shellcheck
+  reported every helper a suite invokes only through `check`'s `eval` as never invoked — SC2329 from
+  0.10 on, SC2317 once per command inside the helper before that. Three files in two repositories
+  went red on it, and what found it was a consumer's own sweep after the deploy rather than anything
+  here. Both halves are now checks in `bin/test.test.sh`, failed by restoring the `exit 0` and by
+  nothing else, and the per-file `disable` directives that had been added for the second half are
+  gone, because the cause is fixed rather than silenced.
 
 - **The installer says what it decided not to do, in the three places it used to decide in
   silence.** A `.gitignore` pattern declined because the tenant's own rules already cover that path

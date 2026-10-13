@@ -34,10 +34,18 @@ verdict_line() { # name passes fails
 }
 # The last line, and the exit status test.sh reads as the verdict.
 #
-# Both arms exit. The passing one used to fall off the end, which made "the verdict is the last line
-# a suite printed" a property of every author having written nothing after `finish` rather than of
-# this file — and bin/test.sh now requires it of the output, so it has to be true by construction.
-# `exit` runs EXIT traps, so the suites that install `trap 'rm -rf "$t"' EXIT` still clean up.
+# The failing arm exits; the passing one returns, and that asymmetry is deliberate twice over.
+# bin/test.sh refuses any suite whose last line is not the verdict its own output implies, and it
+# names the line it saw — so a suite that prints after `finish` is reported, by name, with both
+# lines shown. Exiting here would make that output impossible to emit rather than refused, which
+# hides the defect instead of catching it: the weaker instrument, silently preferred.
+#
+# It also cost something measured. A function that exits on every path makes the end of every
+# script sourcing this file unreachable, and shellcheck then reports every helper a suite invokes
+# only through `check`'s eval as never invoked — SC2329 in 0.11.0, SC2317 once per command inside
+# the helper in 0.9.0. That took three files in two repositories red on a sweep nothing in this
+# repository runs, and it was a consumer's own sweep that found it, after the deploy. `exit` still
+# runs EXIT traps on the failing arm, so the suites that install `trap 'rm -rf "$t"' EXIT` clean up.
 #
 # Zero checks is a failure. A suite that ran none is the case a green run cannot distinguish from a
 # suite that passed, and it is the shape a truncated file, a stray `exit 0` and a sourcing error all
@@ -47,7 +55,6 @@ finish() {
   name=${name%.test.sh}
   verdict_line "$name" "$passes" "$fails"
   if [ "$fails" -ne 0 ] || [ "$((passes + fails))" -eq 0 ]; then exit 1; fi
-  exit 0
 }
 # scratch_repo dir path...: a fresh repository at dir whose index holds just these paths.
 scratch_repo() {

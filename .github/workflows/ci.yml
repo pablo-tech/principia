@@ -44,8 +44,10 @@ jobs:
           } | sort -u)
           # Printed, because which shellcheck judged the tree is part of what a green sweep means.
           # This runner's preinstalled copy and a current one disagree about the code for a helper
-          # invoked only through an `eval` — SC2317 here, SC2329 from 0.10 on — so a suite's
-          # directive names both and this line is how a reader knows which one answered.
+          # invoked only through an `eval` — SC2317 here, SC2329 from 0.10 on — and that divergence
+          # is why a sweep green here says nothing about a sweep run by hand. No suite carries a
+          # directive for either code: what made them fire was `finish` exiting on every path, and
+          # that is fixed in bin/check.sh rather than silenced per file.
           shellcheck --version | sed -n '2p'
           printf 'checking %d scripts\n' "${#scripts[@]}"
           shellcheck -x "${scripts[@]}"
