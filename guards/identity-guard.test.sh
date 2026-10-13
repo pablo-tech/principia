@@ -184,4 +184,30 @@ check "and the refusal names the line grep would not take" \
 check "rather than reading as a verdict about the identity" \
   "[ -z \"\$( (cd '$t/repo' && bash '$DIR/identity-guard.sh' 2>&1) | grep -F 'does not claim' )\" ]"
 
+# A refusal is also a report. `author="$(ident GIT_AUTHOR_IDENT)" || exit 1` stood here, and an
+# `exit` inside a command substitution ends the subshell alone — so the status arrived with nothing
+# printed and the refusal's entire output was git's own "Author identity unknown" advice. The
+# operator configured a name and an address and never learned a guard had spoken: not which one, not
+# that an allowlist exists, and not that the commit would be judged against it once git could answer.
+#
+# `noident` is git with nowhere to read a name and address from. The precondition is a check of its
+# own because if git could still answer, every assertion below would pass for the wrong reason — the
+# guard would be refusing an identity the allowlist does not claim, which is the other refusal and
+# is repaired by the opposite edit.
+mkdir -p "$t/nohome"
+noident() {
+  env -u EMAIL -u GIT_AUTHOR_NAME -u GIT_AUTHOR_EMAIL -u GIT_COMMITTER_NAME -u GIT_COMMITTER_EMAIL \
+    HOME="$t/nohome" GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null "$@"
+}
+
+claims 'Someone <someone@example.test>'
+check "precondition: git resolves no identity under an empty configuration" \
+  "! (cd '$t/repo' && noident git var GIT_AUTHOR_IDENT >/dev/null 2>&1)"
+check "a commit git cannot name the author of is refused rather than reported clean" \
+  "! (cd '$t/repo' && noident bash '$DIR/identity-guard.sh' >/dev/null 2>&1)"
+check "and the refusal is this guard speaking, not git's advice alone" \
+  "[ -n \"\$( (cd '$t/repo' && noident bash '$DIR/identity-guard.sh' 2>&1) | grep -F 'identity-guard:' )\" ]"
+check "and it names where the allowlist that will judge the identity lives" \
+  "[ -n \"\$( (cd '$t/repo' && noident bash '$DIR/identity-guard.sh' 2>&1) | grep -F '.protocol/identity' )\" ]"
+
 finish

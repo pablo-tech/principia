@@ -165,18 +165,52 @@ The policy files in use:
 | `.protocol/identity` | `identity-guard.sh` | extended regular expressions; the identities this repository's commits may be made as. The one policy with a fallback — see above |
 | `.protocol/credentials-allow-name` | `credentials-guard.sh` | globs exempt from the *shape* rule — a file whose name looks like a credential and holds none |
 | `.protocol/credentials-allow-content` | `credentials-guard.sh` | globs that may *contain* credential-shaped text — the suites whose fixtures pin these rules |
-| `.protocol/<name>.local` | whichever guard reads `<name>` | the untracked overlay, appended to the tracked file of that name — **except for the two `credentials-allow-*` files, which are read from the index alone** |
+| `.protocol/<name>.local` | whichever guard reads `<name>` | the untracked overlay, appended to the tracked file of that name — **except for the two `credentials-allow-*` files, which have no overlay at all** |
 
 **The overlay is for a list that tightens, and the exception is the proof of it.** Its whole
 justification above is that a *denylist* in a repository anyone can read cannot state what it
 refuses. An exemption list is the other kind: an overlay there would be a hole in no commit, which
 review never sees and no clone carries, so `credentials-guard.sh` reads its two files with
-`git show :<path>` and consults no overlay at all. The same read is what makes an unstaged edit to
-the tracked file grant nothing — the index is what a commit would record, which is §4's rule for
-every staged blob — so an exemption added in the same commit still works and arrives in the diff.
+`git show :<path>` and consults no overlay at all — an exemption added in the same commit still
+works and arrives in the diff.
+
+**Reading the tracked layer from the index is no longer what distinguishes those two files, and the
+absence of an overlay is.** `policy()` read its own tracked layer from the worktree until
+2026-10-13, so an unstaged edit to `.protocol/tenant` disarmed the tenancy guard for the very commit
+that edit was not part of — the same hole §4's third bullet records as closed, left open in the two
+files that bullet does not name. It now reads the tracked layer with `git show ":.protocol/<name>"`
+wherever the index carries the path, which is §4's rule for every staged blob applied to the policy
+as well as to what the policy judges. The overlay stays a worktree read, because an untracked file
+cannot be in the index by construction, and that asymmetry is the whole of the difference now.
 
 Comments are whole-line only. A policy line is a path or a regular expression and may legitimately
 contain `#`.
+
+### The one policy this repository deliberately does not carry
+
+**`.protocol/tenant` and `.protocol/credentials-allow-content` are tracked here. There is no
+`.protocol/identity`, which by the rule above means this repository's own commits are judged by no
+list.** That is a decision and not an omission, and the reason is the shape of the repository rather
+than the cost of the file: an allowlist is the control for a **closed** set of committers, and this
+one's set is open by design. [CONTRIBUTING.md](CONTRIBUTING.md) invites contributions and
+[`doctrine/git.md`](doctrine/git.md) tells a fresh clone to point `core.hooksPath` at `.githooks`
+itself — so a tracked list naming the identities already on the branch would refuse the first commit
+of every contributor who followed that instruction, and fail their pull request besides once the
+same list ran in continuous integration. A list of the people who have committed so far is a correct
+description of the past and the wrong control for a repository that asks for patches.
+
+**What is enforced instead is the sign-off, and it is the control an open set admits.**
+`.github/workflows/ci.yml` requires a Developer Certificate of Origin line on every commit of every
+pull request: it asks the person to certify the commit rather than asking a list whether that person
+was expected, which is the only one of the two questions a stranger can answer. What it does not
+reach, stated here rather than left to be inferred: a commit header set to somebody else's name on a
+machine with no hook configured is not refused here — only an unsigned commit is, and
+`identity-guard.sh --scan-history` is the control that would reach it. A repository whose committer
+set *is* closed says so for itself, and the untracked `.protocol/identity.local` is where it says
+it, because that file does not travel to a clone and a list of people is the one list that should
+not. `bin/doctrine.test.sh` holds both halves of this to the mechanisms — that no identity allowlist
+is tracked here, and that the sign-off walk exists — so the decision cannot quietly become a stale
+paragraph in either direction.
 
 ## 4. The guard chain runs in order and fails closed
 
@@ -217,12 +251,15 @@ close:
   the ceiling refuses with nothing in the commit recording that the ceiling moved. **It now prints
   one line whenever it differs from 25, on a pass as well as a refusal** — the override stays, and
   stops being silent.
-- **An exemption that is in no commit.** `credentials-allow-name` and `credentials-allow-content`
+- **A policy edit that is in no commit.** `credentials-allow-name` and `credentials-allow-content`
   were read through the two-layer `policy()` like every other file, so an untracked
   `.protocol/credentials-allow-*.local` granted an exemption no clone carries and no review sees,
   and an unstaged edit to the tracked file exempted the very commit it was not part of.
-  **Closed:** those two files are read from the index alone (§3), which is the rule this section
-  already states for every staged blob.
+  **Closed for those two on 2026-10-12, and for the rest on 2026-10-13:** `policy()` reads the
+  tracked layer of every policy from the index as well, so an unstaged edit to `.protocol/tenant`
+  no longer disarms the tenancy guard for the commit it is not part of (§3). This bullet said
+  "those two files are read from the index alone" while the other two were still read the old way,
+  which made the class read as closed on the strength of the half of it that was.
 
 The first is a documented override, the second is now recorded every time it is used, and the third
 is closed. What distinguishes all three from `--no-verify` is that none of them had to be typed

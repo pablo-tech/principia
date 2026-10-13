@@ -17,6 +17,13 @@ set -uo pipefail
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 . "$(dirname "${BASH_SOURCE[0]}")/policy.sh"
 
+# This guard has no audit mode, so every option is unrecognised — and it read `$1` nowhere at all,
+# which made `bash size-guard.sh --scan-tree` a green run of the staged check wearing the name of
+# a tree audit. Taking no option is not the same as accepting any, and only one of the two can be
+# told from outside.
+[ "$#" -eq 0 ] || refuse_option size-guard "$1"
+at_root size-guard
+
 DEFAULT_MAX_MB=25
 MAX_MB="${PROTOCOL_MAX_FILE_MB:-$DEFAULT_MAX_MB}"
 MAX_BYTES=$((MAX_MB * 1024 * 1024))

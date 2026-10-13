@@ -195,4 +195,29 @@ stage infra/prod.env "REGION=us-west-2"
 check "an index git cannot read refuses rather than reading as nothing staged" \
   "! (cd '$t/repo' && printf x > .git/bad-index && GIT_INDEX_FILE=.git/bad-index bash '$DIR/credentials-guard.sh' >/dev/null 2>&1)"
 
+# `--scan-tree` audits the repository, and a repository is not the directory the command was typed
+# in. This guard had the defect in BOTH directions at once, which is why there are two checks and
+# why the second needs the offending path inside the subtree: `git ls-files` is cwd-relative, so a
+# root-level file is invisible from `sub/` and the fail-open hides the fail-closed entirely.
+fresh
+stage infra/prod.env "REGION=us-west-2"
+stage sub/clean.md "nothing to see"
+check "--scan-tree run from a subdirectory still judges a file above it" \
+  "! (cd '$t/repo/sub' && bash '$DIR/credentials-guard.sh' --scan-tree >/dev/null 2>&1)"
+
+# The other direction. `exemptions()` reads an allow-list with `git show ":.protocol/<name>"`, and
+# git resolves an index path relative to the WORKING DIRECTORY — so from `sub/` the guard asked for
+# `sub/.protocol/credentials-allow-name`, got nothing, and an absent allow-list is this guard's
+# STRICTEST setting rather than its off switch. It then refused the very paths the repository had
+# declared, which is how `--scan-tree` from `guards/` refused two of this repository's own
+# allowlisted files. The allow-list is also spelled from the root, so the same `cd` is what makes
+# the path the loop reports and the path the exemption names the same string.
+fresh
+stage sub/prod.env "REGION=us-west-2"
+allow credentials-allow-name 'sub/prod.env'
+check "--scan-tree run from the root honours credentials-allow-name" \
+  "(cd '$t/repo' && bash '$DIR/credentials-guard.sh' --scan-tree >/dev/null 2>&1)"
+check "and run from the subdirectory holding that path honours it too" \
+  "(cd '$t/repo/sub' && bash '$DIR/credentials-guard.sh' --scan-tree >/dev/null 2>&1)"
+
 finish

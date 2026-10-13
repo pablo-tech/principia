@@ -187,4 +187,23 @@ check "every script with no suite beside it is one §9 records a decision for" '
 check "and §9 excuses nothing that has since got a suite" \
   '! comm -13 <(scripts_without_suite) <(scripts_excused) | grep -q .'
 
+# Four: §3 records that this repository carries no `.protocol/identity`, and names what is enforced
+# in its place. Both halves are claims about mechanisms in this same repository, which is the case
+# doctrine/as-built.md is explicit about — so both are derived, and the paragraph goes red from
+# either direction. Adding the allowlist makes the decision stale; deleting the sign-off walk leaves
+# the decision resting on a control that is gone, which is the quieter of the two and the reason
+# there are two checks rather than one.
+tracks() { (cd "$DIR/.." && git ls-files --error-unmatch -- "$1" >/dev/null 2>&1); }
+signoff_walk() {   # the CI step the §3 paragraph names, scoped to it rather than to the file
+  sed -n '/Developer Certificate of Origin sign-off/,/^  [a-z]/p' "$DIR/../.github/workflows/ci.yml"
+}
+check "§3's record that no identity allowlist is tracked here agrees with the index" \
+  '! tracks .protocol/identity'
+check "and the policy files it says ARE tracked are, which is the fail-open case" \
+  'tracks .protocol/tenant && tracks .protocol/credentials-allow-content'
+check "the sign-off walk §3 names in place of it is in continuous integration" \
+  '[ -n "$(signoff_walk)" ] && signoff_walk | grep -q "Signed-off-by"'
+check "and it walks every commit of the pull request rather than its head alone" \
+  'signoff_walk | grep -q "git log .*BASE\.\.\$HEAD"'
+
 finish

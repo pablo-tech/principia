@@ -25,6 +25,24 @@ set -uo pipefail
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 . "$(dirname "${BASH_SOURCE[0]}")/policy.sh"
 
+# An option this guard does not know is a refusal rather than a mode, and `at_root` is what makes
+# `--scan-tree` an audit of the repository rather than of whatever directory it was invoked from.
+# Both are in `policy.sh`, beside the argument for them.
+#
+# `at_root` is load-bearing here in the direction nobody looks for, and it is why it comes before
+# the two reads below rather than beside the loop. `git show ":.protocol/<name>"` resolves an index
+# path relative to the current directory, so run from `guards/` this guard asked the index for
+# `guards/.protocol/credentials-allow-name`, got nothing, and ran with an EMPTY allowlist — which
+# for a list of exemptions is the strict setting. The audit then refused two of this repository's
+# own tracked files, both of them named in `.protocol/credentials-allow-content`. Same single
+# omission as the fail-open one in `tenant-guard`, landing the opposite way round because this
+# guard's policy relaxes where that one's restricts.
+case "${1:-}" in
+  "" | --scan-tree) ;;
+  *) refuse_option credentials-guard "$1" --scan-tree ;;
+esac
+at_root credentials-guard
+
 # exemptions <name>: this repository's exemption list, read from the INDEX and from nowhere else.
 #
 # Not `policy`, which every other guard uses, and the difference is the one thing in this file that
