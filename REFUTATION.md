@@ -85,7 +85,14 @@ green, and not a reading of the diff.
 passes, and the document's own corollary about distrusting checks that pass on first run is written
 for a suite written before its implementation rather than for one check appended to a green suite.
 What held the line was an instrument outside the suite, which is the remedy the field names for
-construct validity, arriving here by luck rather than by design.
+construct validity, and it arrived here by luck rather than by design. Since 2026-10-13 one such
+instrument is designed: `bin/test.sh` counts the `ok` and `FAIL` lines a suite printed, rebuilds
+the verdict those counts imply, and refuses the suite unless its last line is that line byte for
+byte — so a suite whose checks did not all run is a failure rather than a pass, judged by something
+that is not the suite. It would not have caught this one, whose checks all ran and whose count was
+honest; what it closes is the other half of the same hole, a suite that never reached its verdict at
+all. `bin/test.test.sh` is what holds the runner to that, and `shellcheck -x` is still the
+instrument for this entry's own shape.
 
 ### The citation condition failed in the document that states it — 2026-10-07
 

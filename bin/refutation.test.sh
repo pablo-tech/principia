@@ -21,6 +21,13 @@
 # shellcheck disable=SC2034  # ROOT, PAGE and FIX are read inside the eval'd conditions below.
 # shellcheck disable=SC2016  # a check's condition is eval'd by the harness, so those expand there
 # and not here.
+# shellcheck disable=SC2329,SC2317  # every helper below is invoked through `check`'s eval, which
+# is this code's own "ignored if invoked indirectly". Two codes because the two shellchecks that
+# read this tree do not agree on one: 0.11.0 reports the function as SC2329 and the runner's
+# preinstalled copy reports every command inside it as SC2317, so a directive naming either alone
+# passes in one place and fails in the other. That is also why this file needed one at all — the
+# sweep this repository passes in continuous integration failed on it, untouched, for anyone
+# running a current shellcheck by hand.
 set -uo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=bin/check.sh

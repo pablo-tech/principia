@@ -42,6 +42,11 @@ jobs:
               head -c 64 "$f" | grep -qE '^#!.*\b(bash|sh)\b' && printf '%s\n' "$f"
             done
           } | sort -u)
+          # Printed, because which shellcheck judged the tree is part of what a green sweep means.
+          # This runner's preinstalled copy and a current one disagree about the code for a helper
+          # invoked only through an `eval` — SC2317 here, SC2329 from 0.10 on — so a suite's
+          # directive names both and this line is how a reader knows which one answered.
+          shellcheck --version | sed -n '2p'
           printf 'checking %d scripts\n' "${#scripts[@]}"
           shellcheck -x "${scripts[@]}"
 
@@ -53,8 +58,10 @@ jobs:
       - name: No tenant material in the tree
         run: guards/tenant-guard.sh --scan-tree
 
-      # A step rather than a job, so there is one required check: a job skipped by a job-level `if:`
-      # reports SKIPPED, and a required check that reports SKIPPED blocks the merge forever.
+      # A step rather than a job, because this one has to be conditional and a conditional job
+      # cannot be required: a job skipped by a job-level `if:` reports SKIPPED, and a required check
+      # that reports SKIPPED blocks the merge forever. As a step it reports inside `test`, which is
+      # required, so the condition costs nothing.
       - name: Developer Certificate of Origin sign-off
         if: github.event_name == 'pull_request'
         env:
@@ -85,10 +92,10 @@ jobs:
   # protocol that installs itself on whatever machine a tenant has was tested on one kind of
   # machine.
   #
-  # A separate job rather than a matrix on `test`: a matrix renames that job's check, and the one
-  # required check is named `test`. Only the suites run here — shellcheck, the tenancy scan and the
-  # sign-off check are questions about the tree rather than about the shell, and asking them twice
-  # buys nothing.
+  # A separate job rather than a matrix on `test`: a matrix renames that job's check, and both
+  # required checks are named for the job that reports them — `test` and `macos`. Only the suites run
+  # here — shellcheck, the tenancy scan and the sign-off check are questions about the tree rather
+  # than about the shell, and asking them twice buys nothing.
   macos:
     runs-on: macos-latest
     timeout-minutes: 10

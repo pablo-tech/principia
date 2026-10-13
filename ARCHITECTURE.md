@@ -373,17 +373,36 @@ read a link.
 
 ## 9. Testing
 
-Every script has a `*.test.sh` beside it, **except the ten below**. `bin/test.sh` finds the suites
+Every script has a `*.test.sh` beside it, **except the nine below**. `bin/test.sh` finds the suites
 rather than listing them, so an adapter that brings its own suites is tested by existing.
 `bin/check.sh` is the assertion helper they share. The suites are bash and take no arguments, no
 network and no fixtures outside their own `mktemp -d`.
 
-**The ten, and the decision for each.** `bin/doctrine.test.sh` holds this list to the tree, by the
+**A suite's last line is its verdict, and the runner judges it rather than reading it.** `finish`
+prints `<name>: all passed (N checks)` or `<name>: N failed (M checks)`. `bin/test.sh` counts the
+`  ok    ` and `  FAIL  ` lines a suite printed, rebuilds the verdict those counts imply, and
+refuses any suite whose last line is not that line byte for byte — one comparison asserting that the
+suite reached its verdict, that the verdict was the last thing it said, that it named itself rather
+than carrying another suite's line, and that the count it declared is the count it printed. The two
+counts stay independent, which is the point: the suite counts its checks as it runs them and the
+runner counts the lines they produced, so neither is the other's witness. A suite that executed no
+checks fails in both places, because a consumer may run these suites through a runner of its own
+that asks in neither.
+
+**And the run says what it executed** — `all suites passed (N suites, M checks)`, on the failing run
+as well as the passing one. A verdict carrying only failure counts says the same thing about a run
+of hundreds of checks and a run of none, which is the case `doctrine/testing.md` is about. No count
+is written down on this page: a number here would be a claim about a mechanism that the mechanism
+prints, which §9 is not the place to copy. Both lines extend the ones this runner printed before,
+character for character, because every tenant's suites print them and a consumer matching on the
+first words keeps matching.
+
+**The nine, and the decision for each.** `bin/doctrine.test.sh` holds this list to the tree, by the
 same selection CI's shellcheck sweep uses — so a new script with no suite turns the check red and
-arrives here as a decision rather than quietly enlarging the exception. Six are covered by a suite
-that is not beside them, which is recorded rather than left to be inferred; four are unenforced by
-decision, which is `doctrine/as-built.md`'s requirement and the reason none of them is merely absent
-from this page.
+arrives here as a decision rather than quietly enlarging the exception. Seven are covered by a suite
+that is not beside them, which is recorded rather than left to be inferred; two are unenforced by
+decision, which is `doctrine/as-built.md`'s requirement and the reason neither is merely absent from
+this page.
 
 | Script | Decision |
 |---|---|
@@ -393,10 +412,9 @@ from this page.
 | `bin/tenant.sh` | covered by `bin/adapt.test.sh`'s ignore-rule assertions, `say` and `ignore` having no caller but the installer and the adapters |
 | `.githooks/pre-commit` | covered by every commit made to this repository, which is the only thing it is for — four lines resolving the guards beside it |
 | `tenant-template/.githooks/pre-commit` | covered by `bin/adapt.test.sh`'s last case, which makes a real commit through the shim that run installed |
+| `bin/check.sh` | covered by `bin/test.test.sh`, which asserts the verdict `finish` prints against literals and asserts that no suite redefines a name this file owns. The second is not hypothetical: three suites here define a `verdict()` of their own, which is why the formatter is `verdict_line` and why the collision is a check rather than a sentence advising care |
 | `adapters/claude-code/detect.sh` | **unenforced.** It answers whether that agent is installed on this machine, so a suite could assert only what is true of the machine running it — which is a test of the machine |
 | `adapters/cortex/detect.sh` | **unenforced**, for the same reason |
-| `bin/test.sh` | **unenforced.** It is the runner: it finds and runs the suites, so it cannot be one of them, and a suite asserting on it would be started by it |
-| `bin/check.sh` | **unenforced**, and the one with a known defect attached: `check()` always returns 0 and only `finish` exits non-zero, so a suite that never reaches `finish` — truncated, or with a stray `exit 0` — reports success. A suite for the harness would be written in the harness. It is the harness all of these suites and every consumer's share, so changing it changes every test run at once, which is its own change with its own door |
 
 `bin/adapt.test.sh` ends with an end-to-end case: it installs into a scratch tenant, then makes a
 real commit through the shim that run installed, resolving the guards through the well-known path.

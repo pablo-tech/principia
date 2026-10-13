@@ -60,9 +60,13 @@ Two things worth knowing before you start, both of which the example assumes:
   does for you. Git cannot make that travel with a clone, which is why every fresh clone of every
   tenant needs the installer run in it once ([ARCHITECTURE.md §5](ARCHITECTURE.md#5-a-shim-resolves-the-guards-in-four-steps-in-this-order)).
 
-Then run `bin/test.sh`. It is the same suite CI runs, it takes seconds, and watching
+Then run `bin/test.sh`. It is the same suite CI runs and it takes seconds. Reading
 `bin/adapt.test.sh` build a tenant, commit through the installed hook and get refused is the
-fastest way to see the whole thing work at once.
+fastest way to see the whole thing work at once — and its output arrives a suite at a time rather
+than a line at a time, because the runner judges each suite's last line against the `ok` and `FAIL`
+lines above it and cannot know which line is last until the suite has stopped printing. The final
+line says how many suites and how many checks the run executed, which is the number
+[`doctrine/testing.md`](doctrine/testing.md) asks a passing run to carry.
 
 ## Where everything lives
 
