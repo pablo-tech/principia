@@ -9,6 +9,13 @@ source "$DIR/../bin/check.sh"
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 source "$DIR/policy.sh"
 
+# The root as git reports it, which is not always the string `$t` carries. `git rev-parse
+# --show-toplevel` answers with the physical path, and on macOS `mktemp -d` hands back a path
+# through the `/var` -> `/private/var` symlink — so a check comparing a refusal's text to a path has
+# to compare it to the path the refusal would print. Resolved once: `layers` recreates the
+# repository but never moves it.
+repo_root="$(cd "$t" && pwd -P)/repo"
+
 # layers <tracked> <overlay>: a fresh repository carrying whichever of the two is not `-`.
 layers() {
   rm -rf "${t:?}/repo" && git init -q "$t/repo" && mkdir -p "$t/repo/.protocol"
@@ -91,12 +98,14 @@ layers 'alpha' -
 chmod 000 "$t/repo/.protocol/thing"
 check "chmod 000 does make a file unreadable here, which the next three checks need" \
   "! [ -r \"$t/repo/.protocol/thing\" ]"
+check "and git reports the root as this suite spells it, which the reason checks compare against" \
+  "[ \"\$( (cd \"$t/repo\" && git rev-parse --show-toplevel) )\" = \"$repo_root\" ]"
 check "a tracked layer present and unreadable is outcome 2, where it read as an empty policy" \
   "[ \"\$(status)\" = 2 ]"
 # The remedy has to be derivable from the refusal, or the operator is left with the one remedy
 # always available, which is to bypass the chain.
 check "and the reason names the file, so the refusal carries its own remedy" \
-  "[ \"\$(reason)\" = \"$t/repo/.protocol/thing is present and could not be read\" ]"
+  "[ \"\$(reason)\" = \"$repo_root/.protocol/thing is present and could not be read\" ]"
 chmod 644 "$t/repo/.protocol/thing"
 check "the same file readable again is outcome 0, so the status is the file and not the fixture" \
   "[ \"\$(status)\" = 0 ]"
@@ -108,7 +117,7 @@ check "an overlay present and unreadable is outcome 2, not the tracked layer rea
 # Outcome 2 writes the reason where the content would have gone, which is only safe because the two
 # never coexist. This is the check that holds that: the readable layer's `alpha` is not in there.
 check "and the layer it could read does not travel beside the reason" \
-  "[ \"\$(reason)\" = \"$t/repo/.protocol/thing.local is present and could not be read\" ]"
+  "[ \"\$(reason)\" = \"$repo_root/.protocol/thing.local is present and could not be read\" ]"
 chmod 644 "$t/repo/.protocol/thing.local"
 check "both readable again is outcome 0 with both layers, the unreadable one being the cause" \
   "[ \"\$(status)\" = 0 ] && [ \"\$(resolve)\" = alpha,beta ]"
