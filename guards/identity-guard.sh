@@ -28,6 +28,19 @@ set -uo pipefail
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 . "$(dirname "${BASH_SOURCE[0]}")/policy.sh"
 
+# An option this guard does not know is a refusal rather than a mode, and `at_root` is what makes
+# the guard judge a repository rather than whatever directory it was invoked from. Both are in
+# `policy.sh`, beside the argument for them.
+#
+# `--scan-history` takes an optional range, so the pattern is the option and then anything; a
+# mistyped one used to fall through to the staged branch, where it ran the commit check instead of
+# the audit and reported it under the audit's own headline.
+case "${1:-}" in
+  "" | --scan-history) ;;
+  *) refuse_option identity-guard "$1" "--scan-history [<range>]" ;;
+esac
+at_root identity-guard
+
 # Whose list this is, which the report below has to say: being refused by a file that is not in the
 # repository you are committing to is otherwise unreadable.
 #
@@ -38,16 +51,30 @@ set -uo pipefail
 # answering that question with "nobody", which refuses every identity there is. The two are the same
 # picture to a test for a non-empty list and they mean opposite things, which is the whole of why
 # the file is not seeded into a tenant that has not decided.
+#
+# A fourth answer sits underneath those three and is the one that was missing: a policy file this
+# guard could not READ. That is `policy`'s outcome 2, and it took the `exit 0` arm below along with
+# "never opted in" — so a repository whose identity list was present and unreadable was approved in
+# silence, by the guard whose own file says a control that cannot tell whether it applies refuses.
 whose="this repository"
 where=".protocol/identity"
-if ! allowed="$(policy identity)"; then
-  if tenant="$(tenant_root)" && allowed="$(policy identity "$tenant")"; then
-    whose="this repository's tenant"
-    where="$tenant/.protocol/identity"
-  else
-    exit 0
-  fi
-fi
+allowed="$(policy identity)"
+case "$?" in
+  0) ;;
+  2) POLICY_UNREADABLE="$allowed"; refuse_unreadable identity-guard ;;
+  *)
+    if tenant="$(tenant_root)"; then
+      allowed="$(policy identity "$tenant")"
+      case "$?" in
+        0) whose="this repository's tenant"; where="$tenant/.protocol/identity" ;;
+        2) POLICY_UNREADABLE="$allowed"; refuse_unreadable identity-guard ;;
+        *) exit 0 ;;
+      esac
+    else
+      exit 0
+    fi
+    ;;
+esac
 
 # An empty list refuses, and says so in its own words rather than through the refusal below: that one
 # reports an identity the list does not carry, and here the list carries nothing, so the two are
@@ -102,7 +129,37 @@ claimed() { grep -qiE -- "$PATTERN" <<<"$1"; }
 # The answer is `Name <email> 1790800093 -0700`; the trailing timestamp is the machine's clock
 # rather than part of who this is, and `% * *` takes the shortest such tail, so a name with spaces
 # in it survives.
-ident() { local raw; raw="$(git var "$1")" || return 1; printf '%s' "${raw% * *}"; }
+ident() { local raw; raw="$(git var "$1" 2>/dev/null)" || return 1; printf '%s' "${raw% * *}"; }
+
+# refuse_ident <git var>: what `ident` could not answer, reported by this guard in its own words.
+#
+# It is out here rather than inside `ident` because `ident`'s callers read it through a command
+# substitution, and an `exit` inside one ends the subshell and nothing else: the refusal would be
+# captured into the variable the guard goes on to test, and the status would arrive with nothing
+# printed. Which is what the bare `|| exit 1` did. The refusal's entire output was git's OWN
+# "Author identity unknown" advice, so the operator configured a name and an address and never
+# learned that a guard had spoken — not which one, not that an allowlist exists, and not that the
+# commit would be judged against it once the configuration was there. A refusal is also a report,
+# and a report nobody can attribute is what ARCHITECTURE.md's bypass-line claim is about.
+#
+# git's own stderr is suppressed rather than kept alongside, for the same reason: it arrives first
+# and reads as the whole story, and everything it would have said is said below.
+refuse_ident() { # the git var that could not be answered
+  echo "pre-commit: identity-guard: git cannot say what $1 this commit would be made as, so no"
+  echo "pre-commit: rule was applied. Refusing rather than reporting clean a commit nothing"
+  echo "pre-commit: examined."
+  echo "pre-commit:"
+  echo "pre-commit: git declines this when no name and address are configured anywhere it reads,"
+  echo "pre-commit: which is a different answer from an identity $whose does not claim: that one is"
+  echo "pre-commit: repaired in $where and this one is repaired here."
+  echo "pre-commit:"
+  echo "pre-commit:   git config user.name  \"<name>\""
+  echo "pre-commit:   git config user.email \"<email>\""
+  echo "pre-commit:"
+  echo "pre-commit: Once git can answer, the identity is judged against $where as it always was."
+  echo "pre-commit: (bypass: git commit --no-verify)"
+  exit 1
+}
 
 offenders=""
 if [ "${1:-}" = "--scan-history" ]; then
@@ -120,8 +177,8 @@ $sha  committer  $committer"
   done <<<"$history"
 else
   headline="refusing to commit as an identity $whose does not claim:"
-  author="$(ident GIT_AUTHOR_IDENT)" || exit 1
-  committer="$(ident GIT_COMMITTER_IDENT)" || exit 1
+  author="$(ident GIT_AUTHOR_IDENT)" || refuse_ident GIT_AUTHOR_IDENT
+  committer="$(ident GIT_COMMITTER_IDENT)" || refuse_ident GIT_COMMITTER_IDENT
   claimed "$author" || offenders="$offenders
 author     $author"
   [ "$committer" = "$author" ] || claimed "$committer" || offenders="$offenders

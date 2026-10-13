@@ -19,7 +19,26 @@ set -uo pipefail
 # shellcheck source-path=SCRIPTDIR source=policy.sh
 . "$(dirname "${BASH_SOURCE[0]}")/policy.sh"
 
-terms="$(policy tenant)" || exit 0
+# An option this guard does not know is a refusal rather than a mode, and `at_root` is what makes
+# `--scan-tree` an audit of the repository rather than of whatever directory it was invoked from.
+# Both are in `policy.sh`, beside the argument for them. They come before the policy read because
+# neither depends on one: a mistyped flag is wrong in a repository that declares no tenancy too.
+case "${1:-}" in
+  "" | --scan-tree) ;;
+  *) refuse_option tenant-guard "$1" --scan-tree ;;
+esac
+at_root tenant-guard
+
+# Three answers, not two. `|| exit 0` stood here, which made "git could not tell me where the root
+# is" and "a policy file is present and unreadable" into "this repository declares no tenancy" — and
+# the guard then approved a commit it had examined no part of, silently, which is the default
+# doctrine/tenancy.md's own section says a control does not get to have.
+terms="$(policy tenant)"
+case "$?" in
+  0) ;;
+  1) exit 0 ;;
+  *) POLICY_UNREADABLE="$terms"; refuse_unreadable tenant-guard ;;
+esac
 [ -n "$terms" ] || exit 0
 PATTERN="$(printf '%s' "$terms" | paste -sd'|' -)"
 

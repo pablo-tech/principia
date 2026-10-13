@@ -117,4 +117,17 @@ stage notes.md "met with Initech about the migration"
 check "an index git cannot read refuses rather than reading as nothing staged" \
   "! (cd '$t/repo' && printf x > .git/bad-index && GIT_INDEX_FILE=.git/bad-index bash '$DIR/tenant-guard.sh' >/dev/null 2>&1)"
 
+# `--scan-tree` is an audit of the repository, and a repository is not the directory the command was
+# typed in. `git ls-files` is cwd-relative, so run from `sub/` the audit walked `sub/` alone and
+# reported clean on a tree naming another tenant at its root — an audit mode that looks armed and is
+# scoped to whichever subtree happened to be the working directory. `CONTRIBUTING.md:62` and
+# `.github/PULL_REQUEST_TEMPLATE.md:22` hand this command to a person, who runs it from wherever
+# they are. The root-run check below is the control: same tree, same file, same verdict required.
+tenant 'Initech'
+stage notes.md "met with Initech about the migration"
+stage sub/clean.md "the deploy is green"
+check "--scan-tree run from the root refuses a file naming another tenant" "! scan"
+check "and run from a subdirectory refuses the same file, rather than auditing that subtree" \
+  "! (cd '$t/repo/sub' && bash '$DIR/tenant-guard.sh' --scan-tree >/dev/null 2>&1)"
+
 finish

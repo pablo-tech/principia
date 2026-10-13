@@ -184,4 +184,45 @@ check "and the refusal names the line grep would not take" \
 check "rather than reading as a verdict about the identity" \
   "[ -z \"\$( (cd '$t/repo' && bash '$DIR/identity-guard.sh' 2>&1) | grep -F 'does not claim' )\" ]"
 
+# A refusal is also a report. `author="$(ident GIT_AUTHOR_IDENT)" || exit 1` stood here, and an
+# `exit` inside a command substitution ends the subshell alone — so the status arrived with nothing
+# printed and the refusal's entire output was git's own "Author identity unknown" advice. The
+# operator configured a name and an address and never learned a guard had spoken: not which one, not
+# that an allowlist exists, and not that the commit would be judged against it once git could answer.
+#
+# `noident` is git with nowhere to read a name and address from, and told not to guess one.
+# `user.useConfigOnly` is the half of that which is not obvious, and the macOS job is what proved it
+# necessary: an empty HOME alone leaves git free to derive a name from the host's passwd entry and
+# an address from its hostname, which it did there and did not here, so the precondition below
+# failed on one platform and the guard refused for the other reason. The option makes the condition
+# the thing it is named for rather than a property of the machine the suite runs on.
+#
+# The precondition is a check of its
+# own because if git could still answer, every assertion below would pass for the wrong reason — the
+# guard would be refusing an identity the allowlist does not claim, which is the other refusal and
+# is repaired by the opposite edit.
+mkdir -p "$t/nohome"
+noident() {
+  env -u EMAIL -u GIT_AUTHOR_NAME -u GIT_AUTHOR_EMAIL -u GIT_COMMITTER_NAME -u GIT_COMMITTER_EMAIL \
+    HOME="$t/nohome" GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null \
+    GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=user.useConfigOnly GIT_CONFIG_VALUE_0=true "$@"
+}
+
+claims 'Someone <someone@example.test>'
+check "precondition: git resolves no identity, and is not left free to guess one" \
+  "! (cd '$t/repo' && noident git var GIT_AUTHOR_IDENT >/dev/null 2>&1)"
+# Two instruments on the one precondition, because the first alone is satisfied by a host git
+# cannot guess from — which is what this machine is and the macOS runner is not. git's own text is
+# what distinguishes "told not to guess" from "nothing to guess": on a host with a passwd entry and
+# a qualified hostname the message is the first, and without the option it would be neither. Reading
+# git's wording is a coupling, and a narrow one: if it changes, this check names itself.
+check "and because it was told not to guess, rather than because this host has nothing to guess" \
+  "[ -n \"\$( (cd '$t/repo' && noident git var GIT_AUTHOR_IDENT 2>&1) | grep -F 'auto-detection is disabled' )\" ]"
+check "a commit git cannot name the author of is refused rather than reported clean" \
+  "! (cd '$t/repo' && noident bash '$DIR/identity-guard.sh' >/dev/null 2>&1)"
+check "and the refusal is this guard speaking, not git's advice alone" \
+  "[ -n \"\$( (cd '$t/repo' && noident bash '$DIR/identity-guard.sh' 2>&1) | grep -F 'identity-guard:' )\" ]"
+check "and it names where the allowlist that will judge the identity lives" \
+  "[ -n \"\$( (cd '$t/repo' && noident bash '$DIR/identity-guard.sh' 2>&1) | grep -F '.protocol/identity' )\" ]"
+
 finish

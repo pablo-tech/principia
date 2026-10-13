@@ -51,6 +51,49 @@ wrong commit.
 
 ### Fixed
 
+- **A guard that cannot read an input it needs now refuses, where two of the four reported clean.**
+  `doctrine/tenancy.md` has a section headed *"A control that cannot tell whether it applies
+  refuses"*, and `guards/policy.sh` restated it as a property the guards had. It was not one.
+  `policy()` answered the same 1 for *"this repository declares no policy"* and for *"git could not
+  tell me where the root is"*, so `tenant-guard` and `identity-guard` took their `|| exit 0` arm and
+  approved a commit they had examined no part of, in silence; `sed`'s discarded exit status made a
+  policy file that is present and unreadable into an empty one, which is the case that section calls
+  the distinction worth having. `policy()` now has a third outcome — **could not read** — carrying
+  the reason, and every call site refuses on it in the shape `require_index` already established:
+  the input it could not read, that no rule was applied, and the bypass. What a consumer notices is
+  that these guards are stricter in exactly one place, where one of them was previously reporting
+  clean on a commit nothing had looked at.
+- **The tracked layer of a policy is read from the index, so an unstaged edit to `.protocol/tenant`
+  no longer disarms the tenancy guard for the commit that edit is not part of.** `ARCHITECTURE.md`
+  §4 recorded this hole as closed and it was closed for the two `credentials-allow-*` files alone;
+  the other two were read from the worktree. The untracked `.local` overlay stays a worktree read,
+  an untracked file not being in the index by construction, and that asymmetry is now the whole of
+  the difference between the two kinds. §3 and §4 are corrected to say so.
+- **`--scan-tree` audits the repository rather than whichever directory it was invoked from**, which
+  it failed at in both directions at once. `git ls-files` is relative to the working directory, so
+  `tenant-guard.sh --scan-tree` run from a subdirectory reported clean on a tree whose offending
+  file sat above it — and `git show ":.protocol/<name>"` resolves an index path the same way, so
+  `credentials-guard.sh --scan-tree` run from a subdirectory read an **empty** allow-list, which is
+  that guard's strictest setting, and refused the very paths the repository had declared exempt.
+  Both guards, and both others, now resolve the repository root and work from it. `CONTRIBUTING.md`
+  and the pull-request template hand this command to a person, who runs it from wherever they are.
+- **An option a guard does not recognise exits 2 instead of falling through to the staged check.**
+  `--scan-tre` was a green run of the staged check wearing the name of a tree audit, which in a tree
+  with nothing staged is a pass over no part of the repository. `size-guard` read its arguments
+  nowhere at all, so it accepted every option by accident; taking no option and accepting any look
+  the same from outside, and only one of them is a decision.
+- **`identity-guard` speaks when git cannot say what identity a commit would be made as.** The bare
+  `|| exit 1` exited with no output of its own, so the refusal's entire text was git's own *"Author
+  identity unknown"* advice: the operator configured a name and an address and never learned a guard
+  had spoken, which allowlist was waiting, or that the commit would be judged against it.
+- **`principia.tenant` is read from local configuration alone.** `git config --get` resolved the
+  system and global files too, under a comment arguing from locality, so a machine-wide setting
+  supplied a tenant fallback to every repository on it.
+- **`guards/policy.sh`'s header said two of its refusals were made by every guard, and no refusal
+  is.** `policy.test.sh` now derives the table from the guards rather than carrying a count somebody
+  took — which it earns twice over, the first correction to that claim having miscounted in the
+  other direction by reading the word *compiles* in a comment as a call site.
+
 - **A tenant's `.gitignore` line is compared as the path it names, not as its first segment.** The
   reduction to a first path segment read `skills/omarchy` — one ignored directory in a tenant that
   shares every other skill — as a ruling on the whole of `skills/`. The comparison is now a
