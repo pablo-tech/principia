@@ -28,18 +28,6 @@ trap 'rm -rf "$t"' EXIT
 # the lines a suite printed, so the string is asserted here against literals rather than against
 # either caller. The two counts either side of that comparison stay independent; the format does not
 # have to.
-# Every helper in this file is invoked through `check`'s `eval` rather than by a call shellcheck
-# can see, which is SC2329's own "ignored if invoked indirectly" — and it is the idiom of every
-# suite here. The directive sits above each one rather than at the top of the file, so a helper that
-# really is dead still reports.
-#
-# Two codes, because the two shellchecks that read this tree do not agree on one. 0.11.0 reports the
-# function as SC2329; the runner's preinstalled copy reports every command inside it as SC2317, so a
-# directive naming only the code the author's own shellcheck printed passes by hand and fails in
-# continuous integration. Naming both is what makes the sweep answer the same way in both places,
-# and an unknown code in a `disable` list is ignored rather than an error, which is what lets one
-# line serve both.
-# shellcheck disable=SC2329,SC2317
 extends() { # prefix line — the old line is a character-for-character prefix of the new one
   case "$2" in "$1"*) return 0 ;; esac
   return 1
@@ -71,7 +59,6 @@ check "a suite that executed nothing says so, rather than passing with a count o
 # a suite's verdict. That collision was available inside the fix for the verdict defect, which is
 # why the rule is a check rather than a sentence advising care.
 OWNED='check finish verdict_line scratch_repo'
-# shellcheck disable=SC2329,SC2317
 shadowed_names() { # file -> each harness name this file defines
   local name
   for name in $OWNED; do
@@ -79,9 +66,7 @@ shadowed_names() { # file -> each harness name this file defines
   done
   return 0
 }
-# shellcheck disable=SC2329,SC2317
 suites_here() { (cd "$ROOT" && git ls-files '*.test.sh'); }
-# shellcheck disable=SC2329,SC2317
 shadowing_suites() {
   local suite names found=""
   while IFS= read -r suite; do
@@ -221,6 +206,20 @@ suite "$r" alpha 'check "one" true' 'check "two" true' \
   'printf "alpha: all passed (2 checks)\n"' 'echo "cleaning up"' 'exit 0'
 ran "$r"
 check "a verdict that is not the last thing a suite said fails the run" '[ "$rc" -ne 0 ]'
+
+# The same case reached through `finish` rather than around it, which is what holds the harness to
+# returning on a pass. `finish` exited on every path for one commit, and then a suite that printed
+# after its verdict could not: the output the rule above refuses was unreachable, so the stronger
+# instrument was silently replaced by a quieter one. It cost something else as well — a function
+# that always exits makes the end of every sourcing script unreachable, and shellcheck then reports
+# every helper invoked only through `check`'s eval as never invoked, which took three files in two
+# repositories red. Restoring the `exit 0` is the one knob that turns both checks below red.
+r="$(fixture after-finish)"
+suite "$r" alpha 'check "one" true' 'check "two" true' 'finish' 'echo "cleaning up"'
+ran "$r"
+check "a suite that keeps printing after finish fails the run" '[ "$rc" -ne 0 ]'
+check "and finish returns on a pass, so there is output for that rule to refuse" \
+  'grep -q "cleaning up" <<<"$out"'
 
 # And the status rule is still there beside the string rule. A suite can print exactly the right
 # verdict and still have exited non-zero, and the new rule must not have replaced the old one.
