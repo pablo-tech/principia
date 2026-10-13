@@ -32,7 +32,14 @@ trap 'rm -rf "$t"' EXIT
 # can see, which is SC2329's own "ignored if invoked indirectly" — and it is the idiom of every
 # suite here. The directive sits above each one rather than at the top of the file, so a helper that
 # really is dead still reports.
-# shellcheck disable=SC2329
+#
+# Two codes, because the two shellchecks that read this tree do not agree on one. 0.11.0 reports the
+# function as SC2329; the runner's preinstalled copy reports every command inside it as SC2317, so a
+# directive naming only the code the author's own shellcheck printed passes by hand and fails in
+# continuous integration. Naming both is what makes the sweep answer the same way in both places,
+# and an unknown code in a `disable` list is ignored rather than an error, which is what lets one
+# line serve both.
+# shellcheck disable=SC2329,SC2317
 extends() { # prefix line — the old line is a character-for-character prefix of the new one
   case "$2" in "$1"*) return 0 ;; esac
   return 1
@@ -64,7 +71,7 @@ check "a suite that executed nothing says so, rather than passing with a count o
 # a suite's verdict. That collision was available inside the fix for the verdict defect, which is
 # why the rule is a check rather than a sentence advising care.
 OWNED='check finish verdict_line scratch_repo'
-# shellcheck disable=SC2329
+# shellcheck disable=SC2329,SC2317
 shadowed_names() { # file -> each harness name this file defines
   local name
   for name in $OWNED; do
@@ -72,9 +79,9 @@ shadowed_names() { # file -> each harness name this file defines
   done
   return 0
 }
-# shellcheck disable=SC2329
+# shellcheck disable=SC2329,SC2317
 suites_here() { (cd "$ROOT" && git ls-files '*.test.sh'); }
-# shellcheck disable=SC2329
+# shellcheck disable=SC2329,SC2317
 shadowing_suites() {
   local suite names found=""
   while IFS= read -r suite; do
