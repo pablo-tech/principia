@@ -112,6 +112,17 @@ git -C "$t/repo" add -A
 git -C "$t/repo" commit -qm x
 check "--scan-tree judges a tracked symlink rather than skipping it" "! scan"
 
+# And it judges the link as it is on disk. The target is what the content rule is handed for a
+# symlink, so reading it out of the index made a retarget nobody staged invisible to the one mode
+# that is run as an audit — the staged read being right in the commit branch and wrong in this one.
+tenant 'Initech'
+stage notes.md "the deploy is green"
+ln -sfn /srv/ordinary "$t/repo/link.md"
+git -C "$t/repo" add -A
+git -C "$t/repo" commit -qm x
+ln -sfn /srv/initech-share "$t/repo/link.md"
+check "--scan-tree judges a symlink by the target on disk, not the one in the index" "! scan"
+
 tenant 'Initech'
 stage notes.md "met with Initech about the migration"
 check "an index git cannot read refuses rather than reading as nothing staged" \

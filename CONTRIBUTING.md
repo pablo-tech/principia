@@ -39,9 +39,15 @@ A pull request that "fixes" one of these needs to argue with the reason, not jus
   Those look inconsistent and are opposites on purpose (ARCHITECTURE §3, §4). An absent policy is a
   repository that did not opt in. An absent guard is a chain that has been broken, and skipping it
   silently is exactly the failure the chain exists to prevent.
-- **`bin/adapt` never edits a file the tenant already has** — not even to merge one hook into a
-  settings file it could parse. It prints what is missing and stops (§7). A tool that rewrites
-  somebody's instruction file is a tool they stop running.
+- **`bin/adapt` edits one file the tenant already has — `.protocol/protocol-version`, the receipt
+  it wrote itself — and no other.** Not even to merge one hook into a settings file it could
+  parse. It prints what is missing and stops (§7). A tool that rewrites somebody's instruction
+  file is a tool they stop running. The receipt is the exception because it is the installer's
+  own answer to "which commit put this here", and a stale one is worse than none (ARCHITECTURE
+  §2, §11). **This bullet said `never` until 2026-10-13**, which was true of every path but that
+  one — a claim stated as a rule with its single exception left out, which reads as coverage
+  exactly the way an unenforced rule does. `bin/doctrine.test.sh` now derives the exception from
+  `record()` rather than trusting either sentence.
 - **The `.gitignore` rules an adapter appends are skipped when the tenant already has any rule
   about that path**, rather than when the line matches exactly. A tenant ignoring `projects/*/*`
   while keeping `projects/*/memory/*.md` tracked loses that memory to a broader pattern appended

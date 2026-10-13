@@ -105,8 +105,13 @@ if [ "${1:-}" = "--scan-tree" ]; then
     # stood here said "Nothing is skipped — the path rule still sees the file", and it did not.
     # `bin/adapt` installs tracked symlinks into every tenant by design, so a tracked tree holding
     # them is the ordinary case here and not an edge of it.
+    #
+    # `readlink`, not `git show ":$path"`, since 2026-10-13, for the reason
+    # `credentials-guard.sh` states at the same place: this mode audits the tree on disk, so a
+    # retarget nobody staged has to be visible to it.
     if [ -L "$path" ]; then
-      term="$(offence "$path" "$(git show ":$path" 2>/dev/null | tr -d '\0')")" && offenders="$offenders
+      target="$(readlink "$path" 2>/dev/null | tr -d '\0')"
+      term="$(offence "$path" "$target")" && offenders="$offenders
 $path: $term"
       continue
     fi

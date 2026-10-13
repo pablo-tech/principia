@@ -190,6 +190,20 @@ git -C "$t/repo" commit -qm x
 check "--scan-tree judges a tracked symlink rather than skipping it" \
   "! (cd '$t/repo' && bash '$DIR/credentials-guard.sh' --scan-tree >/dev/null 2>&1)"
 
+# The same point about the same line: a symlink's target is the content this guard is handed for
+# it, and under an audit of the tree that target is the one on disk. Reading it from the index
+# meant a retarget nobody staged was judged by whatever the link used to point at. The target
+# carries a token rather than a credential-shaped name because the name is the link's own and a
+# retarget does not change it — the target is the only thing this mode reads differently.
+fresh
+stage notes.md "nothing to see"
+ln -sfn /run/secrets/ordinary "$t/repo/link"
+git -C "$t/repo" add -A
+git -C "$t/repo" commit -qm x
+ln -sfn /run/secrets/ghp_0123456789abcdefghij0123456789 "$t/repo/link"
+check "--scan-tree judges a symlink by the target on disk, not the one in the index" \
+  "! (cd '$t/repo' && bash '$DIR/credentials-guard.sh' --scan-tree >/dev/null 2>&1)"
+
 fresh
 stage infra/prod.env "REGION=us-west-2"
 check "an index git cannot read refuses rather than reading as nothing staged" \
