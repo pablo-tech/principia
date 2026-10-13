@@ -21,6 +21,10 @@
 # shellcheck disable=SC2034  # ROOT, PAGE and FIX are read inside the eval'd conditions below.
 # shellcheck disable=SC2016  # a check's condition is eval'd by the harness, so those expand there
 # and not here.
+# shellcheck disable=SC2329  # every helper below is invoked through `check`'s eval, which is this
+# code's own "ignored if invoked indirectly". The check arrived in shellcheck 0.10 and the runner's
+# preinstalled copy is older, so the sweep this repository passes in continuous integration failed
+# on this untouched file for anyone running a current shellcheck by hand.
 set -uo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=bin/check.sh

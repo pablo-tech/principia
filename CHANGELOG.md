@@ -21,6 +21,33 @@ wrong commit.
 
 ### Added
 
+- **A passing run now says what it executed, and a suite that did not reach its verdict fails.**
+  `doctrine/testing.md` has said since 1.0.0 that a passing run is evidence about what it executed,
+  and this harness printed `all suites passed` over any number of checks including none. Two things
+  changed. `check()` counts its passes, so a suite's last line carries the number —
+  `tenant-guard: all passed (N checks)`, where it read `tenant-guard: all passed` — and the run's
+  own last line carries both numbers, `all suites passed (N suites, M checks)`. And `bin/test.sh`
+  now counts the `ok` and `FAIL` lines each suite printed, rebuilds the verdict those counts imply,
+  and refuses the suite unless its last line is that line byte for byte. **One comparison, four
+  assertions**: the suite reached its verdict, the verdict was the last thing it said, it named
+  itself rather than carrying another suite's line, and the count it declared is the count it
+  printed. Neither instrument is sufficient alone — a counter is the suite's own self-report, and
+  counting lines alone is unsafe because `bin/doctor` prints `  ok    %s` byte-identically — which
+  is why there are two and why they count independently. **Every old verdict line is a
+  character-for-character prefix of its new one**, so a consumer matching on the first words keeps
+  matching. `finish` also exits explicitly on both arms and treats zero checks as a failure: a
+  suite truncated, one with a debugging `exit 0` left in, one with a syntax error before its last
+  check and one running no checks at all used to exit 0 and be reported as passes. Discovery gained
+  `\( -type f -o -type l \)` so a directory named `x.test.sh` is not handed to bash and a
+  symlinked suite is not dropped, `</dev/null` per suite so a suite reading standard input cannot
+  consume the list of suites still to run, and an empty discovery is a failure rather than the
+  quietest pass available. `bin/test.test.sh` is the runner's first suite — it builds a root under
+  `mktemp -d`, copies the runner and the harness into it, writes deliberately-wrong suites beside
+  them and runs the copy, so recursion is impossible structurally rather than by care, and so each
+  rule was red against the old runner before the new one existed. The harness formatter is
+  `verdict_line` rather than `verdict` because three suites here define a `verdict()` of their own
+  after sourcing the harness, and that collision is a check rather than a sentence advising care.
+
 - **The installer says what it decided not to do, in the three places it used to decide in
   silence.** A `.gitignore` pattern declined because the tenant's own rules already cover that path
   now prints both the pattern and the tenant's line, so the skip is a judgement the operator can see
