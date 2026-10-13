@@ -26,7 +26,9 @@ than for routing.
 than following one: what admission costs, and the register naming the principle each document above
 instantiates and the specific prior work it is named from. Each document prints that citation itself,
 on a `Named:` line under its opening line. A rule you cannot name and cite is a mechanism, a
-measurement, or a sentence belonging to a document that already exists.
+measurement, a sentence belonging to a document that already exists, or advice — a rule naming no
+moment at which a cost stops being recoverable, which is the one of the four refused on its subject
+rather than on its form.
 
 ## The two rules that hold the rest together
 

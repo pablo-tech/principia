@@ -271,6 +271,93 @@ unlineaged() {
   [ -z "$none$bad" ] || return 1
 }
 
+# A chunk's visible text: every link target removed. A lineage anchor ends in the year of the work
+# it names, so a year looked for in the raw text is answered by the link that is being checked.
+visible() { sed -e 's@]([^)]*)@]@g'; }
+
+# One copy of a citation per line, `label|text`, the convention `para` above uses: a `Named:` block
+# folded onto one line, or a row of the register. Two of INDUCTION.md's four copies, and the two
+# judgements below are the same question asked of each.
+named_chunks() {
+  local f
+  while IFS= read -r f; do
+    printf '%s|%s\n' "${f##*/}" "$(named_block "$f" | tr '\n' ' ')"
+  done < <(docs "$1")
+}
+row_chunks() {
+  local line
+  while IFS= read -r line; do
+    printf '%s|%s\n' "$(printf '%s' "$line" | sed -e 's@^| \[`@@' -e 's@`\].*@@')" "$line"
+  done < <(rows "$1")
+}
+
+# The year beside a lineage link is the year inside it.
+#
+# This is the mechanism the four-places exemption assumes and did not have. INDUCTION.md:134-139
+# exempts a citation from the rule against four copies of one fact on the ground that "nothing can
+# make the four copies disagree except a typo — the one failure mode a reader catches for free." No
+# reader caught this one: the A201 citation stood at 2017 in the lineage and in the anchor every
+# copy of it linked to, and carried no year at all in the document or in the register, for as long as
+# the page existed. That is the second time the exemption has failed, which is why the ground it
+# rests on is now a check rather than a prediction about readers.
+year_disagrees() {
+  local chunk label text y out=""
+  while IFS= read -r chunk; do
+    label=${chunk%%|*}
+    text=${chunk#*|}
+    for y in $(printf '%s' "$text" | grep -o 'LINEAGE\.md#[a-z0-9-]*-[0-9][0-9][0-9][0-9])' |
+               sed 's/.*-\([0-9][0-9][0-9][0-9]\))$/\1/' | sort -u); do
+      printf '%s' "$text" | visible | grep -q "$y" || out="$out $label($y)"
+    done
+  done
+  [ -z "$out" ] || {
+    printf '        a lineage link names a year the copy carrying it does not:%s\n' "$out"; return 1; }
+}
+
+# And every work the line names is dated, not just the first one.
+#
+# `undated_name` above asks whether the block carries a year at all, which a line naming two works
+# and dating one of them answers — and that is exactly the shape the A201 citation had. The works are
+# separated by the em dash that introduces each one, which is the form all seven of these lines are
+# written in, so each is asked on its own. INDUCTION.md:80 states the condition per work: "It has an
+# author, a title and a year."
+undated_work() {
+  local chunk label out=""
+  while IFS= read -r chunk; do
+    label=${chunk%%|*}
+    out="$out$(printf '%s' "${chunk#*|}" | visible | awk -v lab="$label" -v y="$DATED" -v d=' — ' '
+      { n = split($0, seg, d)
+        for (i = 2; i <= n; i++)
+          if (seg[i] !~ y) printf "\n        %s names a work with no year: %.60s\n", lab, seg[i] }')"
+  done
+  [ -z "$out" ] || { printf '%s\n' "${out#?}"; return 1; }
+}
+
+# The refusal triage, and the one sentence in this repository that is deliberately in three files.
+#
+# A proposal that does not meet the five conditions is one of four things, and *which* four is the
+# whole content of it: a reader meeting the sentence in CONTRIBUTING.md before opening a pull
+# request and a reader meeting it in AGENTS.md before writing a rule are being told the same thing,
+# or it is doing nothing in one of the three places. It had already drifted — AGENTS.md carried
+# three of the four, missing `advice`, which is the one refused on its subject rather than on its
+# form and so the one an otherwise well-formed proposal turns out to be.
+#
+# Held character-identical rather than merely present. `doctrine/clean-code.md` refuses three copies
+# of a fact outright, and what earns the exemption here is the same thing that earns the citation
+# one: there is nothing to paraphrase. The four are a closed list, and a copy stating them in its own
+# words would be a third author's reading of which four. Whitespace is folded, because one sentence
+# wraps differently in each file.
+TRIAGE='a mechanism, a measurement, a sentence belonging to a document that already exists, or'
+TRIAGE="$TRIAGE advice — a rule naming no moment at which a cost stops being recoverable,"
+triage_drift() {
+  local root=$1 f out=""
+  for f in AGENTS.md CONTRIBUTING.md INDUCTION.md; do
+    tr '\n' ' ' <"$root/$f" 2>/dev/null | tr -s ' ' | grep -qF -- "$TRIAGE" || out="$out $f"
+  done
+  [ -z "$out" ] || {
+    printf '        the refusal triage is not stated in these exact words in:%s\n' "$out"; return 1; }
+}
+
 check "every doctrine document carries a \`Named:\` line" 'unnamed "$ROOT/doctrine"'
 check "every \`Named:\` line cites a dated work or declares there is none" 'undated_name "$ROOT/doctrine"'
 check "every doctrine document has a row in README's table of the doctrine" \
@@ -295,6 +382,11 @@ check "the lineage is found at all, so the judgements over it are not passing on
   '[ "$(entry_slugs "$LINEAGE" | grep -c .)" -ge 20 ]'
 check "every \`Named:\` line reaches the lineage, and reaches an entry that is there" \
   'unlineaged "$ROOT/doctrine" "$LINEAGE"'
+check "every \`Named:\` line dates every work it names, and not only the first" \
+  'named_chunks "$ROOT/doctrine" | undated_work'
+check "the year in a lineage link is the year the copy carrying it prints" \
+  'named_chunks "$ROOT/doctrine" | year_disagrees && row_chunks "$ROOT/INDUCTION.md" | year_disagrees'
+check "all three copies of the refusal triage name the same four things" 'triage_drift "$ROOT"'
 
 # The controls. Each judgement above is run against a tree built to fail it, because a matcher that
 # finds no rows at all would pass every one of them in silence.
@@ -394,5 +486,61 @@ check "a dash inside a word closes it up, as GitHub does" \
   '[ "$(slug "The principal–agent problem — Ross, 1973")" = the-principalagent-problem--ross-1973 ]'
 
 check "the index beside the documents is exempt, and the document beside it is not" 'exempts_index'
+
+# The two year judgements, each against a copy built to fail it. Both causes are the A201 citation's
+# two halves and they are controlled apart: `halfdated.md` dates its first work and not its second,
+# `mistyped.md` dates both and disagrees with the anchor it links to.
+cat >"$FIX/doctrine/halfdated.md" <<'FIXTURE'
+# Half dated
+
+*The discipline, stated.*
+
+**Named:** something — Somebody, *A Title*, 1970. Something else — standard practice, as everyone
+knows. [Lineage](../LINEAGE.md#renamed-since--somebody-1970).
+FIXTURE
+cat >"$FIX/doctrine/mistyped.md" <<'FIXTURE'
+# Mistyped
+
+*The discipline, stated.*
+
+**Named:** something — Somebody, *A Title*, 1971.
+[Lineage](../LINEAGE.md#renamed-since--somebody-1970).
+FIXTURE
+cat >"$FIX/MISTYPED.md" <<'FIXTURE'
+| Document | Named in its best-known form, and the prior work it is named from | Where this repository departs |
+|---|---|---|
+| [`gone.md`](doctrine/gone.md) | **Something** ([Somebody, 1971](LINEAGE.md#renamed-since--somebody-1970)) | none |
+FIXTURE
+
+# One accumulator over every document, so each control is asserted over what the failure names.
+halfdated_caught() {
+  local out
+  out=$(named_chunks "$FIX/doctrine" | undated_work 2>&1 || true)
+  printf '%s' "$out" | grep -q 'halfdated\.md names a work with no year' &&
+    ! printf '%s' "$out" | grep -q 'mistyped\.md'
+}
+mistyped_caught() {
+  local a b
+  a=$(named_chunks "$FIX/doctrine" | year_disagrees 2>&1 || true)
+  b=$(row_chunks "$FIX/MISTYPED.md" | year_disagrees 2>&1 || true)
+  printf '%s' "$a" | grep -q 'mistyped\.md(1970)' &&
+    ! printf '%s' "$a" | grep -q 'halfdated\.md' &&
+    printf '%s' "$b" | grep -q 'gone\.md(1970)'
+}
+
+check "a \`Named:\` line that dates one work and leaves the other undated is caught" 'halfdated_caught'
+check "a lineage link whose year the copy carrying it does not print is caught, in a document and in a row" \
+  'mistyped_caught'
+
+# Two of the three carry the sentence and the third does not, which is the shape the drift had.
+{ printf 'before. '; printf '%s' "$TRIAGE"; printf ' after.\n'; } >"$FIX/AGENTS.md"
+cp "$FIX/AGENTS.md" "$FIX/CONTRIBUTING.md"
+triage_names_the_one_that_drifted() {
+  local out
+  out=$(triage_drift "$FIX" 2>&1 || true)
+  printf '%s' "$out" | grep -q 'in: INDUCTION\.md$'
+}
+check "a copy that does not carry the triage in those words is caught, and the two that do are not" \
+  'triage_names_the_one_that_drifted'
 
 finish
