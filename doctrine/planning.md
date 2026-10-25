@@ -1,6 +1,6 @@
 ---
 name: planning
-description: What a plan has to contain before it can be executed without further check-ins — an executive summary first, in the architect voice the closing report uses, what the work will take in calendar time, a worktree named as step one, per-phase summaries and rollback in a fixed table, what a completed phase reports having accomplished, and where the document lives.
+description: What a plan has to contain before it can be executed without further check-ins — an executive summary first, in the architect voice the closing report uses, what the work will take in calendar time, a worktree cut from a freshly fetched base and named as step one, per-phase summaries and rollback in a fixed table, what a completed phase reports having accomplished, and where the document lives.
 ---
 
 # Planning
@@ -160,8 +160,18 @@ wrong and is therefore worth writing down.
 
 ## Every plan sets up its own worktree, and names it as its first step
 
-A plain `git worktree add -b <branch> <path> origin/<deploy-branch>`, created before the plan's first
-edit and removed at cleanup. A plan that does not name its worktree is not ready to execute.
+A plain `git fetch origin && git worktree add -b <branch> <path> origin/<deploy-branch>`, created
+before the plan's first edit and removed at cleanup. A plan that does not name its worktree is not
+ready to execute.
+
+**The fetch is part of that command, not a precaution taken before it.** `origin/<deploy-branch>`
+is a local ref, no fresher than the last fetch, so a clone nothing has fetched hands back whatever
+that branch was when somebody last asked — and a branch cut from it is indistinguishable from a
+correctly based one. The breach shows up at the merge, by which time the work exists and was written
+against files the deploy branch had already moved past, where the check that would have prevented it
+was one command at the start, before anything had been spent. That asymmetry is the whole of it, and
+it is why naming the base does not suffice on its own: a base named correctly and read from a stale
+cache is the same mistake as naming the wrong one.
 
 **Never edit in a standing checkout.** A standing checkout is what a machine runs, what another
 session may be mid-change in, and what a deploy fast-forwards — an edit there is live before anyone
