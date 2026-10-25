@@ -74,6 +74,18 @@ wrong commit.
   `verdict_line` rather than `verdict` because three suites here define a `verdict()` of their own
   after sourcing the harness, and that collision is a check rather than a sentence advising care.
 
+### Changed
+
+- **`doctrine/planning.md`'s worktree command fetches the base before cutting from it.** The rule
+  already said to branch from `origin/<deploy-branch>`, and said nothing about that ref being local:
+  a remote-tracking ref is no fresher than the last fetch, so a clone nothing fetches answers with
+  whatever the deploy branch held when somebody last asked, and a branch cut from it is
+  indistinguishable from a correctly based one. The command is now
+  `git fetch origin && git worktree add -b <branch> <path> origin/<deploy-branch>`, with the
+  paragraph that says why naming the base is not sufficient on its own. A mechanism paragraph rather
+  than a new rule — the section's principle and its citation are unchanged — and held by review,
+  there being no worktree-creating mechanism here for it to be derived from.
+
 ### Fixed
 
 - **Three sentences that stated a rule and left its one exception out now derive the exception.**
