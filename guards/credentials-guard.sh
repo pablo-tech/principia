@@ -120,7 +120,16 @@ ASSIGNED='(^|[^A-Za-z0-9_])([A-Z][A-Z0-9_]*_)?(PASSPHRASE|PASSWORD|SECRET|API_KE
 # opens a bracket is a derivation rather than a literal — no credential charset contains `(`.
 MASKED='=["'"'"']?([A-Za-z0-9_]+\(|REDACTED|MASKED|CHANGE_?ME|PLACEHOLDER|EXAMPLE|SAMPLE|TODO|FIXME|NONE|NULL|UNSET|YOUR[_-]|X{3,}|\.+([^A-Za-z0-9]|$))'
 literal_credential() { # content
-  grep -E -- "$ASSIGNED" <<<"$1" | grep -qviE -- "$MASKED"
+  # Two statements rather than `grep -E … | grep -qviE`, for the reason `leaks()` above is written
+  # the way it is: `grep -qvi` exits on the first unmasked line, the upstream is still writing the
+  # rest, and under `pipefail` that SIGPIPE is the status this function returns — the guard going
+  # quiet on exactly the file it was meant to catch. It missed a 300-line file in 25 of 25 runs.
+  #
+  # The `|| return 1` is load-bearing, not defensive: an empty here-string is still one empty line,
+  # which matches no `MASKED` shape, so `grep -qvi` would succeed and every clean file be refused.
+  local assigned
+  assigned=$(grep -E -- "$ASSIGNED" <<<"$1") || return 1
+  grep -qviE -- "$MASKED" <<<"$assigned"
 }
 
 # A wrapped key — a private key or a data-encryption key sealed under another key — defeats every

@@ -91,6 +91,15 @@ fresh
 stage README.md 'PASSWORD=CHANGEME'
 check "a masked value reads as documentation" "guard"
 
+# The same rule at a size the pipeline it used to be asked through could not survive. `grep -qvi`
+# exits on the first unmasked line, the upstream `grep -E` is still writing the rest, and under
+# `pipefail` that SIGPIPE was the answer `offends` read — so the guard went quiet on exactly the
+# file it was meant to catch, which is the failure its own `leaks()` comment warns about. It missed
+# a 300-line file 25 times in 25; this one is larger so the check cannot pass by winning a race.
+fresh
+stage notes.md "$(awk 'BEGIN{for(i=0;i<5000;i++) printf "API_KEY=s3cretvalue%06d\n", i}')"
+check "and a file of many unmasked assignments is refused, however much follows the first" "! guard"
+
 fresh
 stage suite.test.sh "KEY='$KEY'"
 check "a test carrying a fixture is refused until it is named" "! guard"
