@@ -1,6 +1,6 @@
 ---
 name: git
-description: Commit and branch discipline — who decides to commit and push, what a commit message says, what a pull request declares about the phase that authorized it, how a promotion works, why the file-size ceiling is enforced at commit rather than push, why a committed secret is rotated rather than removed and what declares a repository entitled to hold one, why a compatibility shim defers a failure past the point where it is cheap, and why every repo-scoped command names its repo.
+description: Commit and branch discipline — who decides to commit and push, what a commit message says, what a pull request declares about the phase that authorized it, how a promotion works, why the file-size ceiling is enforced at commit rather than push, why a committed secret is rotated rather than removed and what declares a repository entitled to hold one, why a compatibility shim defers a failure past the point where it is cheap, and why every repo-scoped command and reference names its repo.
 ---
 
 # Git
@@ -15,25 +15,40 @@ Journal*, 2001. [Lineage](../LINEAGE.md#the-end-to-end-argument--saltzer-reed-an
   approved plan, and nothing else does.
 - Never use `--no-verify`, `--force`, or `--amend` on published commits without asking first.
 - Commit messages: imperative mood, one line, focused on *why* rather than *what*.
-- **Every repository-scoped command names its repository** — `gh -R owner/repo`, `git -C <path>`,
-  `repos/owner/repo/...` for an API call. This includes commands handed to a person to run, which
-  may execute outside any checkout. A command that relies on the current directory is a command that
-  eventually runs in the wrong one.
+- **Every repository-scoped command and reference names its repository** — `gh -R owner/repo`,
+  `git -C <path>`, `repos/owner/repo/...` for an API call, `owner/repo#44` for a pull request or an
+  issue. This includes commands handed to a person to run, which may execute outside any checkout,
+  and it includes a number cited in prose — a commit message, a plan, a report, a pull request body
+  pointing at another repository's — which is read outside whatever context gave it a repository. A
+  number stays bare only where it cannot be read apart from the sentence or the row that names one.
+  A command that relies on the current directory is a command that eventually runs in the wrong one;
+  a bare `#44` is a reference that eventually resolves to the wrong pull request. Both succeed when
+  they do, which is why neither announces itself.
 
-**Two of the rules on this page are enforced by nothing at commit time, and that is a decision
-rather than an omission**: the `--no-verify`/`--force`/`--amend` line above, and *Promote whole,
-never by cherry-pick* below. One agent's adapter refuses all four at the moment the command is
-typed, which is the only point any of them is visible — a command-guard directory under
+**Three of the rules on this page are enforced by nothing at commit time, and that is a decision
+rather than an omission**: the `--no-verify`/`--force`/`--amend` line above, *Promote whole, never by
+cherry-pick* below, and the half of the naming rule that governs a reference rather than a command.
+One agent's adapter refuses all four of the commands the first two name at the moment one is typed,
+which is the only point any of them is visible — a command-guard directory under
 [`adapters/`](../adapters/), where an agent that can intercept a command is wired to do it — and
 [`ARCHITECTURE.md`](../ARCHITECTURE.md) §1 says an adapter is deletable, so on a machine with no
 adapter wired what holds these two is review and nothing else. Neither could be a commit guard and
 keep its meaning. `--no-verify` is the string every guard in the chain prints as it refuses, so the
 chain is the one thing that structurally cannot see it being used. `--force` and `--amend` act on
 history, which `pre-commit` has finished looking at. And whether a promotion is whole is a property
-of a branch and a merge — not of any one commit, which is all a hook on one is given. This is
-recorded because a rule nothing enforces leaves no trace at all, so the sentence asserting it is
-the only evidence there is and it reads as coverage: [`as-built.md`](as-built.md)'s requirement,
-applied to this page rather than quoted on it.
+of a branch and a merge — not of any one commit, which is all a hook on one is given.
+
+**The third is held by less than either, and that is the stronger claim rather than a weaker one.** A
+command is a string some mechanism is handed, so an adapter that can intercept one has something to
+refuse; a reference sits in prose, which no mechanism is handed at any point. A guard over a commit
+message is the only place a check could stand, and it would be wrong there more often than right: a
+bare number resolves correctly inside its own repository, which is the exception the rule already
+states, and whether a reference will later be read outside that repository is not a property of its
+text. So what holds this one is the reader.
+
+All of it is recorded because a rule nothing enforces leaves no trace at all, so the sentence
+asserting it is the only evidence there is and it reads as coverage: [`as-built.md`](as-built.md)'s
+requirement, applied to this page rather than quoted on it.
 
 ## A compatibility shim runs the lever backwards
 
