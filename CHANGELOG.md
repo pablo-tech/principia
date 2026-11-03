@@ -256,6 +256,22 @@ wrong commit.
   reported correct. The check that pins it is deliberately not a rerun loop — it builds a body big
   enough that the old form dropped it in 30 of 30 runs, so it is red the moment the pipeline comes
   back rather than red eventually.
+- **The credentials guard went quiet on exactly the file it was meant to catch, which is the failure
+  its own `leaks()` comment fifteen lines above warns against.** `literal_credential()` asked its
+  question as `grep -E -- "$ASSIGNED" <<<"$1" | grep -qviE -- "$MASKED"`, and the file sets
+  `pipefail`. The downstream match exits the instant it finds one unmasked assignment, the upstream
+  is still writing the rest, and its SIGPIPE is the status the function returns — so `offends()`
+  read *no literal credential* in a file that held nothing else. It caught a 100-line file in all of
+  25 runs, missed a 200-line one in 2, and missed a 300-line one — 7799 bytes, well under the pipe
+  buffer — in 25 of 25. `leaks()`, immediately above it, takes its content as an argument rather
+  than on a pipe and its comment gives this as the reason, which makes this the rule stated beside
+  the code that broke it. The two `grep`s are now two statements over a variable, so no pipeline's
+  status answers for a process that was not asked. **The `|| return 1` between them is load-bearing
+  rather than defensive**: an empty here-string is still one empty line, which matches no `MASKED`
+  shape, so without it `grep -qviE` succeeds on a file with no assignment at all and the guard
+  refuses every clean commit. The check that pins it is a file of unmasked assignments large enough
+  that the old form missed it in 25 of 25 runs, so it is red the moment the pipeline comes back
+  rather than red eventually.
 
 ## [2.0.0] — 2026-10-12
 
