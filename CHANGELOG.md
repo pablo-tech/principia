@@ -85,6 +85,19 @@ wrong commit.
   paragraph that says why naming the base is not sufficient on its own. A mechanism paragraph rather
   than a new rule — the section's principle and its citation are unchanged — and held by review,
   there being no worktree-creating mechanism here for it to be derived from.
+- **`doctrine/git.md`'s repository-naming rule covers a reference, not only a command.** The rule
+  already said every repository-scoped command names its repository, and the failure it names was
+  never a property of commands: a bare `#44` in a commit message, a plan or a report resolves
+  against whatever repository the reader is standing in, which is a real pull request and the wrong
+  one, and the command that reads it there succeeds. The bullet now reads *command and reference*,
+  with `owner/repo#44` as the form and one exception — a number may stay bare where it cannot be
+  read apart from the sentence or the row that names a repository. That exception is also why no
+  guard can hold this half: a bare number resolves correctly inside its own repository, so a check
+  over a commit message would be wrong more often than right, and whether a reference will later be
+  read outside that repository is not a property of its text. The unenforced-rules paragraph on that
+  page therefore counts three rather than two, and says which of the three is held by the reader and
+  nothing else. The frontmatter `description` carries the widened clause, so what a consumer's agent
+  loads names it rather than only the command half.
 
 ### Fixed
 
