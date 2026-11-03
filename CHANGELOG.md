@@ -242,6 +242,20 @@ wrong commit.
 - **`CHANGELOG.md` says forty lineage entries**, which is what `2.0.0` shipped. The count is a dated
   claim about a release and is deliberately not derived: a check reading today's `LINEAGE.md` would
   be right about `[2.0.0]` today and wrong at `2.1.0`.
+- **`guards/policy.test.sh` was red about one run in thirteen, and the suite was the thing at
+  fault rather than the tree it judged.** `callers()` — the probe that derives which guard makes
+  which shared refusal, so `policy.sh`'s header cannot read as coverage — asked its question as
+  `grep -v '^[[:space:]]*#' "$guard" | grep -q`, and the file sets `pipefail`. The downstream match
+  exits the instant it finds the helper, the upstream strip is still writing, and its SIGPIPE is
+  the status the following `&&` reads: a guard that *does* name the helper is dropped from the
+  list, silently, and only when it loses the race. Measured at 30 of 400 runs, always
+  `identity-guard.sh`, the largest of the four bodies. The strip now goes to a variable and the
+  match reads that, so no pipeline's status answers for a process that was not asked. **What this
+  cost is the reason it is an entry rather than a quiet edit**: a suite that fails occasionally is
+  read as a defect somewhere else, and this one sent a reader to audit two documents it had just
+  reported correct. The check that pins it is deliberately not a rerun loop — it builds a body big
+  enough that the old form dropped it in 30 of 30 runs, so it is red the moment the pipeline comes
+  back rather than red eventually.
 
 ## [2.0.0] — 2026-10-12
 

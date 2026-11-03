@@ -216,10 +216,16 @@ done
 # inside a string would count, which is the probe's own limit. That is enough for the claim being
 # held — the header names guards, and a guard that mentions a helper outside a comment and does not
 # call it is a defect of its own — and it is said here so the checks below are not read as more.
-callers() { # helper -> the guards naming it outside a comment, alphabetical, comma-separated
-  local helper=$1 guard out=''
-  for guard in "$DIR"/*-guard.sh; do
-    grep -v '^[[:space:]]*#' "$guard" | grep -q "\\b$helper\\b" &&
+callers() { # helper [dir] -> the guards naming it outside a comment, alphabetical, comma-separated
+  local helper=$1 dir=${2:-$DIR} guard body out=''
+  for guard in "$dir"/*-guard.sh; do
+    # Stripped into a variable rather than piped into `grep -q`, because under `pipefail` that
+    # pipeline answers for the wrong process: the match exits at once, the upstream `grep -v` is
+    # still writing, and its SIGPIPE is the status `&&` then reads — so a guard that DOES name the
+    # helper is dropped from the list, silently and only sometimes. It dropped `identity`, the
+    # largest of the four bodies, in 30 of 400 runs. The last check in this file holds it.
+    body=$(grep -v '^[[:space:]]*#' "$guard")
+    grep -q "\\b$helper\\b" <<<"$body" &&
       out="${out:+$out,}$(basename "$guard" -guard.sh)"
   done
   printf '%s' "$out"
@@ -241,5 +247,15 @@ check "compiles is made by those same two, whose patterns come out of a policy f
   "[ \"\$(callers compiles)\" = identity,tenant ]"
 check "and a helper no guard calls comes back empty, so the probe can answer no" \
   "[ -z \"\$(callers policy_strip)\" ]"
+# The probe's own failure mode, pinned rather than described. A match early in a guard with body
+# still to come is what `pipefail` made into a dropped guard, and the four real guards are small
+# enough that it happened in about one run in thirteen — a suite that is red occasionally is read as
+# a defect somewhere else. This body is big enough that the old form dropped it in 30 of 30 runs, so
+# the check is red the moment the pipeline comes back and does not depend on losing a race.
+check "a caller is found however much of the guard body follows the match" \
+  "mkdir -p \"\$t/probe\" &&
+   awk 'BEGIN{print \"at_root\"; for(i=0;i<20000;i++) print \"  filler filler filler\"}' \
+     >\"\$t/probe/big-guard.sh\" &&
+   [ \"\$(callers at_root \"\$t/probe\")\" = big ]"
 
 finish
