@@ -21,6 +21,21 @@ wrong commit.
 
 ### Added
 
+- **`warp.md` says what a stop says.** The document already enumerated the four moments a decision
+  crosses back to a person and said nothing whatever about the form it crosses in, so a tenant that
+  never wrote the rule down inherited four stops with no statement of what a stop is for. One new
+  section carries the invariant — an unresolved decision is never handed back and never resolved in
+  silence, which is one rule failed in opposite directions rather than two — the composition that
+  decides which calls cross, the obligation to recommend with a named discipline's standard behind
+  it, and the non-exhaustive enumeration. It is placed between what stops and what happens when the
+  asking becomes a handover, because that ordering is the argument. Three works are named for it,
+  with their objections: Barnard 1938 for the decision resolved in silence, Charles, Gafni and
+  Whelan 1997 for the recommendation that is owed, and Tversky and Kahneman 1981 as the objection
+  the rule carries rather than answers, since whoever writes the options has already exercised part
+  of the choice. The lineage gains a twelfth group for the medical literature, filing a clinical
+  paper under organization theory being the dishonest alternative. No new document, no frontmatter
+  key, no guard: this one is held by the reader.
+
 - **Every cross-file anchor in the tree is checked, where 41 of 113 were.** `dangling_anchor`
   already existed, already took a source and a target, and was called at one site: over the anchors
   `INDUCTION.md` points at `LINEAGE.md`. The other 72 were held by nothing — including all 41

@@ -1,6 +1,6 @@
 ---
 name: warp
-description: The delegation mode. Say "warp" to take an approved plan from approval to deployed product with no further check-ins — what that authorizes, the four things it still stops for, why blast radius is read off the declared trigger rather than off your diff, why a procedure handed to a person is reduced to one act, the mark it starts with and the report it ends with.
+description: The delegation mode. Say "warp" to take an approved plan from approval to deployed product with no further check-ins — what that authorizes, the four things it still stops for, what a stop says and the form a decision crosses back in, why blast radius is read off the declared trigger rather than off your diff, why a procedure handed to a person is reduced to one act, the mark it starts with and the report it ends with.
 ---
 
 # Warp
@@ -10,7 +10,15 @@ description: The delegation mode. Say "warp" to take an approved plan from appro
 **Named:** mission command — Helmuth von Moltke, *Verordnungen für die höheren Truppenführer*
 ("Instructions for Large Unit Commanders"), 1869. The principal–agent problem — Stephen Ross, "The
 Economic Theory of Agency: The Principal's Problem", *American Economic Review*, 1973.
-[Lineage](../LINEAGE.md#mission-command--moltke-1869).
+[Lineage](../LINEAGE.md#mission-command--moltke-1869). Not making decisions that others should make
+— Chester Barnard, *The Functions of the Executive*, 1938
+([Lineage](../LINEAGE.md#not-making-decisions-that-others-should-make--barnard-1938)). Shared
+decision making — Cathy Charles, Amiram Gafni and Tim Whelan, "Shared decision-making in the medical
+encounter: what does it mean? (or it takes at least two to tango)", *Social Science & Medicine*,
+1997 ([Lineage](../LINEAGE.md#shared-decision-making--charles-gafni-and-whelan-1997)). Framing
+effects — Amos Tversky and Daniel Kahneman, "The Framing of Decisions and the Psychology of Choice",
+*Science*, 1981
+([Lineage](../LINEAGE.md#framing-effects--tversky-and-kahneman-1981)).
 
 **"warp" means: take the plan from approval to deployed product with no further check-ins.**
 Commit, push, open and merge the pull requests, run the migrations, set the secrets, deploy to
@@ -57,6 +65,47 @@ static and readable before the merge — which makes the remedy cheaper than any
 the failure less forgivable. **Read the declaration.** Blast radius is read off the mechanism, and
 "this change could not possibly have published anything" is a prediction about a trigger rather than
 a fact about a diff.
+
+## What a stop says
+
+The section above says what a warp stops for. This one says what the stop itself has to be, because
+a decision returned in the wrong form has not been returned.
+
+**The invariant: an unresolved decision is never handed back and never resolved in silence.** A set
+of options offered with no recommendation hands it back — the delegate holds the information and
+declines to use it, which returns the work rather than the decision. A decision taken quietly
+withholds it — the act is performed, the principal never learns a choice existed, and by the time it
+surfaces the work is already built on it. Those are the same test failed in opposite directions,
+which is why they are one rule. **Not making decisions that others should make** is one of the four
+things the art of executive decision is said to consist in (Chester Barnard, *The Functions of the
+Executive*, 1938), and a delegate who settles a question belonging to the principal has not been
+decisive but has taken something.
+
+**Which calls cross is a composition, not a preference.** A call settleable by reading the code, or
+by weighing two costs that are both the delegate's to pay, is the delegate's to make — and to name
+in one clause, so that it can still be overturned. What crosses is a decision only the principal
+holds: a commercial judgement, a credential, a write reserved to them, the boundary of what was
+asked. It crosses too wherever a different answer would produce materially different work, a
+different artefact, or an irreversible act — **including where a conventional default exists.** A
+default is a prediction about the usual case, and every stop this document enumerates is the unusual
+one by construction, so the default's warrant is absent exactly where it would be leaned on.
+
+**The recommendation is owed, and it is owed with a discipline's standard behind it.** Name the field
+the decision belongs to, argue from that field's standard rather than from what is convenient in the
+repository at hand, and carry the reasoning and not only the verdict: a verdict can be accepted or
+refused and nothing else, while reasoning can be corrected. That is the strong form the clinical
+literature gives this rule — the expert states the options and their consequences *and* recommends
+one, and the choice stays the principal's (Cathy Charles, Amiram Gafni and Tim Whelan, 1997) — and an
+expert who withholds the recommendation has not been neutral, they have abandoned the decision.
+
+**An enumeration is not neutral, and the remedy is to say so rather than to claim otherwise.**
+Whoever writes the options has already exercised part of the choice: logically equivalent
+presentations of one decision produce systematically different answers (Amos Tversky and Daniel
+Kahneman, 1981). So the options are declared non-exhaustive, what was excluded is said where the
+question is asked rather than left to be noticed, the principal's own answer is always available, and
+refusal stays available with it. Where no mechanism supplies that last option it is written out as a
+closing line. This is a partial answer to an objection that has no complete one, and stating it as
+partial is the whole of what is available.
 
 ## A procedure handed to a person is not a transaction
 
