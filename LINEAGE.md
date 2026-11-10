@@ -22,7 +22,7 @@ the register's third column — the admitter's reading, and the only place it is
 says what each work claims in its own scope; the register says what was done with it.
 
 Grouped by the literature the work comes from, which is part of the exhibit: seven short documents
-rest on eleven bodies of work, and the groups are of very unequal size.
+rest on twelve bodies of work, and the groups are of very unequal size.
 
 ## Scientific method and inference
 
@@ -710,6 +710,49 @@ the Columbia loss.
 leads with the answer. Departures stay in
 [the register](INDUCTION.md#the-register).
 
+### Not making decisions that others should make — Barnard, 1938
+
+**The work** — Chester I. Barnard, *The Functions of the Executive*, Harvard University Press, 1938,
+the lectures in which an executive's work is described as decision rather than as instruction.
+
+**What it claims** — that "the fine art of executive decision consists in not deciding questions
+that are not now pertinent, in not deciding prematurely, in not making decisions that cannot be made
+effective, and in not making decisions that others should make." The last of the four is a claim
+about allocation rather than about restraint: a decision has an owner, the owner follows from where
+the authority and the consequences sit, and an executive who answers a question belonging to someone
+else has not been decisive but has taken something.
+
+**What the field says against it** — Herbert Simon, *Administrative Behavior*, 1947, replaces the
+informal account with decision premises and locates influence in how a subordinate's alternatives
+are framed rather than in who formally decides, which cuts against the assumption that the boundary
+of a decision is knowable in advance. Charles Perrow, *Complex Organizations: A Critical Essay*,
+1972, argues that the consent-based authority this school rests on obscures power, so whose decision
+a thing is is less determinate than the sentence implies.
+
+**Taken here** — [`doctrine/warp.md`](doctrine/warp.md), for the half of the invariant that refuses
+a decision resolved in silence. Departures stay in
+[the register](INDUCTION.md#the-register).
+
+### Framing effects — Tversky and Kahneman, 1981
+
+**The work** — Amos Tversky and Daniel Kahneman, "The Framing of Decisions and the Psychology of
+Choice", *Science* 211(4481), 1981, 453–458.
+
+**What it claims** — that logically equivalent descriptions of one choice produce systematically
+different preferences, so the decision frame is part of the decision rather than a presentation of
+it; and that the frame is controlled partly by the formulation of the problem and partly by the
+norms and habits of whoever presents it. The preference reversal follows from the description, not
+from the options.
+
+**What the field says against it** — Anton Kühberger, "The Influence of Framing on Risky Decisions:
+A Meta-analysis", *Organizational Behavior and Human Decision Processes*, 1998, aggregates the
+literature and finds the effect small and heavily dependent on moderators rather than the robust
+reversal the original reports.
+
+**Taken here** — [`doctrine/warp.md`](doctrine/warp.md), for why an enumeration is declared
+non-exhaustive rather than offered as neutral. Departures stay in
+[the register](INDUCTION.md#the-register).
+
 ## Manufacturing and operations
 
 ### Stop the line — Ohno, 1978
@@ -841,3 +884,31 @@ and future", *Journal of Systems and Software*, 2016, report the same gap a gene
 
 **Taken here** — [`doctrine/as-built.md`](doctrine/as-built.md), for the reasoning written where
 the decision is met. Departures stay in [the register](INDUCTION.md#the-register).
+
+## Medicine and shared decision making
+
+### Shared decision making — Charles, Gafni and Whelan, 1997
+
+**The work** — Cathy Charles, Amiram Gafni and Tim Whelan, "Shared decision-making in the medical
+encounter: what does it mean? (or it takes at least two to tango)", *Social Science & Medicine*
+44(5), 1997, 681–692.
+
+**What it claims** — that a decision is shared only where four characteristics hold at once: at
+least two participants, both taking part; both sharing information; both building a consensus about
+the preferred course; and both agreeing on what is to be implemented. The expert's part is to state
+the options and their consequences *and* to give a recommendation, while the choice remains the
+patient's — which makes a withheld recommendation a failure of the model rather than a neutral
+stance, and is what separates the shared form from the paternalistic one above it and the merely
+informative one below.
+
+**What the field says against it** — Gregory Makoul and Marla Clayman, "An integrative model of
+shared decision making in medical encounters", *Patient Education and Counseling*, 2006, reviewed
+the literature and found the concept defined in 418 different ways with no agreement on its
+essential elements, so the name underdetermines the practice it is invoked for. Lesley Degner and
+Jeffrey Sloan, "Decision making during serious illness: what role do patients really want to play?",
+*Journal of Clinical Epidemiology*, 1992, measured that many patients do not want the decision
+offered to them at all, which the four necessary characteristics do not accommodate.
+
+**Taken here** — [`doctrine/warp.md`](doctrine/warp.md), for the options, the consequences and the
+recommendation owed with any decision that crosses back. Departures stay in
+[the register](INDUCTION.md#the-register).
