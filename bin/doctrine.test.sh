@@ -155,9 +155,12 @@ check "and the completeness check can fail" \
   'printf "%s\n" PROTOCOL_NOT_A_VARIABLE | comm -23 - <(vars_documented) | grep -q .'
 
 # Three: ARCHITECTURE.md §9 names the scripts with no suite beside them. The selection is the one
-# CI's own static-analysis sweep makes, verbatim in shape — one definition of "a script here"
-# rather than two that drift — and the direction that matters is a script ARRIVING with no suite,
-# which lands as a decision to write down rather than as a silent enlargement of the exception.
+# CI's own static-analysis sweep starts from, verbatim in shape — one definition of "an artefact
+# here" rather than two that drift — and the direction that matters is a script ARRIVING with no
+# suite, which lands as a decision to write down rather than as a silent enlargement of the
+# exception. The sweep narrows this union to the files shellcheck can parse and this check does not,
+# which is the one place the two part company: coverage is owed by a python module as much as by a
+# shell one, and a static analyser that errors on a file it cannot read is a fact about the analyser.
 scripts_without_suite() {
   local f
   for f in $(cd "$DIR/.." && { git ls-files '*.sh' 'bin/*'

@@ -41,7 +41,18 @@ jobs:
             git ls-files | while read -r f; do
               head -c 64 "$f" | grep -qE '^#!.*\b(bash|sh)\b' && printf '%s\n' "$f"
             done
-          } | sort -u)
+          } | sort -u | while read -r f; do
+            # Then narrowed to what shellcheck can read, which is a third question and not a
+            # third selection. `bin/*` selects every artefact in that directory on purpose —
+            # ARCHITECTURE.md §9's exception table is held to the same union, and since the
+            # retrieval layer landed eight of those artefacts are python. shellcheck refuses a
+            # file it cannot parse (SC1071, an error) rather than skipping it, so an unnarrowed
+            # sweep goes red on files it was never about. Narrowing here keeps one definition of
+            # "a script here" for both consumers and puts the shell-only part where it belongs,
+            # in the step that needs it: a `.sh` name, or a bash/sh shebang.
+            case "$f" in *.sh) printf '%s\n' "$f"; continue ;; esac
+            head -c 64 "$f" | grep -qE '^#!.*\b(bash|sh)\b' && printf '%s\n' "$f"
+          done)
           # Printed, because which shellcheck judged the tree is part of what a green sweep means.
           # This runner's preinstalled copy and a current one disagree about the code for a helper
           # invoked only through an `eval` — SC2317 here, SC2329 from 0.10 on — and that divergence

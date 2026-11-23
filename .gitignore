@@ -1,2 +1,3 @@
 /protocol
 /.protocol/*.local
+__pycache__/

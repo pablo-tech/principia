@@ -21,7 +21,7 @@ printed an objection for one of forty-one names.
 the register's third column — the admitter's reading, and the only place it is stated. This page
 says what each work claims in its own scope; the register says what was done with it.
 
-Grouped by the literature the work comes from, which is part of the exhibit: seven short documents
+Grouped by the literature the work comes from, which is part of the exhibit: eight short documents
 rest on twelve bodies of work, and the groups are of very unequal size.
 
 ## Scientific method and inference
@@ -814,6 +814,30 @@ consequence of automation the earlier framing suggests.
 
 **Taken here** — [`doctrine/warp.md`](doctrine/warp.md), for blast radius read off a trigger's
 declared condition rather than off the size of a diff. Departures stay in
+[the register](INDUCTION.md#the-register).
+
+### The vocabulary problem — Furnas, Landauer, Gomez and Dumais, 1987
+
+**The work** — George Furnas, Thomas Landauer, Louis Gomez and Susan Dumais, "The vocabulary
+problem in human-system communication", *Communications of the ACM* 30(11), 1987, 964–971.
+
+**What it claims** — that spontaneous word choice for the same object or action is far more varied
+than designers assume. Across five domains, two people naming the same thing picked the same main
+word under 20% of the time, and no single access word a designer could choose performed well
+enough to rely on. Their remedy is unlimited aliasing — many names per object, harvested
+empirically from many people rather than chosen by one — and they show the hit rate rising with
+the number of aliases rather than saturating after a few.
+
+**What the field says against it** — Scott Deerwester, Susan Dumais, George Furnas, Thomas
+Landauer and Richard Harshman, "Indexing by Latent Semantic Analysis", *Journal of the American
+Society for Information Science* 41(6), 1990, 391–407 — four of the same authors — show that
+statistical structure derived from a corpus recovers much of what a hand-written synonym list
+supplies, so the mapping is derivable after all from enough text. The weakening is real and it is
+bounded by what it needs: a corpus large enough to fit, and a derived artifact beside the prose
+that nothing reconciles with it.
+
+**Taken here** — [`doctrine/retrieval.md`](doctrine/retrieval.md), for the one surface of a route
+that is authored rather than generated, and for a table kept thin on purpose. Departures stay in
 [the register](INDUCTION.md#the-register).
 
 ## Records and archives

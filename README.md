@@ -46,6 +46,7 @@ matters.
 | [`as-built.md`](doctrine/as-built.md) | "A document found to disagree with the system is corrected in the change that found it." | [stop the line — Ohno, 1978](LINEAGE.md#stop-the-line--ohno-1978) |
 | [`warp.md`](doctrine/warp.md) | "Take the plan from approval to deployed product with no further check-ins." | [mission command — Moltke, 1869](LINEAGE.md#mission-command--moltke-1869) |
 | [`tenancy.md`](doctrine/tenancy.md) | "The ordering matters more than the list. A great deal of effort is commonly spent on 3 while 1 is quietly violated, which buys nothing." | [complete mediation — Saltzer and Schroeder, 1975](LINEAGE.md#complete-mediation--saltzer-and-schroeder-1975) |
+| [`retrieval.md`](doctrine/retrieval.md) | "Generate every surface that can be derived, and author the one that cannot." | [the vocabulary problem — Furnas and colleagues, 1987](LINEAGE.md#the-vocabulary-problem--furnas-landauer-gomez-and-dumais-1987) |
 
 **The third column is a condition of entry, not a bibliography.** A rule is admitted to `doctrine/`
 only when it can be named as an instance of something the wider field already knows *and* attributed

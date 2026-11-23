@@ -17,6 +17,7 @@ the one that applies to what you are about to do.
 | [`doctrine/testing.md`](doctrine/testing.md) | writing or changing a test, which is any change of behaviour |
 | [`doctrine/as-built.md`](doctrine/as-built.md) | changing how a system works, or finding a document that disagrees with one |
 | [`doctrine/tenancy.md`](doctrine/tenancy.md) | working for more than one tenant from one machine |
+| [`doctrine/retrieval.md`](doctrine/retrieval.md) | writing or extending the way into a corpus somebody else has to find an answer in |
 
 That table is which one to open. [`doctrine/README.md`](doctrine/README.md) is the other axis over
 the same documents — what each holds you to, and why it is shaped that way — for reading rather
