@@ -123,7 +123,7 @@ check "an excluded path is not selected" \
 # ---------------------------------------------------------------- config
 mkdir -p "$T/r/.retrieval"
 check "a repository declaring nothing still has four answers" \
-  '[ "$(py config.py --repo "$T/r" | wc -l)" = 4 ]'
+  '[ $(py config.py --repo "$T/r" | wc -l) -eq 4 ]'
 check "quote defaults to line, the permissive answer, for a repository that has not thought about it" \
   '[ "$(py config.py --repo "$T/r" quote)" = line ]'
 check "a declaration overrides the default" \
@@ -216,7 +216,7 @@ rm -f "$T/h/hand.md"
 
 # ---------------------------------------------------------------- aliases
 check "the alias table's rows are read without its header or its rule line" \
-  '[ "$(py aliases.py --repo "$T/h" | wc -l)" = 1 ]'
+  '[ $(py aliases.py --repo "$T/h" | wc -l) -eq 1 ]'
 check "a row resolving to a tracked document passes" \
   'py aliases.py --repo "$T/h" --check | grep -q "1 alias rows, 0 unresolved"'
 # A renamed folder is the failure the table cannot survive and nothing else in the layer
@@ -242,7 +242,7 @@ check "a rule matching no tracked path is refused" \
 check "a rule with no reason is refused — a rule nobody can review is not a rule" \
   'printf "two.md\n" > "$T/h/.retrieval/exclude"; ! py exclude.py --repo "$T/h" >/dev/null 2>&1'
 check "a comment and a blank line are not rules" \
-  'printf "# why\n\ntwo.md\ta reason\n" > "$T/h/.retrieval/exclude"; [ "$(py exclude.py --repo "$T/h" | wc -l)" = 1 ]'
+  'printf "# why\n\ntwo.md\ta reason\n" > "$T/h/.retrieval/exclude"; [ $(py exclude.py --repo "$T/h" | wc -l) -eq 1 ]'
 
 # ---------------------------------------------------------------- gen_exclude
 # A separate repository, because every check here is about the pair `.retrieval/exclude`
