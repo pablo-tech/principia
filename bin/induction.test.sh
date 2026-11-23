@@ -378,7 +378,7 @@ year_disagrees() {
 #
 # `undated_name` above asks whether the block carries a year at all, which a line naming two works
 # and dating one of them answers — and that is exactly the shape the A201 citation had. The works are
-# separated by the em dash that introduces each one, which is the form all seven of these lines are
+# separated by the em dash that introduces each one, which is the form all eight of these lines are
 # written in, so each is asked on its own. INDUCTION.md:80 states the condition per work: "It has an
 # author, a title and a year."
 undated_work() {

@@ -104,6 +104,24 @@ The same chapter says where a defect in the protocol gets reported: as an issue 
 repository rather than as a pull request here, because the tenant's repository is the only place the
 control that protects the tenant is running at the moment the report is written.
 
+### [Generate every surface that can be derived, and author the one that cannot](retrieval.md)
+
+> The cost of an unroutable corpus is not slowness. It is confident wrong answers.
+
+That first sentence is why the rest is a document rather than a convenience. Whoever cannot find a
+record says the corpus does not hold it, in the same voice they use for what it does hold, so the
+failure arrives as an answer and nothing downstream can tell the two apart. Every other rule here
+— the generated index, the declared gap, the refusal carried as data, the reading taken at a ref —
+is a way of making that particular failure visible instead of silent.
+
+The authored surface is the part worth arguing about. Everything a route needs can be derived from
+the prose it describes except one thing: the mapping from the words a question arrives in onto the
+words the records use. Two people name the same object the same way under a fifth of the time, and
+the word a question arrives in is by definition absent from the corpus — so nothing reading the
+corpus can invent it, and the table is written by hand or not at all. The costs either side of it
+are asymmetric, which is the other half: an omission is recovered from by a ranked search, while a
+wrong row routes a question somewhere plausible and empty.
+
 ---
 
 ## What a machine checks, and what it does not
