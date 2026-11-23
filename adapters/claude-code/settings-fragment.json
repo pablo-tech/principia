@@ -11,17 +11,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/protocol/adapters/claude-code/turn-cost.sh\" --hook",
-            "timeout": 15
-          }
-        ]
-      }
     ]
   }
 }

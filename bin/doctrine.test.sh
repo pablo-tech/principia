@@ -70,6 +70,54 @@ check "the version pattern can fail" 'fires "$VERSIONS" "unchanged since Sonnet 
 check "the price pattern can fail" 'fires "$PRICES" "the cross-check costs 4 cents a turn"'
 check "the tuning pattern can fail" 'fires "$TUNING" "extended thinking widens a tight frame"'
 
+# ---- the subject test, over every tracked file --------------------------------------------------
+#
+# ARCHITECTURE.md §1 admits nothing whose subject is other than this protocol. The five checks above
+# ask that of `doctrine/`; three of the patterns can be asked of the whole tree, and the difference
+# is not strictness but ambiguity. `adapters/` has to name the agent it adapts — the directory is
+# that agent's name — so FAMILIES cannot widen, and this repository's own prose needs the tuning
+# vocabulary in order to say that a rule is not a tuning knob, so TUNING cannot either. A vendor, a
+# dated version and a published rate carry no such need anywhere here, and the measurement when this
+# was written is that outside `doctrine/` the three of them matched one script and its two documents
+# — a cost reporter carrying a vendor's price list, which is a commercial fact of theirs that is
+# true on a date. §10 already says a measurement belongs to the tenant that took it; a vendor's
+# published terms are the same sentence about somebody else's product, and the file reading a
+# tenant's own session transcripts to apply them is that tenant's tooling.
+#
+# What this cannot do is decide subject, and the limit is formal rather than a gap in the patterns:
+# every non-trivial semantic property of a program is undecidable (Rice, 1953 — LINEAGE.md, which
+# `doctrine/tenancy.md` cites against this same wall). A script that reads somebody else's corpus
+# with no vendor noun in it passes here and is refused by review. So this is a name sweep with a
+# declared blind spot, not a classifier.
+#
+# The one exception is structural rather than a list: this file holds the patterns and one sample of
+# each, so it cannot be searched for them — the same exemption §10 gives `.protocol/tenant`, which
+# is exempt from the scan it configures. A list would need maintaining and would quietly become the
+# thing it was checking for.
+SELF='bin/doctrine.test.sh'
+
+# `\$[0-9]` is in the doctrine pattern above and cannot widen: outside prose it is a positional
+# parameter, which every script here uses. A rate is the dollar amount with a unit after it.
+RATES='\$[0-9]+(\.[0-9]+)?/[A-Za-z]|[0-9]+ ?cents?|per (million|thousand) tokens?'
+RATES="$RATES|per-token|(cost|price) per (turn|call|token)|list price"
+
+scan_tree() {
+  local hits
+  hits=$(cd "$DIR/.." && git grep -niIE "$1" -- . ":(exclude)$SELF") || return 0
+  printf '%s\n' "$hits" | sed 's/^/        /'
+  return 1
+}
+
+# The fail-open case: a tree git cannot read makes `git grep` exit non-zero with nothing to print,
+# which is indistinguishable from a clean sweep. Asked once, so the three below mean something.
+check "the sweep can see the tree, which is the fail-open case" \
+  '[ "$(cd "$DIR/.." && git ls-files | wc -l)" -gt 1 ]'
+check "no tracked file names a vendor" 'scan_tree "$VENDORS"'
+check "no tracked file carries a dated model version" 'scan_tree "$VERSIONS"'
+check "no tracked file carries a vendor's published rate" 'scan_tree "$RATES"'
+check "the rate pattern can fail" 'fires "$RATES" "input \$15/Mtok, output \$75/Mtok"'
+check "and the sweep itself can fail" '! scan_tree "^# Architecture$"'
+
 # Every guard the chain dispatches is named by a doctrine document.
 #
 # A guard with no document above it is the mirror image of the refusal `INDUCTION.md` is built to
