@@ -224,6 +224,34 @@ checks.
    different rules inside a month. A claim that is mostly an existing document's claim is a sentence
    inside that document, not a new file beside it.
 
+## The same question, asked of a mechanism
+
+Everything above is the bar for a **rule**. A mechanism — a guard, an installer, an adapter — is
+admitted by no ceremony at all: it arrives in a commit like any other file, and nothing here asks it
+for a name, a citation, a register row or a declared departure. That asymmetry is correct rather
+than an omission. A mechanism makes no claim with a twenty-year half-life, so there is no literature
+for it to be wrong against, and a citation demanded of a shell script would be ceremony performed on
+the one artefact whose behaviour can simply be read.
+
+**What a mechanism is asked instead is its subject, and that question has one input: what does it
+read?** [`ARCHITECTURE.md`](ARCHITECTURE.md) §1 states the answer — *nothing whose subject is other
+than this protocol* — and it is the mirror of condition 2 rather than a sixth condition. *Tenant-free*
+and *model-free* are both subject tests; asked of a document they are asked of its sentences, and
+asked of a script they are asked of its inputs. Everything here reads this repository's own
+documents, the commit being made, or a tenant's declaration about itself. A script that reads a
+tenant's own corpus is that tenant's tooling however general its code looks, and a script carrying a
+vendor's published rates is about that vendor's product; neither becomes this protocol's by being
+useful to every tenant of it.
+
+**That is the direction the drift actually runs, which is the reason to write it down.** A rule
+coming through the front door is argued with, named, cited, and usually refused — the directory is
+short because admission is expensive. A mechanism arrives with a mechanism paragraph and a passing
+suite, and nothing in the diff poses the question at all, so a tenant's tooling can accumulate here
+under the authority of a protocol that is shared with every tenant and owned by none. The condition
+a rule meets by ceremony therefore has to be met by a mechanism by check: `bin/doctrine.test.sh`
+sweeps every tracked file, and §1 says what that sweep reaches and what it cannot, the limit being
+formal and not a matter of better patterns.
+
 ## A principle, a mechanism and a measurement read alike in a diff
 
 Three kinds of sentence, three homes, three half-lives. Filing one as another is the failure this

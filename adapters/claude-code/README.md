@@ -46,20 +46,12 @@ Which branch is protected is the tenant's, not the protocol's: `PROTOCOL_PROTECT
 by default ([`ARCHITECTURE.md`](../../ARCHITECTURE.md) §6). The dispatcher resolves the name once
 and passes it to each guard, so no guard carries a branch name of its own.
 
-`turn-cost.sh` is a `Stop` hook reporting what the turn cost. Its token counts are read from the
-transcript; its **dollar figures are a vendor's published list prices, hard-coded in the jq**, so
-they are the one thing here that silently goes stale. Re-check them before trusting a figure.
-
-It also **appends one line per turn** to `$PROTOCOL_WORK_LOG`, defaulting to
-`$XDG_STATE_HOME/warp/work-log.jsonl` (`~/.local/state/warp/work-log.jsonl`) — a JSON object
-carrying `kind`, `at`, `session`, `requests`, `tokens` and `context_max`, and **no dollar figure**,
-for the reason above: the measurement is tokens, money is a view over them computed from prices that
-are current when the report is written. A figure printed once and discarded can answer what a turn
-cost and can never answer whether it is getting worse, which is the whole argument for keeping it.
-
-Setting `PROTOCOL_WORK_LOG` empty turns the append off. The log is append-only, never rotated here,
-and nothing in this repository reads it back — it exists for whatever reports on a tenant's own
-work, and a tenant that wants none of it sets the variable empty in its own settings.
+This adapter registers one hook and one event, `PreToolUse` on `Bash`. It reported what a turn cost
+on `Stop` until that script was evicted by [`ARCHITECTURE.md`](../../ARCHITECTURE.md) §1's subject
+test: it read a tenant's own session transcripts and applied a vendor's published rate table, which
+makes it that tenant's tooling rather than this protocol's. `PROTOCOL_WORK_LOG` is gone with it, and
+a tenant that wants the report runs its own copy on its own `Stop` hook — nothing here prevents a
+second hook on the event, the harness running every matching one.
 
 None of this is the boundary. A hook stops one command in one tool and says nothing about a diff
 written by another agent, by hand or by an IDE — see [`doctrine/tenancy.md`](../../doctrine/tenancy.md).
