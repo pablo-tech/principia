@@ -14,16 +14,6 @@ and is not itself doctrine (§7).
 `guards/`, `bin/` and `adapters/` are mechanism: delete all three and the protocol still exists as
 documents, which is the property the whole design is arranged to preserve.
 
-**One thing in `bin/` neither installs this protocol nor enforces it, and it is named here rather
-than left to be inferred from the heading.** The retrieval layer — the readers, the three generators
-and the verifier that [`doctrine/retrieval.md`](doctrine/retrieval.md) is about, which §9 records as
-nine files covered by one suite — is mechanism a tenant runs over *its own* corpus. `bin/adapt`
-writes no copy of it and nothing seeds it into a tenant: a tenant consumes it by path, which is what
-keeps one implementation of a generated surface rather than one per tenant that agrees today. It is
-here because the rule is here, and because the alternative to sharing it is every tenant writing its
-own heading index and then having to be believed about it. The paragraph above still holds: delete
-it and the protocol exists as documents, and what is lost is a projection that can be regenerated.
-
 A doctrine file carries exactly two frontmatter keys, `name` and `description`, and no others.
 That is the minimum one agent's skill format requires and it is inert to every other reader, which
 is what lets a skill be a symlink to the doctrine file rather than a copy of it. **Adding a third
@@ -430,8 +420,8 @@ read a link.
 
 ## 9. Testing
 
-Every script has a `*.test.sh` beside it, **except the eighteen below**. `bin/test.sh` finds the
-suites rather than listing them, so an adapter that brings its own suites is tested by existing.
+Every script has a `*.test.sh` beside it, **except the nine below**. `bin/test.sh` finds the suites
+rather than listing them, so an adapter that brings its own suites is tested by existing.
 `bin/check.sh` is the assertion helper they share. The suites are bash and take no arguments, no
 network and no fixtures outside their own `mktemp -d`.
 
@@ -454,24 +444,12 @@ prints, which §9 is not the place to copy. Both lines extend the ones this runn
 character for character, because every tenant's suites print them and a consumer matching on the
 first words keeps matching.
 
-**The eighteen, and the decision for each.** `bin/doctrine.test.sh` holds this list to the tree, by
-the selection CI's shellcheck sweep starts from — so a new script with no suite turns the check red
-and arrives here as a decision rather than quietly enlarging the exception. *Starts from* rather
-than *uses*, since the retrieval layer landed: the union is every artefact in `bin/` plus everything
-in the tree carrying a shell shebang, and the sweep then narrows it to the files shellcheck can
-parse, because eight of those artefacts are python and shellcheck errors on a file it cannot read
-rather than skipping it. One definition of what counts as an artefact here, with the shell-only part
-in the step that needs it. Sixteen are covered by a
-suite that is not beside them, which is recorded rather than left to be inferred; two are unenforced
-by decision, which is `doctrine/as-built.md`'s requirement and the reason neither is merely absent
-from this page.
-
-**Nine of the sixteen are the retrieval layer, and they share one suite because they are one
-mechanism.** Every check of a generator has to build a scratch repository, commit to it and read the
-generated surface back, so nine suites beside nine files would build the same fixture nine times and
-still not assert the thing worth asserting — that the readers, the generators and the verifier agree
-with each other on one tree. `bin/retrieval.test.sh` is that suite, and it names which file each of
-its sections is about.
+**The nine, and the decision for each.** `bin/doctrine.test.sh` holds this list to the tree, by the
+same selection CI's shellcheck sweep uses — so a new script with no suite turns the check red and
+arrives here as a decision rather than quietly enlarging the exception. Seven are covered by a suite
+that is not beside them, which is recorded rather than left to be inferred; two are unenforced by
+decision, which is `doctrine/as-built.md`'s requirement and the reason neither is merely absent from
+this page.
 
 | Script | Decision |
 |---|---|
@@ -482,15 +460,6 @@ its sections is about.
 | `.githooks/pre-commit` | covered by every commit made to this repository, which is the only thing it is for — four lines resolving the guards beside it |
 | `tenant-template/.githooks/pre-commit` | covered by `bin/adapt.test.sh`'s last case, which makes a real commit through the shim that run installed |
 | `bin/check.sh` | covered by `bin/test.test.sh`, which asserts the verdict `finish` prints against literals and asserts that no suite redefines a name this file owns. The second is not hypothetical: three suites here define a `verdict()` of their own, which is why the formatter is `verdict_line` and why the collision is a check rather than a sentence advising care |
-| `bin/slugify.py` | covered by `bin/retrieval.test.sh`, which asserts the GitHub anchor algorithm byte for byte and the repeat-suffix counter across a run of colliding headings |
-| `bin/scan.py` | covered by the same suite, which reads headings at a ref and in the checkout and asserts the two agree, and asserts the generated block is excluded from the scan that feeds it |
-| `bin/config.py` | covered by the same suite, which asserts a misspelled key is refused rather than defaulted — the positive control that makes the rest of its config reads mean anything |
-| `bin/gen_headings.py` | covered by the same suite, which generates the index into a scratch repository, asserts idempotence on a second run, and asserts a hand edit is reported instead of rewritten |
-| `bin/gen_toc.py` | covered by the same suite, including that a hand-written Contents block is refused loudly and left in place |
-| `bin/aliases.py` | covered by the same suite, which asserts a row naming a folder that does not exist is refused, and that an entry point carrying no table is reported rather than passing |
-| `bin/exclude.py` | covered by the same suite, which asserts a rule matching no tracked path and a rule with no reason are both refused |
-| `bin/gen_exclude.py` | covered by the same suite, which asserts each bullet carries its rule's reason and that the block carries no count, so a new file under an excluded subtree cannot stale it |
-| `bin/verify-retrieval.sh` | covered by the same suite, which runs it over a scratch repository and asserts each of its refusals on an exit status rather than on its output. A `verify-retrieval.test.sh` beside it would test one of nine files through the one that drives the other eight |
 | `adapters/claude-code/detect.sh` | **unenforced.** It answers whether that agent is installed on this machine, so a suite could assert only what is true of the machine running it — which is a test of the machine |
 | `adapters/cortex/detect.sh` | **unenforced**, for the same reason |
 

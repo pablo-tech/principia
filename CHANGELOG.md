@@ -21,34 +21,25 @@ wrong commit.
 
 ### Added
 
-- **`doctrine/retrieval.md`, and the generator layer that enforces it.** A corpus with no declared
-  way in is read by guessing, and a search that found nothing is reported in the same voice as a
-  fact — which is the failure the eighth document is about, and the one no other document here
-  covered: `clean-code.md` governs what a file says and `tenancy.md` what a tree may contain, and
-  neither says how somebody else finds an answer in it. The rule is that every surface of a route
-  which can be derived is generated from the prose it describes, the one surface that cannot be is
-  authored, and a refusal is data with a reason rather than silence. Named on the vocabulary
-  problem — Furnas, Landauer, Gomez and Dumais, 1987, where two people name the same object the
-  same way under 20% of the time — with Deerwester and colleagues' 1990 latent-structure result as
-  the objection, accepted on its own ground and bounded by the corpus. Three departures are in
-  [the register](INDUCTION.md#the-register), the sharpest being that the paper harvests aliases
-  from many people while an author here writes the table by hand, which is their own sampling
-  objection turned on their own remedy.
+- **`doctrine/retrieval.md`.** A corpus with no declared way in is read by guessing, and a search
+  that found nothing is reported in the same voice as a fact — which is the failure the eighth
+  document is about, and the one no other document here covered: `clean-code.md` governs what a file
+  says and `tenancy.md` what a tree may contain, and neither says how somebody else finds an answer
+  in it. The rule is that every surface of a route which can be derived is generated from the prose
+  it describes, the one surface that cannot be is authored, and a refusal is data with a reason
+  rather than silence. Named on the vocabulary problem — Furnas, Landauer, Gomez and Dumais, 1987,
+  where two people name the same object the same way under 20% of the time — with Deerwester and
+  colleagues' 1990 latent-structure result as the objection, accepted on its own ground and bounded
+  by the corpus. Three departures are in [the register](INDUCTION.md#the-register), the sharpest
+  being that the paper harvests aliases from many people while an author here writes the table by
+  hand, which is their own sampling objection turned on their own remedy.
 
-  **The mechanism arrives with it**: nine files in `bin/` — `slugify.py`, `scan.py`, `config.py`,
-  `aliases.py`, `exclude.py`, the three `gen_*.py` generators and `verify-retrieval.sh` — which
-  generate a heading index, an in-file Contents block and the readable form of an exclusion, and
-  refuse rather than overwrite a surface somebody edited by hand. They were developed in a tenant
-  and move here as a path change, which is a property their own suite had to be written for: every
-  fixture `bin/retrieval.test.sh` builds is a scratch repository, so the layer's correctness is
-  never a fact about one tree. 71 checks, several of them positive controls — a rule matching
-  nothing, a rule with no reason, an alias row naming a folder that does not exist, a misspelled
-  config key and a hand-written Contents block each get a check asserting the refusal. Stdlib only,
-  enumerated by a check rather than claimed in a comment. `ARCHITECTURE.md` §9 records the nine as
-  covered by one suite, with the argument for why nine suites would assert less — and CI's
-  shellcheck sweep now narrows that same union to the files shellcheck can parse, since it errors
-  on a python file rather than skipping it, which is where the two consumers of one selection part
-  company.
+  **The document arrives with no mechanism beside it, which is the ordinary case here rather than a
+  gap.** Half of these documents are named by no enforcing code — `clean-code.md`, `planning.md`,
+  `warp.md` and `as-built.md` — and a generator of the surfaces this one requires would be the first
+  thing in `bin/` reading a *tenant's* own corpus rather than this repository's documents, its
+  commits or its installation. That is a subject other than this protocol, so it stays where the
+  corpus is. What is shared here is the rule, the citation and the objection to it.
 
 - **`warp.md` says what a stop says.** The document already enumerated the four moments a decision
   crosses back to a person and said nothing whatever about the form it crosses in, so a tenant that
