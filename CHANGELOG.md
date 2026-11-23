@@ -109,6 +109,36 @@ wrong commit.
   `verdict_line` rather than `verdict` because three suites here define a `verdict()` of their own
   after sourcing the harness, and that collision is a check rather than a sentence advising care.
 
+- **A fourth admission constraint: nothing whose subject is other than this protocol**
+  (`ARCHITECTURE.md` §1, mirrored in `INDUCTION.md`). The two constraints already there — tenant-free
+  and model-free — are the two particular cases this repository has actually been tempted by, and
+  neither one asked the general question they are instances of. **The test has one input: what does
+  the artefact read?** Everything here reads this repository's own documents, the commit being made,
+  or a tenant's declaration about itself; a file whose subject is a tenant's own corpus, a vendor's
+  commercial terms or a model's behaviour is admissible somewhere and not here. It is the one
+  admission constraint that is not about `doctrine/` alone, because a script is where the subject
+  slips: a rule arriving through the front door is argued with and usually refused, while a mechanism
+  arrives with a mechanism paragraph and a passing suite and nothing poses the question — so the
+  condition a rule meets by ceremony has to be met by a mechanism by check. `INDUCTION.md` gains
+  `## The same question, asked of a mechanism`, which states it as the mirror of condition 2 rather
+  than a sixth condition: *tenant-free* and *model-free* asked of a document are asked of its
+  sentences, and asked of a script are asked of its inputs.
+
+  **The mechanical half is a name sweep with a declared blind spot, not a classifier.** Subject is
+  not decidable — every non-trivial semantic property of a program is undecidable (Rice, 1953,
+  already cited in `doctrine/tenancy.md` against the same wall) — and the limit is stated beside the
+  check rather than left for a reader to discover. `bin/doctrine.test.sh` now sweeps every tracked
+  file for a vendor's name, a dated model version and a vendor's published rate, which is measured
+  rather than chosen: of the five patterns it holds over `doctrine/`, the other two cannot widen at
+  all. The price pattern's `$[0-9]` is a shell positional parameter outside prose (39 of them in
+  `bin/induction.test.sh` alone), and the model-family pattern cannot widen because
+  `adapters/claude-code/` *is* the agent's name, just as this repository's own prose needs the tuning
+  vocabulary in order to say that a rule is not a tuning knob. Naming an agent is not what is
+  refused; being about one is. The suite carrying the patterns is excepted from them, which is
+  structural rather than a list — the same exemption §10 already gives `.protocol/tenant`, exempt
+  from the scan it configures — because a hand-maintained exception list becomes the thing it was
+  checking for.
+
 ### Changed
 
 - **`doctrine/planning.md`'s worktree command fetches the base before cutting from it.** The rule
@@ -133,6 +163,25 @@ wrong commit.
   page therefore counts three rather than two, and says which of the three is held by the reader and
   nothing else. The frontmatter `description` carries the widened clause, so what a consumer's agent
   loads names it rather than only the command half.
+
+- **The Claude Code adapter's turn-cost script is evicted to the tenant, and `PROTOCOL_WORK_LOG`
+  goes with it.** This is a break for any tenant whose `settings.json` registers
+  `adapters/claude-code/turn-cost.sh` on `Stop`: the file is gone, the `Stop` block is gone from
+  `settings-fragment.json`, and the adapter now registers one hook and one event, `PreToolUse` on
+  `Bash`. It is the first thing §1's subject test above finds, and it was found by widening the
+  check rather than by reading the directory: the script read a tenant's own session transcripts and
+  applied a vendor's published rate table, which are two subjects other than this protocol, and §10
+  already held that a measurement belongs to the tenant that took it. A tenant that wants the report
+  runs its own copy on its own `Stop` hook — nothing here prevents a second hook on the event, the
+  harness running every matching one. `turn-cost.test.sh` and `commands/turn-cost.md` go with it, and
+  §9's nine exceptions stay balanced because a script and its suite leave together.
+
+  **Three derived statements the removal falsified went red in the same run, which is the point of
+  deriving them.** §6's foreign-variable sentence named `XDG_STATE_HOME` and `CLAUDE_CONFIG_DIR`,
+  which that script was the only reader of, and now names `CORTEX_BIN` alone; §4's adapter-variable
+  count said three and says two; and `PROTOCOL_WORK_LOG`'s row is out of §6's table. None of those
+  was noticed by a reader — the suite printed `named in §6 and read by nothing here` — and prose that
+  only a person checks is prose that would have stayed wrong until somebody acted on it.
 
 ### Fixed
 

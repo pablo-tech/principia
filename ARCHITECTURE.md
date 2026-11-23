@@ -28,6 +28,26 @@ of a generation — and belongs in a dated finding in the tenant that measured i
 would inherit the authority of a rule with a twenty-year half-life and be shared with every tenant
 that never measured it. §10 is the check that holds this one too.
 
+Doctrine is about this protocol, and so is every file beside it. The test has one input: **what
+does the artefact read?** Everything here reads this repository's own documents, the commit being
+made, or a tenant's declaration about itself. A file whose subject is a tenant's own corpus, a
+vendor's commercial terms or a model's behaviour is admissible somewhere and not here — *nothing
+whose subject is other than this protocol*. The two constraints above are the general rule's two
+particular cases, being the two subjects this repository has actually been tempted by, and this is
+the form they are instances of. It is also the one admission constraint that is not about
+`doctrine/` alone. A rule's subject is weighed at admission, which is what
+[INDUCTION.md](INDUCTION.md) is; mechanism arrives in a commit like any other file and is asked
+nothing, and a script is where the subject slips, because a script reading somebody else's corpus
+looks like tooling from the inside. `bin/doctrine.test.sh` holds the mechanical half over every
+tracked file rather than over `doctrine/`: a vendor, a dated model version or a vendor's published
+rate anywhere in the tree is refused, the suite carrying those patterns excepted from them — the
+same exemption §10 gives `.protocol/tenant`, and structural rather than a list. Subject itself is
+not decidable, which is formal rather than a gap in the patterns: every non-trivial semantic
+property of a program is undecidable ([Rice, 1953](LINEAGE.md#rices-theorem--rice-1953), cited in
+[`doctrine/tenancy.md`](doctrine/tenancy.md) against the same limit). So the check is a sweep over
+three name shapes, and what a file is *for* stays a judgement about which decision a module hides
+([Parnas, 1972](LINEAGE.md#information-hiding--parnas-1972)).
+
 Doctrine is named and cited. A rule is admitted only when the document carries the principle it
 instantiates, in the strongest form the wider field states it, **and the specific prior work it is
 named from — author, title, year — printed on a `Named:` line under the document's opening line and
@@ -270,12 +290,13 @@ which is the defect in it, because a bypass nobody has written down is one nobod
 close. The variable ones are derived rather than listed by hand: **every `PROTOCOL_*` the shim or a
 guard expands is one of these by construction**, the shim's deciding which guards run and a guard's
 deciding what it refuses, and in both cases the commit records nothing. `bin/doctrine.test.sh` holds
-this list to that set. The three adapter variables in §6's table are deliberately outside it —
-`PROTOCOL_COMMAND_GUARDS`, `PROTOCOL_PROTECTED_BRANCH` and `PROTOCOL_WORK_LOG` bind one agent's
-hooks rather than the commit, and §1 says an adapter is deletable. That count said two until
-2026-10-13 and left the third unnamed, which is the omission above arriving a second time in the
-paragraph that records it — so the exclusion is now derived too: it is §6's table less the set the
-sentence before it derives, and a variable joining either side reds this.
+this list to that set. The two adapter variables in §6's table are deliberately outside it —
+`PROTOCOL_COMMAND_GUARDS` and `PROTOCOL_PROTECTED_BRANCH` bind one agent's
+hooks rather than the commit, and §1 says an adapter is deletable. This count has been wrong in both
+directions — it said two while three were in the table, which is the omission above arriving a
+second time in the paragraph that records it — so the number is derived rather than typed: it is
+§6's table less the set the sentence before it derives, and a variable joining or leaving either
+side reds this.
 
 - **`PROTOCOL_GUARDS`** redirects the entire chain at another directory (§6). It cannot be closed,
   because it is how the shim finds the guards at all where there is no `protocol/`, and a guard
@@ -352,18 +373,17 @@ in the same repository as the sentence. All are optional and all are read at run
 | `PROTOCOL_MAX_FILE_MB` | `25` | the size ceiling `size-guard.sh` enforces — a value other than the default prints one line per run (§4) |
 | `PROTOCOL_COMMAND_GUARDS` | unset | the command-guard directory one adapter's hooks run |
 | `PROTOCOL_PROTECTED_BRANCH` | `main` | the branch those guards refuse a push or a pick onto |
-| `PROTOCOL_WORK_LOG` | `$XDG_STATE_HOME/warp/work-log.jsonl` | where one adapter's turn-cost hook appends; set empty to turn the append off |
 
 The variables read here that are **not** this protocol's to name are these, and
-`bin/doctrine.test.sh` holds the sentence to the tree the way it holds the table above:
-`XDG_STATE_HOME`, which is the specification's, `CLAUDE_CONFIG_DIR`, which is one agent's, and
-`CORTEX_BIN`, which is another's — the first two in the Claude Code adapter and the third in the
-Cortex one, and an adapter is deletable (§1). They are named here because a reader checking this
-section against the tree finds them, not because this protocol defines any of them.
+`bin/doctrine.test.sh` holds the sentence to the tree the way it holds the table above: `CORTEX_BIN`
+alone, which is one agent's, read in the Cortex adapter, and an adapter is deletable (§1). It is
+named here because a reader checking this section against the tree finds it, not because this
+protocol defines it.
 
-**This sentence said two, in one adapter, until 2026-10-13**, which is the shape of a check that
-stops at a table's edge: the table above it was derived and the prose under it was not, so the
-third variable was read by a script in the tree and named nowhere. It is derived now, and in both
+**This sentence has been wrong in both directions**, which is the shape of a check that stops at a
+table's edge: the table above it was derived and the prose under it was not, so a variable was read
+by a script in the tree and named nowhere, and later two were named here after the script reading
+them had gone. It is derived now, and in both
 directions — a variable arriving reds it, and so does a name here that nothing reads.
 
 ## 7. The adapter contract
@@ -509,9 +529,12 @@ records the same gap for the citation copies, which is the half of this that has
   or a model version, and none of them carries the tuning vocabulary a measurement needs. A finding
   about how a generation of models behaves is true on a date and belongs to the tenant that took the
   measurement; filed here it would be read as a rule and shared with every tenant that did not.
-  `bin/doctrine.test.sh` enforces it against this tree in the `bin/test.sh` sweep, over `doctrine/`
-  alone — the rest of the repository is mechanism and may say whatever it has to about the agents it
-  installs for.
+  `bin/doctrine.test.sh` enforces it against this tree in the `bin/test.sh` sweep. All five patterns
+  run over `doctrine/`; three of them — a vendor, a dated model version, a published rate — run over
+  every tracked file, by §1's subject test. The other two stop at `doctrine/` because the rest of
+  the repository must name the agent it installs for: an adapter's own directory is that agent's
+  name, and this page needs the tuning vocabulary in order to say that a rule is not a tuning knob.
+  Naming an agent is not what is refused; being about one is.
 
 ## 11. A tenant records which protocol installed it, and the record is a receipt rather than a pin
 

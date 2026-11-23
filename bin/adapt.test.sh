@@ -57,10 +57,10 @@ check "that symlink resolves through the tenant's own protocol entry" \
 cmds="$PROTOCOL/adapters/claude-code/commands"
 check "every command the adapter carries is offered" \
   "[ \$(ls '$t/tenant/commands' | wc -l) -eq \$(ls '$cmds' | wc -l) ]"
-check "a command is a symlink, not a second copy" "[ -L '$t/tenant/commands/turn-cost.md' ]"
+check "a command is a symlink, not a second copy" "[ -L '$t/tenant/commands/phase-done.md' ]"
 check "and it resolves through the tenant's own protocol entry" \
-  "[ \"\$(readlink -f '$t/tenant/commands/turn-cost.md')\" = \\
-    '$PROTOCOL/adapters/claude-code/commands/turn-cost.md' ]"
+  "[ \"\$(readlink -f '$t/tenant/commands/phase-done.md')\" = \\
+    '$PROTOCOL/adapters/claude-code/commands/phase-done.md' ]"
 check "an agent with no instruction file of its own is pointed at AGENTS.md" \
   "grep -q AGENTS.md '$t/tenant/CLAUDE.md'"
 check "the command guards are registered as hooks" \
@@ -300,7 +300,7 @@ fresh
 adapt --copy --agent claude-code >/dev/null
 check "--copy leaves no symlink for a machine that will not follow one" \
   "[ -z \"\$(find '$t/tenant' -type l -not -path '*/.git/*')\" ] &&
-   [ -f '$t/tenant/skills/warp/SKILL.md' ] && [ -f '$t/tenant/commands/turn-cost.md' ]"
+   [ -f '$t/tenant/skills/warp/SKILL.md' ] && [ -f '$t/tenant/commands/phase-done.md' ]"
 # A copy of a clone is a clone, and its `.git` is what would make it one a `git pull` could move on
 # — which is the opposite of what --copy is for, so the copy this run made has it removed.
 check "and the history of the copy it made is removed, that copy not being a checkout" \

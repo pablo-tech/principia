@@ -162,8 +162,9 @@ check "and lets anything else through" "[ -z \"\$(unparseable 'not json at all: 
 check "the settings fragment runs this dispatcher as its Bash PreToolUse hook" \
   "jq -e '.hooks.PreToolUse[] | select(.matcher == \"Bash\") | .hooks[]
     | select(.command | contains(\"command-guards.sh\"))' '$DIR/settings-fragment.json' >/dev/null"
-check "and turn-cost on Stop" \
-  "jq -e '.hooks.Stop[].hooks[] | select(.command | contains(\"turn-cost.sh\"))' \
-    '$DIR/settings-fragment.json' >/dev/null"
+# One event, and the fragment is where that is readable: a hook on `Stop` is handed the session
+# transcript, which is the tenant's own corpus and so not this protocol's subject (ARCHITECTURE.md §1).
+check "and registers that event and no other" \
+  "[ \"\$(jq -r '.hooks | keys | join(\",\")' '$DIR/settings-fragment.json')\" = PreToolUse ]"
 
 finish
